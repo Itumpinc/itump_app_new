@@ -55,7 +55,7 @@ export default function NewBusinessFormation() {
           </Text>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('services-module');
+              navigation.navigate('ServiceList');
             }}
             style={{
               alignSelf: 'flex-start',
@@ -137,7 +137,7 @@ export default function NewBusinessFormation() {
       <Gap height={hp(2)} />
       {modalClose && (
         <Popup close={() => setModalClose(false)} height={90}>
-          <AddBusinessPopup />
+          <AddBusinessPopup close={() => setModalClose(false)} />
         </Popup>
       )}
     </>

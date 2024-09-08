@@ -74,6 +74,13 @@ export const afterLoginAction = ({dispatch, setData, data}: any) => {
 export const saveUser = async ({dispatch, setData, userData}: any) => {
   if (userData.isSuccess) {
     const data = userData.data.data;
-    dispatch(setData({key: 'user', value: data.user}));
+    const {user, business} = data;
+    dispatch(setData({key: 'user', value: user}));
+    dispatch(setData({key: 'business', value: business}));
+    if(business && business.length>0){
+      dispatch(setData({key: 'primaryBusiness', value: business[0]}));
+    }else{
+      dispatch(setData({key: 'primaryBusiness', value: {id: 0}}));
+    }
   }
 };

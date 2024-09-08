@@ -14,46 +14,54 @@ import {commonApi} from '@src/store/services/common';
 import {getData} from '@src/utils/helpers';
 import useStyles from '../styles';
 import {USMap} from './map/USMap';
-import {RenderDropdown, RenderRadio} from '@src/components/hocs/forms';
+import {Button, RenderDropdown, RenderRadio} from '@src/components/hocs/forms';
 import {getStateOptions} from '../Utils';
+import {userApi} from '@src/store/services/user';
 
 const Entity = (props: any) => {
+  const {countryId} = props;
   const pictures = useThemeImages();
   const colors = useThemeColors();
+  const getEntities = userApi.useGetEntitiesQuery(countryId);
+  const getEntitiesData = getData(getEntities);
+
+  const options = [];
+  if (getEntitiesData && getEntitiesData.length > 0) {
+    for (let index = 0; index < getEntitiesData.length; index++) {
+      const entity = getEntitiesData[index];
+      options.push({
+        value: entity.id,
+        heading: entity.entity_name,
+        // image: pictures.defaultProfile,
+        label: entity.description,
+      });
+    }
+  }
+
   return (
     <View>
-      <RenderRadio
-        name="entityType"
-        options={[
-          {
-            value: 'llc',
-            heading: 'Limited Liability Companies',
-            image: pictures.defaultProfile,
-            label:
-              'Easy to afford and own, making them the favored choice for small and new business proprietors.',
-          },
-          {
-            value: 'corp',
-            heading: 'Corporation',
-            image: pictures.defaultProfile,
-            label:
-              'Although more intricate and costly, they serve as excellent means for formal ownership and management structures, as well as for raising substantial capital.',
-          },
-        ]}
-      />
+      <RenderRadio name="entityType" options={options} />
     </View>
   );
 };
 
 export function StateAndEntitty(props: any) {
-  const loadStateQuery = commonApi.useLoadStateQuery(226);
+  const {schema, setSchema, stepAction} = props;
+  const loadStateQuery = commonApi.useLoadStateQuery(schema.data.countryId);
   const stateList = getData(loadStateQuery);
   const colors = useThemeColors();
   const storage = useAppSelector(state => state.common.storage);
   const {user} = storage;
   const styles = useStyles();
   const options = getStateOptions(stateList);
-  const {schema, setSchema} = props;
+
+  const state = schema.data.stateId
+    ? options.find((option: any) => option.value === schema.data.stateId)
+    : undefined;
+
+  const submit = () => {
+    stepAction('next');
+  };
 
   return (
     <View>
@@ -83,10 +91,24 @@ export function StateAndEntitty(props: any) {
         options={options}
       />
 
-      <Gap height={hp(1)} />
-      <Text style={styles.mainText}>Choose an Entity Type in Delaware</Text>
-      <Gap height={hp(1)} />
-      <Entity />
+      {state && (
+        <>
+          <Gap height={hp(1)} />
+          <Text style={styles.mainText}>
+            Choose an Entity Type in {state.name}
+          </Text>
+          <Gap height={hp(1)} />
+          <Entity countryId={schema.data.countryId} />
+          <Gap height={hp(2)} />
+          <Button
+            text="Next"
+            textColor="white"
+            onPress={submit}
+            disabled={!(state && schema.data.entityType)}
+          />
+          <Gap height={hp(5)} />
+        </>
+      )}
     </View>
   );
 }

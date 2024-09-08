@@ -62,7 +62,8 @@ const IssueLayout = ({text, onPress}: any) => {
   );
 };
 
-export default function FixIssues() {
+export default function FixIssues(props: any) {
+  const {business} = props;
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
@@ -169,7 +170,7 @@ export default function FixIssues() {
             style={{height: hp(8), width: hp(8)}}
           />
         </View>
-        
+
         <View
           style={{
             height: hp(0.1),
@@ -178,7 +179,7 @@ export default function FixIssues() {
             backgroundColor: colors.verticalLine,
           }}
         />
-        
+
         {/* <Gap height={hp(2)} /> */}
         <IssueLayout text={'Activate Account'} />
         {/* <Gap height={hp(2)} /> */}

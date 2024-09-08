@@ -113,7 +113,7 @@ const Input = (props: {
               style={{
                 fontFamily: 'Satoshi-Regular',
                 fontSize: 12,
-                color: textColor,
+                color: textColor || colors.secondaryText,
               }}>
               {selectedCountry.dial_code}
               {'  |'}
@@ -137,7 +137,7 @@ const Input = (props: {
             fontFamily: 'Satoshi-Regular',
             fontSize: 12,
             textAlign: 'left',
-            color: textColor,
+            color: textColor || colors.secondaryText,
             opacity: 1,
             paddingTop: Platform.OS === 'ios' ? 0 : hp(0.8),
             alignSelf: 'center',

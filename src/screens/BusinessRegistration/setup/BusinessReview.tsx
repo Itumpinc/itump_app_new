@@ -1,38 +1,89 @@
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  Platform,
-  FlatList,
-  ScrollView,
-} from 'react-native';
+import {View} from 'react-native';
 
-import React from 'react';
-import {useThemeImages} from '@constants/images';
+import React, {useState} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {Text} from 'native-base';
 import {useThemeColors} from '@constants/colors';
-import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
 import {commonApi} from '@src/store/services/common';
-import {getData} from '@src/utils/helpers';
-import useStyles from '../styles';
-import {USMap} from './map/USMap';
-import {RenderDropdown, RenderRadio} from '@src/components/hocs/forms';
-import {getStateOptions} from '../Utils';
+import {alert, getData} from '@src/utils/helpers';
 import ReviewCard from '@src/components/common/reviewCard';
-import Button from '@src/constants/button';
+import {userApi} from '@src/store/services/user';
+import {serviceApi} from '@src/store/services/service';
+import {Button} from '@src/components/hocs/forms';
+import {generateInvoiceSerial} from '../Utils';
+import { useAppSelector } from '@src/store/store';
 
 export function BusinessReview(props: any) {
+  const {schema, stepAction, setParamsData} = props;
+  const [loading, setLoading] = useState(false);
   const colors = useThemeColors();
+  
   const storage = useAppSelector(state => state.common.storage);
   const {user} = storage;
 
-  const submit = () => {};
+  const loadStateQuery = commonApi.useLoadStateQuery(schema.data.countryId);
+  const stateList = getData(loadStateQuery);
+
+  const getEntities = userApi.useGetEntitiesQuery(schema.data.countryId);
+  const getEntitiesData = getData(getEntities);
+
+  const [businessCreateQuery] = serviceApi.useLazyBusinessCreateQuery();
+
+  const serviceDetailData = serviceApi.useServiceListQuery({
+    user_id: user.id,
+  });
+  // const servicesList = getData(serviceDetailData);
+  // const businessService = servicesList ? servicesList.find((service:any) => service.tags.indexOf('register_business') > -1) : undefined;
+  // console.log('businessService===>', businessService);
+
+  const submit = async () => {
+    setLoading(true);
+    const invoiceSerial = generateInvoiceSerial(schema.data.companyName);
+    const data = {
+      entity_type: schema.data.entityType,
+      country_id: schema.data.countryId,
+      service_id: 1,
+      state_id: schema.data.stateId,
+      business_title: schema.data.companyName,
+      status: schema.data.businessOwner === 'itump' ? 'pending' : 'active',
+      invoice_serial: invoiceSerial,
+      invoice_counter: 1,
+      is_business_existing: schema.data.businessOwner === 'itump' ? 0 : 1,
+      detail: {},
+      users: [],
+    };
+
+    const businessCreateData = await businessCreateQuery(data);
+    if (businessCreateData.isSuccess) {
+      const businessData = getData(businessCreateData);
+      setLoading(false);
+      setParamsData(businessData);
+      stepAction('next');
+    }
+
+    if (businessCreateData.isError) {
+      setLoading(false);
+      const error: any = businessCreateData.error;
+      const data = error && error.data ? error.data : undefined;
+      if (data) {
+        alert(data.message);
+      }
+    }
+  };
+
+  const state = schema.data.stateId
+    ? stateList.find((option: any) => option.id === schema.data.stateId)
+    : undefined;
+
+  const entity = schema.data.entityType
+    ? getEntitiesData.find(
+        (option: any) => option.id === schema.data.entityType,
+      )
+    : undefined;
 
   return (
     <View>
@@ -43,8 +94,8 @@ export function BusinessReview(props: any) {
           alignSelf: 'flex-start',
           fontSize: hp(1.8),
         }}>
-        Awesome! here are the details of your company on itump. You may proceed
-        with one of the options below:
+        Awesome! Here are the details of your company on itump. You may proceed
+        with the options below:
       </Text>
       <Gap height={hp(2)} />
       <View
@@ -55,15 +106,22 @@ export function BusinessReview(props: any) {
           borderRadius: 10,
         }}>
         <ReviewCard
+          open
+          standalone
           data={[
-            {heading: 'Name of Company', text: 'ALPS'},
-            {heading: 'State of Formation', text: 'Co-Founder'},
-            {heading: 'Entity Type', text: 'Corporation'},
+            {heading: 'Name of Company', text: schema.data.companyName},
+            {heading: 'State of Formation', text: state.name},
+            {heading: 'Entity Type', text: entity.entity_name},
           ]}
         />
       </View>
-      <Gap height={hp(25)} />
-      <Button text="Create Record" textColor="white" onPress={submit} />
+      <Gap height={hp(20)} />
+      <Button
+        text="Create Business"
+        textColor="white"
+        onPress={submit}
+        loader={loading}
+      />
     </View>
   );
 }

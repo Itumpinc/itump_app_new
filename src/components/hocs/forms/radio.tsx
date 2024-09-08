@@ -27,6 +27,7 @@ const Radio = (props: {
   error: any;
   onChange: any;
   required: any;
+  optionDots: boolean;
   options: {id: string; heading?: string; image?: any; label: string}[];
 }) => {
   const {
@@ -38,6 +39,7 @@ const Radio = (props: {
     onChange,
     required,
     options,
+    optionDots = false,
   } = props;
   const inputRef = useRef(null);
   const pictures = useThemeImages();
@@ -82,6 +84,54 @@ const Radio = (props: {
                 : {},
             ]}
             onPress={() => selectRadio(option)}>
+            {optionDots ? (
+              <View style={{marginTop: 3}}>
+                {option.value === value ? (
+                  <View
+                    style={[
+                      {
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 20,
+                        height: 20,
+                        borderColor: colors.primary,
+                        borderWidth: 2,
+                        borderRadius: 10,
+                      },
+                    ]}>
+                    <View
+                      style={{
+                        width: 12,
+                        height: 12,
+                        backgroundColor: colors.primary,
+                        borderRadius: 10,
+                      }}></View>
+                  </View>
+                ) : (
+                  <View
+                    style={[
+                      {
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 20,
+                        height: 20,
+                        borderColor: colors.line,
+                        borderWidth: 2,
+                        borderRadius: 10,
+                      },
+                    ]}>
+                    <View
+                      style={{
+                        width: 12,
+                        height: 12,
+                        backgroundColor: colors.activityBox,
+                        borderRadius: 10,
+                      }}></View>
+                  </View>
+                )}
+              </View>
+            ) : null}
+
             {option.image && (
               <Image
                 source={pictures.defaultProfile}
@@ -110,7 +160,7 @@ const Radio = (props: {
                 </>
               )}
 
-              <Text
+              {option.label && <Text
                 style={[
                   styles.text,
                   {
@@ -118,11 +168,11 @@ const Radio = (props: {
                     fontFamily: 'Satoshi-Regular',
                     alignSelf: 'flex-start',
                     fontSize: hp(1.8),
-                    maxWidth: wp(74)
+                    maxWidth: wp(74),
                   },
                 ]}>
                 {option.label}
-              </Text>
+              </Text>}
             </View>
           </TouchableOpacity>
         );

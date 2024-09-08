@@ -11,7 +11,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {Text} from 'native-base';
+import {Spinner, Text} from 'native-base';
 import {useThemeColors} from '@constants/colors';
 
 const Button = ({
@@ -26,6 +26,8 @@ const Button = ({
   iconSource,
   iconRight = false,
   half = false,
+  loader = false,
+  style,
 }: any) => {
   const colors = useThemeColors();
 
@@ -53,31 +55,48 @@ const Button = ({
       <TouchableOpacity
         onPress={!disabled ? onPress : null}
         // @ts-ignore
-        style={[commonStyles, check ? checkTrueStyles : checkFalseStyles]}>
-        {icon && (
-          <>
-            <Image
-              source={iconSource}
-              style={{width: hp(2.5), height: hp(2.5), resizeMode: 'contain'}}
-            />
-            <View style={{width: wp(5)}} />
-          </>
-        )}
-        <Text
-          style={{
-            color: textColor,
-            fontFamily: 'Satoshi-Bold',
-            fontSize: 16,
-          }}>
-          {text}
-        </Text>
-        {iconRight && (
+        style={[
+          commonStyles,
+          check ? checkTrueStyles : checkFalseStyles,
+          style,
+        ]}>
+        {loader ? (
           <>
             <View style={{width: wp(2)}} />
-            <Image
-              source={iconSource}
-              style={{width: hp(2.5), height: hp(2.5)}}
-            />
+            <Spinner color={colors.buttonText} />
+          </>
+        ) : (
+          <>
+            {icon && (
+              <>
+                <Image
+                  source={iconSource}
+                  style={{
+                    width: hp(2.5),
+                    height: hp(2.5),
+                    resizeMode: 'contain',
+                  }}
+                />
+                <View style={{width: wp(5)}} />
+              </>
+            )}
+            <Text
+              style={{
+                color: textColor,
+                fontFamily: 'Satoshi-Bold',
+                fontSize: 16,
+              }}>
+              {text}
+            </Text>
+            {iconRight && (
+              <>
+                <View style={{width: wp(2)}} />
+                <Image
+                  source={iconSource}
+                  style={{width: hp(2.5), height: hp(2.5)}}
+                />
+              </>
+            )}
           </>
         )}
       </TouchableOpacity>

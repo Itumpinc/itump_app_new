@@ -18,11 +18,9 @@ import { updateSchema } from '@src/components/hocs/forms/form';
 
 export const USMap = ({value, setSchema, schema}: {value: number, setSchema:any, schema:any}) => {
   const pictures = useThemeImages();
-  const loadCountryQuery = commonApi.useLoadCountryQuery();
-  const countryList = getData(loadCountryQuery);
-  const colors = useThemeColors();
   const storage = useAppSelector(state => state.common.storage);
-  const {user} = storage;
+  const {countryList} = storage;
+  const colors = useThemeColors();
 
   const states = [
     {id: 2, code: 'AK', name: 'Alaska', top: hp('0%'), left: wp('0%')},

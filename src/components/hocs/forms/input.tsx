@@ -75,6 +75,8 @@ const Input = (props: {
     paddingTop = 0;
   }
 
+  if (multiline) paddingTop = hp(1.5);
+
   useEffect(() => {
     if (autofocus && inputRef) {
       // @ts-ignore
@@ -102,24 +104,24 @@ const Input = (props: {
         <TextInput
           ref={inputRef}
           inputMode={mode == 'number' ? 'numeric' : 'text'}
-          maxLength={maxLength ? 200 : phoneNumber ? 15 : 40}
+          maxLength={maxLength ? maxLength : phoneNumber ? 15 : 40}
           editable={disable ? false : true}
           onChangeText={
             mode === 'number'
               ? val => {
-                  (val = val.replace(/[^0-9]/g, '')), onChange({name, val});
+                  (val = val.replace(/[^0-9]/g, '')),
+                    onChange({name, value: val ? parseInt(val, 10) : ''});
                 }
               : val => {
                   onChange({name, value: val});
                 }
           }
-          value={value}
+          value={value ? value.toString() : ''}
           multiline={multiline}
           secureTextEntry={isPassword && !showPassword}
           placeholder={placeHolder ? placeHolder + (required ? '*' : '') : ''}
           placeholderTextColor="#A5A5A5"
           style={{
-            fontFamily: 'Satoshi-Regular',
             fontSize: 12,
             textAlign: 'left',
             color: textColor || colors.primaryText,
@@ -161,28 +163,12 @@ const Input = (props: {
             /> */}
           </Pressable>
         )}
-        {isCalender == true && (
-          <TouchableOpacity
-            onPress={() => {}}
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              alignSelf: 'center',
-            }}>
-            <Image
-              resizeMode="contain"
-              style={{
-                width: hp(2),
-                height: hp(2),
-              }}
-              source={pictures.calendarIcon}
-            />
-          </TouchableOpacity>
-        )}
       </View>
       {maxLength && showLimit && (
         <View style={{position: 'absolute', bottom: hp(3), right: wp(4)}}>
-          <Text style={{color: colors.placeholder}}>{value.length}/200</Text>
+          <Text style={{color: colors.placeholder}}>
+            {value ? value.length : 0}/{maxLength}
+          </Text>
         </View>
       )}
       {error && (

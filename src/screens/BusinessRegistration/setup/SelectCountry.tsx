@@ -7,7 +7,7 @@ import {
   FlatList,
 } from 'react-native';
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useThemeImages} from '@constants/images';
 import {
   widthPercentageToDP as wp,
@@ -19,20 +19,27 @@ import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
 import {commonApi} from '@src/store/services/common';
 import {getData} from '@src/utils/helpers';
+import {updateSchema} from '@src/components/hocs/forms/form';
 
 export function SelectCountry(props: any) {
   const pictures = useThemeImages();
-  const loadCountryQuery = commonApi.useLoadCountryQuery();
-  const countryList = getData(loadCountryQuery);
-  const colors = useThemeColors();
   const storage = useAppSelector(state => state.common.storage);
-  const {user} = storage;
-  const {stepAction} = props;
+  const {countryList} = storage;
+  const colors = useThemeColors();
+  const {stepAction, schema, setSchema} = props;
 
   const selectCountries = (item: any) => {
-    console.log(item);
+    setSchema(updateSchema(schema, 'data', 'countryId', item.id));
     stepAction('next');
   };
+
+  // useEffect(() => {
+  //   if (countryList.length === 1) {
+  //     console.log('i am updating country', schema.data, countryList[0].id)
+  //     setSchema(updateSchema(schema, 'data', 'countryId', countryList[0].id));
+  //     stepAction('next');
+  //   }
+  // }, [countryList]);
 
   const renderItem = ({item}: any) => (
     <TouchableOpacity
@@ -41,13 +48,13 @@ export function SelectCountry(props: any) {
         styles.countryButtonStyles,
         {borderBottomColor: colors.activityBox},
       ]}>
-      <View style={{width: 50}}>
+      <View style={{width: 40}}>
         <Image
           source={{uri: `data:image/png;base64, ${item.flag}`}}
           style={styles.flag}
         />
       </View>
-      <Text style={[styles.countryName, {color: colors.boxText, width: 50}]}>
+      <Text style={[styles.countryName, {color: colors.boxText, width: 40}]}>
         {item.iso_alpha_3}
       </Text>
       <Text style={[styles.countryName, {color: colors.boxText}]}>
@@ -114,11 +121,12 @@ const styles = StyleSheet.create({
   countryName: {
     fontFamily: 'Satoshi-Medium',
     fontSize: 16,
-    marginLeft: 10,
+    marginLeft: 5,
   },
   flag: {
     width: 25,
-    height: 18,
+    height: 25,
+    borderRadius: 12,
   },
   itemsList: {
     marginTop: 10,

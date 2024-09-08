@@ -7,6 +7,7 @@ import {
   FlatList,
   ScrollView,
   ImageBackground,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 import React, {useEffect} from 'react';
@@ -25,15 +26,28 @@ import {RenderInput} from '@src/components/hocs/forms';
 import useStyles from '../styles';
 import Button from '@src/constants/button';
 import ServiceCard from '@src/components/common/serviceCard';
+import {useNavigation} from '@react-navigation/native';
 
 export function ExistingBusinessSuccess(props: any) {
+  const {businessDetails} = props;
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const {schema, stepAction} = props;
   const styles = useStyles();
+  const navigation: any = useNavigation();
 
   const submit = () => {
-    stepAction('next');
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'AddBusiness', params: {id: businessDetails.id}}],
+    });
+  };
+
+  const gotoConcrypt = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'Concrypt'}],
+    });
   };
 
   return (
@@ -53,8 +67,15 @@ export function ExistingBusinessSuccess(props: any) {
             textAlign: 'center',
           }}>
           Your business,{' '}
-          <Text style={{fontFamily: 'Satoshi-Bold'}}>ALPS Inc.</Text> is being
-          confirmed.{'\n'}You may visit and update your information in Corpcrypt
+          <Text style={{fontFamily: 'Satoshi-Bold'}}>
+            {businessDetails.business_title}
+          </Text>{' '}
+          is being confirmed.{'\n'}You may visit and update your information in{' '}
+          <TouchableWithoutFeedback onPress={() => gotoConcrypt()}>
+            <Text style={{color: colors.primary, fontWeight: 700}}>
+              Corpcrypt
+            </Text>
+          </TouchableWithoutFeedback>{' '}
           at anytime.
         </Text>
         <Gap height={hp(4)} />
@@ -88,16 +109,7 @@ export function ExistingBusinessSuccess(props: any) {
           alignSelf: 'flex-start',
         }}
         showsHorizontalScrollIndicator={true}>
-        <View
-          style={{
-            height: hp(55),
-            flexDirection: 'row',
-            marginRight: wp(3),
-          }}>
-          <ServiceCard />
-          <ServiceCard />
-          <ServiceCard />
-        </View>
+        <ServiceCard />
       </ScrollView>
       <Gap height={hp(5)} />
     </>

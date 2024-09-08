@@ -211,7 +211,7 @@ const SignUp = () => {
                   }}>
                   By creating an account with Itump, you agree to our{'\n'}
                   <TouchableWithoutFeedback
-                    onPress={() => setOpenPrivacy('privacy')}>
+                    onPress={() => setOpenPrivacy('terms')}>
                     <Text
                       style={{
                         color: colors.primary,
@@ -223,7 +223,7 @@ const SignUp = () => {
                   </TouchableWithoutFeedback>
                   <Text> and </Text>
                   <TouchableWithoutFeedback
-                    onPress={() => setOpenPrivacy('policy')}>
+                    onPress={() => setOpenPrivacy('privacy')}>
                     <Text
                       style={{
                         color: colors.primary,
@@ -253,7 +253,7 @@ const SignUp = () => {
         {openPrivacy && (
           <Popup
             close={() => setOpenPrivacy('')}
-            type="privacy"
+            type={openPrivacy}
             value={schema.data.agree}
             setIsChecked={(val: boolean) => acceptTerms(val)}
           />

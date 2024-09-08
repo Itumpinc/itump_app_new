@@ -19,14 +19,32 @@ import {useThemeColors} from '@constants/colors';
 import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
 import Button from '@src/constants/button';
+import {useNavigation} from '@react-navigation/native';
 
 export function SuccessBusiness(props: any) {
+  const {schema, paramsData} = props;
   const colors = useThemeColors();
   const pictures = useThemeImages();
-  const storage = useAppSelector(state => state.common.storage);
-  const {user} = storage;
-  
-  const submit = () => {};
+  const navigation: any = useNavigation();
+
+  console.log('paramsData', paramsData);
+
+  const submit = () => {
+    console.log('schema.data.businessOwner===>', schema.data.businessOwner, paramsData);
+    if (schema.data.businessOwner === 'itump') {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'AddBusiness', params: {id: paramsData.id}}],
+      });
+    } else if (schema.data.businessOwner === 'external') {
+      navigation.reset({
+        index: 0,
+        routes: [
+          {name: 'ExistingBusinessAddFormation', params: {id: paramsData.id}},
+        ],
+      });
+    }
+  };
 
   return (
     <View>
@@ -45,8 +63,11 @@ export function SuccessBusiness(props: any) {
             fontSize: hp(1.8),
             textAlign: 'center',
           }}>
-          <Text style={{fontFamily: 'Satoshi-Bold'}}>ALPS Inc.</Text> has been
-          added to your itump records, now lets create your company together!
+          <Text style={{fontFamily: 'Satoshi-Bold'}}>
+            {schema.data.companyName}
+          </Text>{' '}
+          has been added to your itump records, now lets create your company
+          together!
         </Text>
         <Gap height={hp(4)} />
         <View>

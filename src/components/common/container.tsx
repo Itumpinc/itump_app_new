@@ -14,7 +14,7 @@ import {
 import React from 'react';
 import {useThemeColors} from '@constants/colors';
 import {setTheme} from '@src/store/services/storage';
-import { useAppDispatch, useAppSelector } from '@src/store/store';
+import {useAppDispatch, useAppSelector} from '@src/store/store';
 
 const STATUSBAR_COLOR: any = {
   dark: '#181818',
@@ -50,7 +50,14 @@ const useStyles = () => {
 };
 
 const Container = (props: any) => {
-  const {children, style, disableScroll, source, background = false} = props;
+  const {
+    children,
+    style,
+    disableScroll,
+    source,
+    background = false,
+    backgroundColor,
+  } = props;
   const styles = useStyles();
   const dispatch = useAppDispatch();
   const theme = useAppSelector((state: any) => state.common.theme);
@@ -69,7 +76,8 @@ const Container = (props: any) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{flex: 1}}>
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView
+          style={[styles.container, backgroundColor ? {backgroundColor} : {}]}>
           {background && (
             <Image source={source} style={styles.backgroundImage} />
           )}

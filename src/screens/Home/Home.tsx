@@ -26,20 +26,23 @@ import LineOfCreditbanner from './LineOfCreditbanner';
 import Transaction from './Transaction';
 import {useThemeColors} from '@src/constants/colors';
 import Invoices from './Invoices';
+import {userApi} from '@src/store/services/user';
+import {getData, getSettings} from '@src/utils/helpers';
 
 export default function Home() {
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const navigation: any = useNavigation();
-  const storage = useAppSelector(state => state.common.storage);
-  const {user} = storage;
+  const userApisData = userApi.useUserProfileQuery();
+  const userProfile = getData(userApisData);
 
   const logout = async () => {
     await dispatch(logoutAction());
     navigation.dispatch(StackActions.replace('Auth'));
   };
 
-  if (!user) return null;
+  if (!(userProfile && userProfile.user)) return null;
+  const {user, business} = userProfile;
 
   return (
     <Container>
@@ -48,11 +51,14 @@ export default function Home() {
       <Gap height={hp(2)} />
       <WalletChart />
       <Gap height={hp(2)} />
-      {/* Dashboard 2 Component */}
-      <ItumpDebitCard />
-      <Ongoing />
       <NewBusinessFormation />
-      <FixIssues />
+      {business.length > 0 && <ActivateAccount />}
+      {business.length === 0 && <NewBusinessFormation />}
+
+      {/* Dashboard 2 Component */}
+      {/* <ItumpDebitCard /> */}
+      {business.length > 0 && <Ongoing />}
+      {business.length > 0 && <FixIssues business={business} />}
       <LineOfCreditbanner />
       <Text
         style={[
@@ -70,16 +76,11 @@ export default function Home() {
       <Gap height={hp(2)} />
       <Transaction />
       <Invoices />
+
       {/* Dashboard 1 Component */}
-      <ActivateAccount />
       <DuePayment />
       <RecentOrders />
       <FixIssues />
-      <MakeBusiness />
-
-      <TouchableOpacity onPress={() => logout()}>
-        <Text>Logout</Text>
-      </TouchableOpacity>
     </Container>
   );
 }

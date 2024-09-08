@@ -5,7 +5,7 @@ export const commonApi = api.injectEndpoints({
   endpoints: builder => ({
     loadInit: builder.query<any, void>({
       query: () => ({
-        url: `/v1/master/country/dropdown`,
+        url: `/v1/init/config?device_id=12345`,
       }),
     }),
     loadCountry: builder.query<any, void>({

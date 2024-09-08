@@ -13,17 +13,38 @@ import * as StepComponent from '@src/screens/BusinessRegistration/ExistingBusine
 import {getExistingBusinessSchema, getExistingBusinessSteps} from '../Utils';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Form from '@src/components/hocs/forms/form';
+import {serviceApi} from '@src/store/services/service';
+import {getData} from '@src/utils/helpers';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 
 export default function ExistingBusiness(props: any) {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
-  const route = useRoute();
+  const route: any = useRoute();
   const {steps, currentStep, currentIndex} = getExistingBusinessSteps(
     props,
     route.name,
   );
-  const [schema, setSchema] = useState(getExistingBusinessSchema());
+
+  const {schema, setSchema, setParamsData, paramsData} = props;
+
+  console.log('paramsData', paramsData);
+
+  let businessId = route.params ? route.params.id : 0;
+  if (!businessId) {
+    businessId = paramsData && paramsData.id ? paramsData.id : 0;
+  }
+
+  const businessUpdateData = serviceApi.useGetBusinessDetailQuery(businessId);
+
+  useEffect(() => {
+    setParamsData({id: businessId});
+    if (!(schema && schema.data && schema.data.haveFormedDate)) {
+      setSchema(getExistingBusinessSchema());
+    }
+    if (!businessId) navigation.navigate('Home');
+  }, []);
 
   const stepAction = (action: string, number?: number) => {
     const goIndex = number || 1;
@@ -47,6 +68,10 @@ export default function ExistingBusiness(props: any) {
       : null;
 
   const doSubmit = () => {};
+
+  if (!schema) return null;
+
+  console.log(schema.data);
 
   return (
     <Container>
@@ -72,6 +97,7 @@ export default function ExistingBusiness(props: any) {
               stepAction={stepAction}
               setSchema={setSchema}
               schema={schema}
+              businessDetails={getData(businessUpdateData)}
             />
           )}
         </Form>

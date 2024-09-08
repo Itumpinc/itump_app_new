@@ -6,3 +6,5 @@ export {OTPInput} from './otpInput';
 export {RenderDropdown} from './dropdown';
 export {RenderRadio} from './radio';
 export {RenderUpload} from './upload';
+export {RenderCalendar} from './calendar';
+export {RenderCompany} from './company';

@@ -7,7 +7,7 @@ import {
   FlatList,
 } from 'react-native';
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useThemeImages} from '@constants/images';
 import {
   widthPercentageToDP as wp,
@@ -18,30 +18,99 @@ import {useThemeColors} from '@constants/colors';
 import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
 import {commonApi} from '@src/store/services/common';
-import {getData} from '@src/utils/helpers';
+import {alert, getData} from '@src/utils/helpers';
 import {
+  Button,
+  RenderCalendar,
   RenderDropdown,
   RenderInput,
   RenderPhone,
   RenderRadio,
 } from '@src/components/hocs/forms';
 import useStyles from '../styles';
-import Button from '@src/constants/button';
-import {getCountryOptions} from '../Utils';
+import {getCountryOptions, getStateOptions} from '../Utils';
+import {serviceApi} from '@src/store/services/service';
 
 export function ExistingBusinessAddDetails(props: any) {
+  const storage = useAppSelector(state => state.common.storage);
+  const {countryList} = storage;
+
   const pictures = useThemeImages();
   const colors = useThemeColors();
-  const {schema, stepAction} = props;
+  const {schema, stepAction, businessDetails} = props;
   const styles = useStyles();
 
-  const loadCountryQuery = commonApi.useLoadCountryQuery();
-  const countryList = getData(loadCountryQuery);
-  const options = getCountryOptions(countryList);
+  const [loading, setLoading] = useState(false);
 
-  const submit = () => {
-    stepAction('next');
+  const [stateOptions, setStateOptions] = useState([]);
+  const options = getCountryOptions(countryList, true);
+
+  const [loadStateQuery] = commonApi.useLazyLoadStateQuery();
+  const [businessUpdateQuery] = serviceApi.useLazyBusinessUpdateQuery();
+
+  // console.log('businessDetails===>', businessDetails);
+
+  const formatJson = () => {
+    const data = {
+      entity_type: businessDetails.entity_type.id,
+      country_id: businessDetails.country.id,
+      state_id: businessDetails.state.id,
+      business_title: businessDetails.business_title,
+      detail: {
+        business_id: businessDetails.id,
+        address1: schema.data.businessAddress1,
+        address2: schema.data.businessAddress2,
+        zipcode: schema.data.businesszipcode,
+        phone_num: schema.data.businessPhone,
+        ein: schema.data.ein,
+        tax_id: schema.data.taxId,
+        form_owner: businessDetails.detail ? businessDetails.detail.form_owner : 'external',
+        formation_date: schema.data.haveFormedDate === 'yes' ? schema.data.formedDate : '',
+        email: schema.data.businessEmail,
+      },
+      users: [],
+    };
+    return data;
   };
+
+  const submit = async () => {
+    setLoading(true);
+    const businessUpdateData = await businessUpdateQuery({
+      businessId: businessDetails.id,
+      data: formatJson(),
+    });
+    if (businessUpdateData.isSuccess) {
+      setLoading(false);
+      stepAction('next');
+    }
+
+    if (businessUpdateData.isError) {
+      setLoading(false);
+      const error: any = businessUpdateData.error;
+      const data = error && error.data ? error.data : undefined;
+      if (data) {
+        alert(data.message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (schema.data.businessCountryId) {
+        const loadStateData = await loadStateQuery(
+          schema.data.businessCountryId,
+        );
+        if (loadStateData.isSuccess) {
+          const stateList: any[] = getData(loadStateData);
+          const sOptions = getStateOptions(stateList);
+          // @ts-ignore
+          setStateOptions(sOptions);
+        }
+      }
+    })();
+  }, [schema.data.businessCountryId]);
+
+  console.log(schema.data);
 
   return (
     <>
@@ -54,16 +123,20 @@ export function ExistingBusinessAddDetails(props: any) {
           Please provide some details of your business
         </Text>
       </View>
-      <Gap height={hp(2)} />
-      <Text style={styles.mainText}>Date Formed</Text>
-      <Gap height={hp(1)} />
-      <RenderInput
-        name="formedDate"
-        value={schema.data.formedDate}
-        placeHolder="MM-DD-YYYY"
-        type="text"
-        isCalender
-      />
+      {schema.data.haveFormedDate === 'yes' ? (
+        <>
+          <Gap height={hp(2)} />
+          <Text style={styles.mainText}>Date Formed</Text>
+          <Gap height={hp(1)} />
+          <RenderCalendar
+            name="formedDate"
+            value={schema.data.formedDate}
+            placeHolder="MM-DD-YYYY"
+            type="text"
+            isCalender
+          />
+        </>
+      ) : null}
 
       <Gap height={hp(2)} />
       <Text style={styles.mainText}>Business Address</Text>
@@ -76,17 +149,17 @@ export function ExistingBusinessAddDetails(props: any) {
       />
 
       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-        <RenderInput
-          name="businessCity"
-          value={schema.data.businessCity}
-          placeHolder="City"
-          half
-        />
         <RenderDropdown
           name="businessStateId"
           value={schema.data.businessStateId}
           placeHolder="State"
-          options={options}
+          options={stateOptions}
+          half
+        />
+        <RenderInput
+          name="businessCity"
+          value={schema.data.businessCity}
+          placeHolder="City"
           half
         />
       </View>
@@ -147,7 +220,8 @@ export function ExistingBusinessAddDetails(props: any) {
         text="Next"
         textColor="white"
         onPress={submit}
-        disabled={!schema.data.companyName}
+        disabled={!schema.valid && Object.keys(schema.errors).length > 0}
+        loader={loading}
       />
       <Gap height={hp(4)} />
     </>

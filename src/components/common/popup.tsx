@@ -1,4 +1,10 @@
-import {StyleSheet, View, Image, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import React, {useState, useEffect, forwardRef, useRef} from 'react';
 import {useThemeImages} from '@constants/images';
 import {
@@ -10,198 +16,40 @@ import {Gap} from '@constants/gap';
 import {useThemeColors} from '@constants/colors';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useAppSelector} from '@src/store/store';
+import {getData, getSettings} from '@src/utils/helpers';
+import {commonApi} from '@src/store/services/common';
+import HTMLContent from './htmlContent';
 
 const PrivacyPolicy = ({
-  data: {colors, setIsChecked, close, pictures},
+  data: {type},
 }: any) => {
-  return (
-    <>
+  const storage = useAppSelector(state => state.common.storage);
+  const {
+    initConfig: {settings},
+  } = storage;
+  const staticBoxId = getSettings(settings, 'static_box_id');
+  const boxId =
+    staticBoxId[type === 'terms' ? 'terms_and_condition' : 'privacy_policy'];
+  const getStaticBoxData = commonApi.useGetStaticBoxQuery(boxId);
+  const boxData = getData(getStaticBoxData);
+
+  if (getStaticBoxData.isLoading || getStaticBoxData.isFetching) {
+    return (
       <View style={{width: '100%'}}>
-        <View style={{marginHorizontal: wp(5)}}>
-          <Gap height={hp(3)} />
-          <Text
-            style={{
-              color: colors.boldText,
-              fontFamily: 'Satoshi-Bold',
-              fontSize: 20,
-            }}>
-            PRIVACY POLICY
-          </Text>
-          <Gap height={hp(0.6)} />
-          <Text
-            style={{
-              color: colors.primaryText,
-              fontFamily: 'Satoshi-Regular',
-              fontSize: 12,
-            }}>
-            Last updated 08/02/2023
-          </Text>
-          <Gap height={hp(3)} />
-          <Text
-            style={{
-              color: colors.privacyPolicyTextColor,
-              fontFamily: 'Satoshi-Regular',
-              fontSize: 14,
-            }}>
-            This privacy notice for Itump ("
-            <Text style={{fontFamily: 'Satoshi-Bold'}}>Company</Text>
-            ," "<Text style={{fontFamily: 'Satoshi-Bold'}}>we</Text>
-            ," "<Text style={{fontFamily: 'Satoshi-Bold'}}>us</Text>
-            ," or "<Text style={{fontFamily: 'Satoshi-Bold'}}>our</Text>
-            "), describes how and why we might collect, store, use, and/or share
-            ("
-            <Text style={{fontFamily: 'Satoshi-Bold'}}>process</Text>
-            ") your information when you use our services ("
-            <Text style={{fontFamily: 'Satoshi-Bold'}}>Services</Text>
-            "), such as when you.{' '}
-            <Text style={{fontFamily: 'Satoshi-Bold'}}>
-              Questions or concerns?{' '}
-            </Text>
-            Reading this privacy notice will help you understand your privacy
-            rights and choices. If you do not agree with our policies and
-            practices, please do not use our Services. If you still have any
-            questions or concerns, please contact us at mgt@itump.com
-          </Text>
-          <Gap height={hp(4)} />
-          <Text
-            style={{
-              color: colors.boldText,
-              fontFamily: 'Satoshi-Bold',
-              fontSize: 14,
-            }}>
-            SUMMARY OF KEY POINTS
-          </Text>
-          <Gap height={hp(3)} />
-          <Text
-            style={{
-              fontFamily: 'Satoshi-Bold',
-              fontStyle: 'italic',
-              color: colors.privacyPolicyTextColor,
-              fontSize: 14,
-            }}>
-            This summary provides key points from our privacy notice, but you
-            can find out more details about any of these topics by clicking the
-            link following each key point or bu using our{' '}
-            {/* <TouchableOpacity> */}
-            <Text
-              style={{
-                color: colors.primary,
-                fontFamily: 'Satoshi-Bold',
-                fontStyle: 'italic',
-                fontSize: 14,
-              }}>
-              table of contents
-            </Text>
-            {/* </TouchableOpacity> */} below to find the section you are
-            looking for.
-          </Text>
-          <Gap height={hp(2)} />
-          <Text
-            style={{
-              fontFamily: 'Satoshi-Regular',
-              color: colors.privacyPolicyTextColor,
-              fontSize: 14,
-            }}>
-            <Text
-              style={{
-                fontFamily: 'Satoshi-Bold',
-                color: colors.privacyPolicyTextColor,
-                fontSize: 14,
-              }}>
-              What personal information do we process?{' '}
-            </Text>
-            When you visit, use, or navigate our Services, we may process
-            personal information depending on how you interact with Itump and
-            the Services, the choices you make, and the products and features
-            you use.
-          </Text>
-          <Gap height={hp(2)} />
-          <Text
-            style={{
-              fontFamily: 'Satoshi-Regular',
-              color: colors.privacyPolicyTextColor,
-              fontSize: 14,
-            }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </Text>
-        </View>
-        <Gap height={hp(5)} />
-        {/* <View style={{flexDirection:'row'}}>
-          </View> */}
+        <ActivityIndicator />
       </View>
-      {/* </ScrollView> */}
-      <View
-        style={{
-          backgroundColor: colors.buttonPrivacyPolicyBackground,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingHorizontal: wp(14),
-          // paddingVertical: hp(4),
-        }}>
-        <TouchableOpacity
-          onPress={() => {
-            if (setIsChecked != null) {
-              setIsChecked(false);
-            }
-            close();
-          }}
-          style={{alignItems: 'center', justifyContent: 'center'}}>
-          <Text
-            style={{
-              color: colors.boldText,
-              fontFamily: 'Satoshi-Bold',
-              fontSize: 18,
-            }}>
-            I Decline
-          </Text>
-        </TouchableOpacity>
-        <View
-          style={{
-            width: 1,
-            height: hp(10),
-            backgroundColor: colors.verticalLine,
-          }}
-        />
-        <TouchableOpacity
-          onPress={() => {
-            if (setIsChecked != null) {
-              setIsChecked(true);
-            }
-            close();
-          }}
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'row',
-          }}>
-          <Text
-            style={{
-              color: colors.primary,
-              fontFamily: 'Satoshi-Bold',
-              fontSize: 18,
-              marginRight: wp(1),
-            }}>
-            I Agree
-          </Text>
-          <Image
-            source={pictures.arrowRightPrimary}
-            style={{width: hp(2.5), height: hp(2.5)}}
-          />
-        </TouchableOpacity>
-      </View>
-    </>
+    );
+  }
+
+  const html = JSON.parse(boxData.data).popup_body;
+  return (
+    <View style={{width: '100%', paddingHorizontal: 20, paddingTop: 20}}>
+      <HTMLContent htmlContent={html} />
+    </View>
   );
 };
 
 const Popup = (props: any) => {
-  const storage = useAppSelector((state: any) => state.storage);
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const refRBSheet: any = useRef();
@@ -229,7 +77,9 @@ const Popup = (props: any) => {
 
   let html = children;
   if (type == 'terms' || type == 'privacy') {
-    html = <PrivacyPolicy data={{colors, setIsChecked, close, pictures}} />;
+    html = (
+      <PrivacyPolicy data={{colors, setIsChecked, close, pictures, type}} />
+    );
   }
 
   return (
@@ -268,23 +118,87 @@ const Popup = (props: any) => {
           </View>
         )}
         {closeIcon && (
-            <>
-              <Gap height={hp(1)} />
-              <View style={{alignItems: 'flex-end', marginRight: hp(1)}}>
-                <TouchableOpacity onPress={onClose}>
-                  <Image
-                    source={pictures.closeRBSheet}
-                    style={{width: hp(4), height: hp(4)}}
-                  />
-                </TouchableOpacity>
-              </View>
-            </>
-          )}
-        <ScrollView>
-          {html}
-        </ScrollView>
+          <View style={{position:'absolute', top: 10, right: 10, zIndex:1}}>
+            <Gap height={hp(1)} />
+            <View style={{alignItems: 'flex-end', marginRight: hp(1)}}>
+              <TouchableOpacity onPress={onClose}>
+                <Image
+                  source={pictures.closeRBSheet}
+                  style={{width: hp(4), height: hp(4)}}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        <ScrollView>{html}</ScrollView>
 
-        <Gap height={hp(5)} />
+        <Gap height={hp(type == 'terms' ? 12 : 4)} />
+        {type == 'terms' && (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              width: '100%',
+              zIndex: 1,
+              backgroundColor: colors.buttonPrivacyPolicyBackground,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: wp(14),
+              // paddingVertical: hp(4),
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                if (setIsChecked != null) {
+                  setIsChecked(false);
+                }
+                close();
+              }}
+              style={{alignItems: 'center', justifyContent: 'center'}}>
+              <Text
+                style={{
+                  color: colors.boldText,
+                  fontFamily: 'Satoshi-Bold',
+                  fontSize: 18,
+                }}>
+                I Decline
+              </Text>
+            </TouchableOpacity>
+            <View
+              style={{
+                width: 1,
+                height: hp(10),
+                backgroundColor: colors.verticalLine,
+              }}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                if (setIsChecked != null) {
+                  setIsChecked(true);
+                }
+                close();
+              }}
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'row',
+              }}>
+              <Text
+                style={{
+                  color: colors.primary,
+                  fontFamily: 'Satoshi-Bold',
+                  fontSize: 18,
+                  marginRight: wp(1),
+                }}>
+                I Agree
+              </Text>
+              <Image
+                source={pictures.arrowRightPrimary}
+                style={{width: hp(2.5), height: hp(2.5)}}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
       </RBSheet>
     </View>
   );

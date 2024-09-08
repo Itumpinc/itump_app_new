@@ -6,17 +6,25 @@ export const FormContext = React.createContext({});
 
 export const updateSchema = (
   formState: any,
-  type: 'data' | 'errors',
+  type: 'data' | 'errors' | 'valid',
   key?: string,
   value?: any,
 ) => {
   const {schema} = formState;
   const formStateClone: any = deepCopy(formState);
 
+  if (type === 'valid') {
+    return {
+      ...formState,
+      schema,
+      valid: value,
+    };
+  }
+
   if (key) {
     formStateClone[type][key] = value;
   } else {
-    formStateClone[type] = value;
+    formStateClone[type] = {...formStateClone[type], ...value};
   }
 
   if (type === 'data') {
@@ -31,6 +39,34 @@ export const updateSchema = (
     ...{[type]: formStateClone[type]},
     schema,
     valid: formStateClone.valid,
+  };
+};
+
+const isSchemaValid = (schema: any, formState: any, data: any) => {
+  if (typeof schema.validate === 'function') {
+    const {error} = schema.validate(data);
+    const {errors} = deepCopy(formState);
+
+    if (error) {
+      console.log(error.details);
+      for (let index = 0; index < error.details.length; index++) {
+        const er = error.details[index];
+        errors[er.path[0]] = er.message;
+      }
+      return {
+        valid: Object.keys(errors).length === 0,
+        errors,
+      };
+    }
+
+    return {
+      valid: !error || Object.keys(errors).length === 0,
+      errors: error ? errors : {},
+    };
+  }
+  return {
+    valid: true,
+    errors: {},
   };
 };
 
@@ -54,7 +90,6 @@ export const withSchemaData = (schema: any, defaultValue?: any) => {
       }
     }
   }
-
   return {
     data,
     required,
@@ -89,34 +124,8 @@ const Form = (props: {
     autoCheck,
     id,
   } = props;
+
   const {schema} = formState;
-
-  const isSchemaValid = (data: any) => {
-    if (typeof schema.validate === 'function') {
-      const {error} = schema.validate(data);
-      const {errors} = deepCopy(formState);
-
-      if (error) {
-        for (let index = 0; index < error.details.length; index++) {
-          const er = error.details[index];
-          errors[er.path[0]] = er.message;
-        }
-        return {
-          valid: Object.keys(errors).length === 0,
-          errors,
-        };
-      }
-
-      return {
-        valid: !error || Object.keys(errors).length === 0,
-        errors: error ? errors : {},
-      };
-    }
-    return {
-      valid: true,
-      errors: {},
-    };
-  };
 
   const updateState = (obj: any) => {
     formhandler({
@@ -127,7 +136,7 @@ const Form = (props: {
   };
 
   const autoCheckFn = () => {
-    const {valid} = isSchemaValid(formState.data);
+    const {valid} = isSchemaValid(schema, formState, formState.data);
     if (valid) {
       updateState({
         ...deepCopy(formState),
@@ -139,7 +148,7 @@ const Form = (props: {
 
   const doSubmit = async (event?: any) => {
     if (event) event.preventDefault();
-    const {valid, errors} = isSchemaValid(formState.data);
+    const {valid, errors} = isSchemaValid(schema, formState, formState.data);
     if (!valid) {
       updateState({
         ...deepCopy(formState),
@@ -206,7 +215,7 @@ const Form = (props: {
     data[name] = value;
 
     const errors = validateProperty({name, value: data[name]});
-    const {valid} = isSchemaValid(data);
+    const {valid} = isSchemaValid(schema, formState, data);
     if (errors) {
       updateState({
         actionOn: name,
@@ -273,7 +282,7 @@ const Form = (props: {
       }
     }
 
-    const {valid} = isSchemaValid(formState.data);
+    const {valid} = isSchemaValid(schema, formState, formState.data);
     if (Object.keys(allErrors).length > 0) {
       updateState({
         data: formState.data,
@@ -290,7 +299,7 @@ const Form = (props: {
 
   return (
     <FormContext.Provider value={{...contextValue}}>
-      <View>{children}</View>
+      {children}
     </FormContext.Provider>
   );
 };

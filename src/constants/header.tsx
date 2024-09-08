@@ -23,7 +23,6 @@ const Header = ({
   title,
   onPress,
   rightImage,
-  onRightPress,
   titleImage,
   titleImageSource,
   secondLastRightImage,
@@ -33,6 +32,7 @@ const Header = ({
   titleColor,
   margintop = false,
   top,
+  rightTitle,
   textIcon = false,
 }: any) => {
   const colors = useThemeColors();
@@ -66,6 +66,7 @@ const Header = ({
             style={textIcon ? styles.textImageStyle : styles.imageStyle}
           />
         </TouchableOpacity>
+
         <Text
           style={{
             fontSize: 20,
@@ -93,9 +94,22 @@ const Header = ({
             {/* <View style={{marginLeft:wp(1)}}/> */}
           </>
         )}
-        <TouchableOpacity onPress={onRightPress} style={styles.imageStyle}>
-          <Image source={rightImage} style={styles.rightImageStyle} />
-        </TouchableOpacity>
+        <View style={[styles.imageStyle, {alignItems: 'center'}]}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginLeft: -4,
+              marginTop: -5,
+            }}>
+            <Image
+              source={rightImage}
+              style={[styles.rightImageStyle, {marginRight: 4}]}
+            />
+            {rightTitle ? <Text style={{fontWeight: 400, fontSize:hp(1.6), color:colors.secondaryText}}>{rightTitle}</Text> : <Text />}
+          </View>
+        </View>
       </View>
       <View
         style={{

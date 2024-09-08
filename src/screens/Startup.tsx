@@ -9,10 +9,12 @@ import {
 } from 'react-native-responsive-screen';
 import {useThemeColors} from '@constants/colors';
 import {userApi} from '@src/store/services/user';
-import {getAuthDetails} from '@src/navigators/Utils';
+import {getAuthDetails, saveUser} from '@src/navigators/Utils';
 import {useAppDispatch, useAppSelector} from '@src/store/store';
 import {StackActions, useNavigation} from '@react-navigation/native';
 import {logoutAction, setData} from '@src/store/services/storage';
+import {commonApi} from '@src/store/services/common';
+import {getData} from '@src/utils/helpers';
 
 const Startup = () => {
   const pictures = useThemeImages();
@@ -21,7 +23,29 @@ const Startup = () => {
   const dispatch = useAppDispatch();
   const storage = useAppSelector(state => state.common.storage);
   const {screen} = getAuthDetails(storage);
+
+  const loadInitData = commonApi.useLoadInitQuery();
   const [refreshTokenQuery] = userApi.useLazyRefreshTokenQuery();
+  const [userApisQuery] = userApi.useLazyUserProfileQuery();
+
+  const loadCountryData = commonApi.useLoadCountryQuery();
+
+  useEffect(() => {
+    if (loadInitData.isSuccess) {
+      dispatch(setData({key: 'initConfig', value: getData(loadInitData)}));
+    }
+
+    if (loadInitData.isError) {
+      navigation.navigate('Error');
+    }
+  }, [loadInitData]);
+
+  useEffect(() => {
+    if (loadCountryData.isSuccess) {
+      const countryList = getData(loadCountryData);
+      dispatch(setData({key: 'countryList', value: countryList}));
+    }
+  }, [loadCountryData]);
 
   useEffect(() => {
     (async () => {
@@ -34,6 +58,8 @@ const Startup = () => {
           const data = refreshTokenData.data.data;
           if (data) {
             dispatch(setData({key: 'tokens', value: data}));
+            const userData = await userApisQuery();
+            saveUser({dispatch, setData, userData});
             navigation.dispatch(StackActions.replace(screen));
           } else {
             await dispatch(logoutAction());

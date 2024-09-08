@@ -1,43 +1,19 @@
 import {
   StyleSheet,
   View,
-  Platform,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   Image,
   FlatList,
-  ScrollView,
 } from 'react-native';
-import React, {useState, useEffect, useRef} from 'react';
-import {useThemeImages} from '@constants/images';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-import Container from '@components/common/container';
-import Joi from 'joi';
-import Form, {updateSchema, withSchemaData} from '@components/hocs/forms/form';
-import {
-  Button,
-  RenderInput,
-  RenderPhone,
-  Checkbox,
-} from '@components/hocs/forms';
+import React from 'react';
 import {Text} from 'native-base';
-import {Gap} from '@constants/gap';
 import {useThemeColors} from '@constants/colors';
-import {useNavigation} from '@react-navigation/native';
-import Header from '@constants/header';
-
-import PrivacyPolicy from '@constants/privacypolicy';
-import {passwordRegex, getfirstlastname, getData} from '@src/utils/helpers';
-import Popup from '@src/components/common/popup';
-import {commonApi} from '@src/store/services/common';
-import {getCountryByPhone} from '@src/components/hocs/forms/phone';
+import {useAppSelector} from '@src/store/store';
 
 const Countries = ({onChange, close}: any) => {
-  const loadCountryQuery = commonApi.useLoadCountryQuery();
-  const countryList = getData(loadCountryQuery);
+  const storage = useAppSelector(state => state.common.storage);
+  const {countryList} = storage;
+
   const colors = useThemeColors();
 
   const selectCountries = (item: any) => {

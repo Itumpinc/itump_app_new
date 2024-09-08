@@ -263,6 +263,16 @@ export const light = {
   walletIcon: require('@images/wallet_icon.png'),
   walletBG: require('@images/wallet-bg.jpg'),
   businessSuccess: require('@images/business-success.png'),
+  business:{
+    first: require('@images/business/1.png'),
+    second: require('@images/business/2.png'),
+    third: require('@images/business/3.png'),
+    fourth: require('@images/business/4.png'),
+    fifth: require('@images/business/5.png'),
+    sixth: require('@images/business/6.png'),
+    seventh: require('@images/business/7.png'),
+    eight: require('@images/business/8.png'),
+  }
 };
 
 export const dark = {
@@ -525,6 +535,16 @@ export const dark = {
   walletIcon: require('@images/wallet_icon.png'),
   walletBG: require('@images/wallet-bg.jpg'),
   businessSuccess: require('@images/business-success.png'),
+  business:{
+    first: require('@images/business/1-b.png'),
+    second: require('@images/business/2-b.png'),
+    third: require('@images/business/3-b.png'),
+    fourth: require('@images/business/4-b.png'),
+    fifth: require('@images/business/5-b.png'),
+    sixth: require('@images/business/6-b.png'),
+    seventh: require('@images/business/7-b.png'),
+    eight: require('@images/business/8-b.png'),
+  }
 };
 
 export const useThemeImages = () => {

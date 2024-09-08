@@ -1,12 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {FormContext} from './form';
-import {
-  StyleSheet,
-  View,
-  Image,
-  StatusBar,
-  TouchableOpacity,
-} from 'react-native';
+import {View} from 'react-native';
 import {useThemeImages} from '@constants/images';
 import {
   widthPercentageToDP as wp,
@@ -14,16 +8,17 @@ import {
 } from 'react-native-responsive-screen';
 import {Text} from 'native-base';
 import {useThemeColors} from '@constants/colors';
+// @ts-ignore
 import CheckBox from 'react-native-check-box';
 
 export const Checkbox = (props: any) => {
-  const {name, disabled, children, value} = props;
+  const {name, disabled, children, value, onChange} = props;
   const formContext: any = useContext(FormContext);
   const {data, errors, required} = formContext;
 
   const colors = useThemeColors();
   const [isChecked, setIsChecked] = useState(false);
-  const error = errors[name];
+  const error = name ? errors[name] : "";
 
   useEffect(() => {
     setIsChecked(value);
@@ -32,7 +27,11 @@ export const Checkbox = (props: any) => {
   const onPressAction = () => {
     const value = !isChecked;
     setIsChecked(value);
-    formContext.onChange({name, value});
+    if (onChange) {
+      onChange(value);
+    } else {
+      formContext.onChange({name, value});
+    }
   };
 
   return (

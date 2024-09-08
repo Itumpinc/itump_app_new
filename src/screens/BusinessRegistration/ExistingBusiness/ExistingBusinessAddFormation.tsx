@@ -60,7 +60,7 @@ export function ExistingBusinessAddFormation(props: any) {
         text="Next"
         textColor="white"
         onPress={submit}
-        disabled={!schema.data.companyName}
+        disabled={!(schema.data && schema.data.haveFormedDate)}
       />
     </>
   );

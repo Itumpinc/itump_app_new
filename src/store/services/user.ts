@@ -80,6 +80,12 @@ export const userApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    getEntities: builder.query<any, number>({
+      query: (countryId: number) => ({
+        url: `/v1/business/entity-type?country_id=${countryId}`,
+        method: 'GET',
+      }),
+    }),
   }),
   overrideExisting: false,
 });

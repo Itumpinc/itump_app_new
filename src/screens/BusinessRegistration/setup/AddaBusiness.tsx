@@ -11,19 +11,38 @@ import Container from '@src/components/common/container';
 import Header from '@src/constants/header';
 import * as StepComponent from '@src/screens/BusinessRegistration/setup/index';
 import {getBusinessSchema, getBusinessSteps} from '../Utils';
-import {
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import Form from '@src/components/hocs/forms/form';
+import {commonApi} from '@src/store/services/common';
+import {getData} from '@src/utils/helpers';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
+import { useAppSelector } from '@src/store/store';
 
 export default function AddaBusiness(props: any) {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
-  const route = useRoute();
-  const {steps, currentStep, currentIndex} = getBusinessSteps(props, route.name);
-  const [schema, setSchema] = useState(getBusinessSchema());
+  const route: any = useRoute();
+
+  const {schema, setSchema, setParamsData, paramsData} = props;
+  const {steps, currentStep, currentIndex} = getBusinessSteps(
+    props,
+    route.name,
+  );
+
+  const storage = useAppSelector(state => state.common.storage);
+  const {countryList} = storage;
+
+  useEffect(() => {
+    if (!(schema && schema.data && schema.data.businessOwner)) {
+      const businessOwner = route.params ? route.params.businessOwner : 'itump';
+      setSchema(
+        getBusinessSchema({
+          businessOwner,
+        }),
+      );
+    }
+  }, []);
 
   const stepAction = (action: string, number?: number) => {
     const goIndex = number || 1;
@@ -41,12 +60,21 @@ export default function AddaBusiness(props: any) {
   };
 
   const Component =
-    currentStep && currentStep.component
+    // @ts-ignore
+    currentStep && currentStep.component && StepComponent[currentStep.component]
       ? // @ts-ignore
         StepComponent[currentStep.component]
       : null;
 
   const doSubmit = () => {};
+
+  if (!schema) return null;
+
+  const country = schema.data.countryId
+    ? countryList.find((option: any) => option.id === schema.data.countryId)
+    : undefined;
+
+  console.log(schema.data);
 
   return (
     <Container>
@@ -55,7 +83,16 @@ export default function AddaBusiness(props: any) {
           alignSelf: 'center',
           width: wp(90),
         }}>
-        <Header title="Add a Business" source={pictures.arrowLeft} />
+        <Header
+          title="Add a Business"
+          source={pictures.arrowLeft}
+          rightImage={
+            country
+              ? {uri: `data:image/png;base64, ${country.flag}`}
+              : undefined
+          }
+          rightTitle={country ? country.iso_alpha_3 : ''}
+        />
 
         <Form formState={schema} formhandler={setSchema} onSubmit={doSubmit}>
           {Component && (
@@ -65,6 +102,8 @@ export default function AddaBusiness(props: any) {
               stepAction={stepAction}
               setSchema={setSchema}
               schema={schema}
+              setParamsData={setParamsData}
+              paramsData={paramsData}
             />
           )}
         </Form>

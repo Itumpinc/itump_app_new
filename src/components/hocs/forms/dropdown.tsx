@@ -57,7 +57,6 @@ const Dropdown = (props: {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleDropdownPress = () => {
-    console.log('handleDropdownPress');
     setDropdownOpen(!dropdownOpen);
   };
 
@@ -65,6 +64,12 @@ const Dropdown = (props: {
     setDropdownOpen(false);
     onChange({name, value: option.value});
   };
+
+  useEffect(() => {
+    if (options.length === 1 && !value) {
+      onChange({name, value: options[0].value});
+    }
+  }, [options.length, value]);
 
   useEffect(() => {
     setFilteredData(options);
@@ -87,6 +92,7 @@ const Dropdown = (props: {
   }
 
   const selectedOption = getSelectedOption(options, value);
+
   return (
     <View
       style={{
@@ -110,7 +116,7 @@ const Dropdown = (props: {
           style={{
             flex: 1,
             flexDirection: 'row',
-            alignItems: 'center'
+            alignItems: 'center',
           }}>
           <View
             style={{
@@ -120,10 +126,9 @@ const Dropdown = (props: {
               width: half == true ? wp(35) : wp(80),
               justifyContent: 'center',
             }}>
-            {!value ? (
+            {!value || !selectedOption ? (
               <Text
                 style={{
-                  fontFamily: 'Satoshi-Regular',
                   fontSize: 12,
                   textAlign: 'left',
                   color: '#A5A5A5',
@@ -133,12 +138,11 @@ const Dropdown = (props: {
             ) : (
               <Text
                 style={{
-                  fontFamily: 'Satoshi-Regular',
                   fontSize: 12,
                   textAlign: 'left',
-                  color: textColor,
+                  color: textColor || colors.primaryText,
                 }}>
-                {selectedOption.name}
+                {selectedOption ? selectedOption.name : ''}
               </Text>
             )}
           </View>

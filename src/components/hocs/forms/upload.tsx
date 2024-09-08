@@ -21,7 +21,7 @@ import {useAppDispatch, useAppSelector} from '@src/store/store';
 import {userApi} from '@src/store/services/user';
 import {Gap} from '@src/constants/gap';
 
-const FileShowRow = ({file, index, removeFile}: any) => {
+const FileShowRow = ({file, removeFile}: any) => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
 
@@ -65,7 +65,7 @@ const FileShowRow = ({file, index, removeFile}: any) => {
         ) : null}
       </View>
       <View style={{alignItems: 'flex-end', marginRight: hp(1)}}>
-        <TouchableOpacity onPress={() => removeFile(index)}>
+        <TouchableOpacity onPress={() => removeFile()}>
           <Image
             source={pictures.closeRBSheet}
             style={{width: hp(3), height: hp(3)}}
@@ -84,7 +84,6 @@ const Upload = (props: {
   error?: any;
   onChange?: any;
   required: boolean;
-  multiple?: boolean;
   returnType?: 'id' | 'url';
 }) => {
   const {
@@ -96,7 +95,6 @@ const Upload = (props: {
     required,
     error,
     returnType = 'id',
-    multiple = false,
   } = props;
   const pictures = useThemeImages();
   const colors = useThemeColors();
@@ -104,89 +102,19 @@ const Upload = (props: {
   const [removing, setRemoving] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [complete, setComplete] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<any>([]);
+  const [selectedFile, setSelectedFile] = useState<any>('');
   const storage = useAppSelector(state => state.common.storage);
   const [getMediaQuery] = userApi.useLazyGetMediaQuery();
 
-  const updateProgress = (sFiles: any[], index: number, progress: number) => {
-    let localS = [...sFiles];
-    localS[index].progress = progress;
-    setSelectedFile(localS);
-  };
-
-  const onComplete = () => {
-    // console.log('onComplete');
-    setProcessing(false);
-    setComplete(true);
-  };
-
-  const uploadFiles = async (sFiles: any[]) => {
-    let localS = [...sFiles];
-    setComplete(false);
-    setProcessing(true);
-    function uploadF(index: number) {
-      if (!localS[index].id) {
-        updateProgress(sFiles, index, 100);
-        fileUpload({
-          file: localS[index],
-          storage,
-          onDone: (result: any) => {
-            localS[index] = {
-              errMessage: '',
-              error: false,
-              fileCopyUri: null,
-              name: result.filename,
-              progress: 0,
-              size: result.media_size,
-              type: result.media_type,
-              uri: result.media_path,
-              id: result.id,
-            };
-            // console.log('onDone', localS);
-            setSelectedFile(localS);
-
-            if (index + 1 == localS.length) {
-              console.log(index, localS);
-              onComplete();
-            } else {
-              uploadF(index + 1);
-            }
-          },
-          onError: (err: any) => {
-            localS[index].errMessage = err;
-            localS[index].error = true;
-            localS[index].progress = 0;
-            // console.log('onError', localS);
-            setSelectedFile(localS);
-            if (index + 1 == localS.length) {
-              onComplete();
-            } else {
-              uploadF(index + 1);
-            }
-          },
-        });
-      } else {
-        if (index + 1 == sFiles.length) {
-          // console.log('else', index, sFiles);
-          setSelectedFile([]);
-          onComplete();
-        } else {
-          uploadF(index + 1);
-        }
-      }
-    }
-    uploadF(0);
-  };
-
   const uploadDocument = async () => {
-    let sFile = await selectFile({allowMultiSelection: multiple});
+    let sFile = await selectFile({allowMultiSelection: false});
     if (!sFile) sFile = [];
-    let allowedNoofFiles = 5;
-    if (sFile.length > allowedNoofFiles) {
-      alert('You can select upto ' + allowedNoofFiles + ' files at max.');
-    }
+    // let allowedNoofFiles = 5;
+    // if (sFile.length > allowedNoofFiles) {
+    //   alert('You can select upto ' + allowedNoofFiles + ' files at max.');
+    // }
 
-    const files = [];
+    let files = {};
     for (let index = 0; index < sFile.length; index++) {
       const file = sFile[index];
       let error = false;
@@ -204,103 +132,43 @@ const Upload = (props: {
 
       if (file.name) file.name = file.name?.toLowerCase();
 
-      files.push({
+      files = {
         ...file,
         ...{
           progress: 0,
           error,
           errMessage,
         },
-      });
+      };
+      break;
     }
-
     setSelectedFile(files);
-    uploadFiles(files);
+    onChange({name, value: Object.keys(files).length > 0 ? files : ''});
   };
 
-  const getDataAndSelect = async () => {
-    let fileValue: any = value;
-    if (!Array.isArray(value)) {
-      fileValue = [value];
-    }
-
-    console.log('fileValue', fileValue);
-    const getMediaData = await getMediaQuery(fileValue);
-
-    if (getMediaData.isSuccess) {
-      let data: any = getMediaData.data.data;
-      if (!Array.isArray(data)) {
-        data = [data];
-      }
-
-      let files = [];
-      for (let index = 0; index < data.length; index++) {
-        const file = data[index];
-        files.push({
-          errMessage: '',
-          error: false,
-          fileCopyUri: null,
-          name: file.filename,
-          progress: 0,
-          size: file.media_size,
-          type: file.media_type,
-          uri: file.media_path,
-          id: file.id,
-        });
-      }
-      setSelectedFile(files);
-    }
-  };
-
-  const onSubmit = () => {
-    let returnData = [];
-    if (returnType === 'id') {
-      for (let index = 0; index < selectedFile.length; index++) {
-        if (selectedFile[index].id) returnData.push(selectedFile[index].id);
-      }
-    } else if (returnType == 'url') {
-      for (let index = 0; index < selectedFile.length; index++) {
-        if (selectedFile[index].id) returnData.push(selectedFile[index].uri);
-      }
-    }
-    if (multiple) {
-      onChange({name, value: returnData});
-    } else {
-      onChange({name, value: returnData.join(',')});
-    }
-  };
-
-  const removeFile = (index: number) => {
-    if (!processing || !selectedFile[index].id) {
-      setRemoving(true);
-      let fl = [];
-      for (let i = 0; i < selectedFile.length; i++) {
-        if (i != index) {
-          fl.push(selectedFile[i]);
-        }
-      }
-      setSelectedFile(fl);
-    }
+  const removeFile = () => {
+    onChange({name, value: ''});
+    setSelectedFile('');
   };
 
   useEffect(() => {
     (async () => {
       // value
       // console.log('props.value', props.value);
-      if (value) {
-        await getDataAndSelect();
+      if (value && Object.keys(value).length > 0) {
+        setSelectedFile(value);
       } else {
-        setSelectedFile([]);
+        setSelectedFile('');
       }
     })();
   }, [value]);
 
-  useEffect(() => {
-    if ((complete || removing) && selectedFile.length > 0) {
-      setRemoving(false);
-      onSubmit();
-    }
-  }, [selectedFile, complete, removing]);
+  // useEffect(() => {
+  //   if ((complete || removing) && selectedFile.length > 0) {
+  //     setRemoving(false);
+  //     onSubmit();
+  //   }
+  // }, [selectedFile, complete, removing]);
 
   return (
     <View
@@ -397,19 +265,12 @@ const Upload = (props: {
         </View>
       </TouchableOpacity>
 
-      <View>
-        <Gap height={hp(2)} />
-        {selectedFile.map((file: any, index: number) => {
-          return (
-            <FileShowRow
-              key={index}
-              index={index}
-              file={file}
-              removeFile={removeFile}
-            />
-          );
-        })}
-      </View>
+      {selectedFile && (
+        <View>
+          <Gap height={hp(2)} />
+          <FileShowRow file={selectedFile} removeFile={removeFile} />
+        </View>
+      )}
       {error && (
         <View>
           <Text style={{color: colors.errorText}}>{error}</Text>

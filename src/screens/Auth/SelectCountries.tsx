@@ -22,11 +22,14 @@ import Form, {withSchemaData} from '@components/hocs/forms/form';
 import {Button, OTPInput, RenderInput} from '@src/components/hocs/forms';
 import {getData, passwordRegex} from '@src/utils/helpers';
 import {commonApi} from '@src/store/services/common';
+import { useAppSelector } from '@src/store/store';
 
 const SelectCountry = () => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
-  const loadCountryQuery = commonApi.useLoadCountryQuery();
+  const storage = useAppSelector(state => state.common.storage);
+  const {countryList} = storage;
+
   const [schema, setSchema] = useState(
     withSchemaData(
       Joi.object({
@@ -55,8 +58,6 @@ const SelectCountry = () => {
       }),
     ),
   );
-
-  const countryList = getData(loadCountryQuery);
 
   const doSubmit = () => {
     console.log('schema.data.phone', schema.data);

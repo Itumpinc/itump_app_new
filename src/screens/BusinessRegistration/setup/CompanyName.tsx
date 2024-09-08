@@ -24,7 +24,6 @@ import useStyles from '../styles';
 import Button from '@src/constants/button';
 
 export function CompanyName(props: any) {
-  const pictures = useThemeImages();
   const colors = useThemeColors();
   const {schema, stepAction} = props;
   const styles = useStyles();

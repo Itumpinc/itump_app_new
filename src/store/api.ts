@@ -53,7 +53,7 @@ const axiosBaseQuery: BaseQueryFn<
 ) => {
   const {i18n, common} = api.getState();
   const token = getToken(common.storage);
-  const endpointUrl = getApiEndpoint(process.env.API_URL + url, i18n.id);
+  const endpointUrl = getApiEndpoint('http://localhost:3000' + url, i18n.id);
 
   const headers = {
     Accept: 'application/json',

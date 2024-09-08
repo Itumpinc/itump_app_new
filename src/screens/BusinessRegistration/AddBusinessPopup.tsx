@@ -8,7 +8,7 @@ import {
   FlatList,
 } from 'react-native';
 
-import React, {useRef, useState} from 'react';
+import React from 'react';
 import {useThemeImages} from '@constants/images';
 import {
   widthPercentageToDP as wp,
@@ -17,15 +17,20 @@ import {
 import {Text} from 'native-base';
 import {useThemeColors} from '@constants/colors';
 import {useNavigation} from '@react-navigation/native';
-import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
-import Popup from '@src/components/common/popup';
 import Button from '@src/constants/button';
 
-export default function AddBusinessPopup() {
+export default function AddBusinessPopup({close}: any) {
   const colors = useThemeColors();
   const pictures = useThemeImages();
-  const storage = useAppSelector(state => state.common.storage);
+  const navigation: any = useNavigation();
+
+  const selectBusiness = (type: string) => {
+    close();
+    navigation.navigate('SelectCountry', {
+      businessOwner: type,
+    });
+  };
 
   return (
     <View style={{width: '100%', alignItems: 'center'}}>
@@ -67,7 +72,7 @@ export default function AddBusinessPopup() {
 
       <Button
         text="Add Existing Business"
-        onPress={() => {}}
+        onPress={() => selectBusiness('external')}
         textColor="white"
         backgroundColor={colors.primary}
         borderColor={colors.primary}
@@ -76,7 +81,7 @@ export default function AddBusinessPopup() {
 
       <Button
         text="Register New"
-        onPress={() => {}}
+        onPress={() => selectBusiness('itump')}
         textColor={colors.primary}
         backgroundColor={colors.background}
         borderColor={colors.primary}

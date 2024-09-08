@@ -43,6 +43,9 @@ export function getData(resp: any) {
   if (resp.currentData && resp.currentData.data) {
     return resp.currentData.data;
   }
+  if (resp.data && resp.data.data) {
+    return resp.data.data;
+  }
   return {};
 }
 
@@ -119,4 +122,77 @@ export function createImgUrl(url: string, imgEndPoint: string) {
     }
     return imgEndPoint.replace('http://', 'https://') + url;
   }
+}
+
+export function formatAmount(num: number | number, currency?: string) {
+  const fixedNum = Number(num).toFixed(2);
+  const parts = fixedNum.split('.');
+
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  // Check if the decimal part is 00, and if so, return only the integer part
+  if (parts[1] === '00') {
+    return `${currency ? currency : ''}${parts[0]}`;
+  }
+
+  return `${currency ? currency : ''}${parts.join('.')}`;
+}
+
+export const getCurrency = (storage: any, fromBusiness = false) => {
+  const {countryList, user, primaryBusiness} = storage;
+  let countryId = 0;
+  try {
+    countryId = user.country_id;
+    if (fromBusiness && primaryBusiness.id !== 0) {
+      countryId = primaryBusiness.country_id;
+    }
+    const countryData = countryList.find(
+      (country: any) => country.id === countryId,
+    );
+    if (countryData) {
+      return countryData;
+    }
+    return {
+      currency_code: 'USD',
+      currency_name: 'Dollar',
+      currency_symbol: '$',
+      dial_code: '+1',
+    };
+  } catch (err) {
+    return {
+      currency_code: 'USD',
+      currency_name: 'Dollar',
+      currency_symbol: '$',
+      dial_code: '+1',
+    };
+  }
+};
+
+export function titleCase(str: string) {
+  const final = [];
+  if (typeof str !== 'undefined' && str !== '') {
+    const strNew = str.toLowerCase().split(' ');
+    for (let i = 0; i < strNew.length; i++) {
+      final.push(strNew[i].charAt(0).toUpperCase() + strNew[i].slice(1));
+    }
+  }
+  return final.join(' ');
+}
+
+export function getSettings(settings: any, key: any) {
+  let data = undefined;
+  if (settings) {
+    for (let index = 0; index < settings.length; index++) {
+      const setting = settings[index];
+      if (setting.key == key) {
+        const value = setting.value;
+        try {
+          data = JSON.parse(value);
+        } catch (err) {
+          data = value;
+        }
+      }
+    }
+  }
+  return data;
 }

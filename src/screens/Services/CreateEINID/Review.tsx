@@ -46,26 +46,59 @@ const Review = (props: any) => {
 
   const submit = async () => {
     setLoading(true);
+
+    const JSONData = {
+      company_id: schema.data.company_id,
+      company_industry: schema.data.company_industry,
+      company_address: schema.data.company_address,
+      company_address2: schema.data.company_address2,
+      company_city: schema.data.company_city,
+      company_state_id: schema.data.company_state_id,
+      company_zipcode: schema.data.company_zipcode,
+      company_country_id: schema.data.company_country_id,
+      company_email: schema.data.company_email,
+      company_phone: schema.data.company_phone,
+      future_hire_count: schema.data.future_hire_count,
+      is_six_month_hire: schema.data.is_six_month_hire,
+      first_name: schema.data.first_name,
+      last_name: schema.data.last_name,
+      email: schema.data.email,
+      phone: schema.data.phone,
+      country_id: schema.data.country_id,
+      state_id: schema.data.state_id,
+      city: schema.data.city,
+      address: schema.data.address,
+      address2: schema.data.address2,
+      zipcode: schema.data.zipcode,
+    };
+
     const serviceCreateData = await serviceCreateQuery({
       tag: serviceData.tags,
-      data: schema.data,
+      data: JSONData,
     });
     if (serviceCreateData.isSuccess) {
       const data = getData(serviceCreateData);
+      console.log('🚀 ~ submit ~ data:', data);
 
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: 'OrderSummary',
-            params: {
-              service_add_ons: [],
-              service_id: serviceData.id,
-              service_request_id: data.service.id,
-              business_id: schema.data.company_id,
-            },
-          },
-        ],
+      // navigation.reset({
+      //   index: 0,
+      //   routes: [
+      //     {
+      //       name: 'OrderSummary',
+      //       params: {
+      //         service_add_ons: [],
+      //         service_id: serviceData.id,
+      //         service_request_id: data.service.id,
+      //         business_id: schema.data.company_id,
+      //       },
+      //     },
+      //   ],
+      // });
+      navigation.navigate('OrderSummary', {
+        service_add_ons: [],
+        service_id: serviceData.id,
+        service_request_id: data.service.id,
+        business_id: schema.data.company_id,
       });
     }
 
@@ -190,16 +223,16 @@ const Review = (props: any) => {
               title="Documents Upload"
               editAction={() => editAction('DocumentsUpload')}
               data={[
-                {
-                  heading: 'Business Formation Document',
-                  file: schema.data.businessFormationDocument,
-                  type: 'file'
-                },
+                // {
+                //   heading: 'Business Formation Document',
+                //   file: schema.data.businessFormationDocument,
+                //   type: 'file'
+                // },
                 {
                   heading: 'Supporting Document(s)',
                   file: schema.data.relateddocument,
                   name: schema.data.relateddocumentName,
-                  type: 'file'
+                  type: 'file',
                 },
               ]}
             />

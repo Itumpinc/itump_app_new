@@ -53,19 +53,11 @@ const Review = (props: any) => {
     if (serviceCreateData.isSuccess) {
       const data = getData(serviceCreateData);
 
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: 'OrderSummary',
-            params: {
-              service_add_ons: [],
-              service_id: serviceData.id,
-              service_request_id: data.service.id,
-              business_id: schema.data.company_id,
-            },
-          },
-        ],
+      navigation.navigate('OrderSummary', {
+        service_add_ons: [],
+        service_id: serviceData.id,
+        service_request_id: data.service.id,
+        business_id: schema.data.company_id,
       });
     }
 

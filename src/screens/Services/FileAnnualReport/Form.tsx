@@ -6,10 +6,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {Gap} from '@src/constants/gap';
-import {useThemeColors} from '@src/constants/colors';
-import {useAppSelector} from '@src/store/store';
-import {useThemeImages} from '@src/constants/images';
-import * as Tabs from '@src/screens/Services/BuildBusinessCredit/Tabs/index';
+import * as Tabs from '@src/screens/Services/FileAnnualReport/Tabs/index';
 import Button from '@src/constants/button';
 import { useRoute } from '@react-navigation/native';
 
@@ -46,14 +43,14 @@ const Form = (props: any) => {
   };
 
   useEffect(() => {
-    console.log(route.params);
+    // console.log(route.params);
     if (route.params && route.params.tabId) {
       const tabId = route.params.tabId;
       toggleTab(tabId);
     }
   }, [route.params]);
 
-  console.log(schema.data, schema.valid, schema.errors);
+  // console.log(schema.valid, schema.errors);
 
   return (
     <View style={{width: wp(90)}}>

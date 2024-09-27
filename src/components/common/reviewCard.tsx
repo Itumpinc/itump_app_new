@@ -103,7 +103,7 @@ const ReviewCard = (props: any) => {
                   </>
                 ) : null}
 
-                {review.type === 'file' ? (
+                {review.type === 'file' && review.file ? (
                   <>
                     <Gap height={hp(2)} />
                     {review.file.name ? (
@@ -125,7 +125,8 @@ const ReviewCard = (props: any) => {
                         </View>
 
                         <Text style={[styles.secondaryText]}>
-                          {review.file.name} {review.name ? `- ${review.name}` : ''}
+                          {review.file.name}{' '}
+                          {review.name ? `- ${review.name}` : ''}
                         </Text>
                       </>
                     ) : (

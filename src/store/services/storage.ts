@@ -42,10 +42,10 @@ export const storageSlice = createSlice({
           ...state.storage,
           tokens: undefined,
           user: undefined,
+          primaryBusiness: undefined,
+          business: undefined,
         },
       };
-      delete newState.storage.tokens;
-      delete newState.storage.user;
       state.storage = newState.storage;
     },
   },

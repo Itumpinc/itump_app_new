@@ -86,6 +86,51 @@ export const userApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    searchUser: builder.query<any, string>({
+      query: (keyword: string) => ({
+        url: `/v1/users/search?keyword=${keyword}`,
+        method: 'GET',
+      }),
+    }),
+    invoiceCalculate: builder.query<any, any>({
+      query: (data: any) => ({
+        url: `/v1/users/invoice/calculate`,
+        method: 'POST',
+        data,
+      }),
+    }),
+    createInvoice: builder.query<any, any>({
+      query: (data: any) => ({
+        url: `/v1/users/invoice/create`,
+        method: 'POST',
+        data,
+      }),
+    }),
+    listInvoice: builder.query<any, string>({
+      query: (query: string) => ({
+        url: `/v1/users/invoice/list${query}`,
+        method: 'GET',
+      }),
+    }),
+    detailInvoice: builder.query<any, string>({
+      query: (invoice_num: string) => ({
+        url: `/v1/users/invoice/detail/${invoice_num}`,
+        method: 'GET',
+      }),
+    }),
+    cancelInvoice: builder.query<any, any>({
+      query: ({invoice_num, data}: {invoice_num: string; data: any}) => ({
+        url: `/v1/users/invoice/cancel/${invoice_num}`,
+        method: 'POST',
+        data,
+      }),
+    }),
+    getHealth: builder.query<any, number>({
+      query: (businessId: number) => ({
+        url: `/v1/business/health/${businessId}`,
+        method: 'GET',
+      }),
+    }),
   }),
   overrideExisting: false,
 });

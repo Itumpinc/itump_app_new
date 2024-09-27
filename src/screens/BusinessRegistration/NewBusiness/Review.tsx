@@ -307,8 +307,6 @@ export function NewBusinessReview(props: any) {
   const [addons, setAddons] = useState([]);
   const [addonsSchemaValid, setAddonsSchemaValid] = useState(false);
   // console.log(storage);
-  console.log('businessDetails====>', businessDetails);
-
   const {
     initConfig: {settings},
   } = storage;
@@ -349,7 +347,6 @@ export function NewBusinessReview(props: any) {
   };
 
   const editAction = (id: string) => {
-    console.log(id);
     navigation.navigate('AddBusiness', {tabId: id, id: businessDetails.id});
   };
 
@@ -434,7 +431,7 @@ export function NewBusinessReview(props: any) {
                   text: formataddress({
                     address: detail.address1,
                     address2: detail.address2,
-                    city: '',
+                    city: detail.city,
                     zipcode: detail.zipcode,
                     country_id: businessDetails.country.id,
                     state_id: businessDetails.state.id,
@@ -509,24 +506,35 @@ export function NewBusinessReview(props: any) {
             editAction={() => editAction('Director')}
           />
         </View>
-
-        <Gap height={hp(2)} />
-        <Line />
-        <Gap height={hp(2)} />
-        <Addons
-          businessDetails={businessDetails}
-          countryList={countryList}
-          setAddons={setAddons}
-          setAddonsSchemaValid={setAddonsSchemaValid}
-        />
+        {businessDetails.status === 'active' ? null : (
+          <>
+            <Gap height={hp(2)} />
+            <Line />
+            <Gap height={hp(2)} />
+            <Addons
+              businessDetails={businessDetails}
+              countryList={countryList}
+              setAddons={setAddons}
+              setAddonsSchemaValid={setAddonsSchemaValid}
+            />
+          </>
+        )}
       </View>
       <Gap height={hp(3)} />
-      <Button
-        text="Review Order"
-        textColor="white"
-        onPress={submit}
-        disabled={!addonsSchemaValid}
-      />
+      {businessDetails.status === 'active' ? (
+        <Button
+          text="Review Order"
+          textColor="white"
+          onPress={() => navigation.navigate('Health')}
+        />
+      ) : (
+        <Button
+          text="Review Order"
+          textColor="white"
+          onPress={submit}
+          disabled={!addonsSchemaValid}
+        />
+      )}
       <Gap height={hp(7)} />
     </View>
   );

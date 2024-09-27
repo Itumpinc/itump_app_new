@@ -7,14 +7,12 @@ import {
 } from 'react-native-responsive-screen';
 import {Gap} from '@src/constants/gap';
 import {useThemeColors} from '@src/constants/colors';
-import {useAppSelector} from '@src/store/store';
-import {useNavigation} from '@react-navigation/native';
 import Container from '@src/components/common/container';
 import Header from '@src/constants/header';
 import {useThemeImages} from '@src/constants/images';
 import ServiceCard from '@src/components/common/serviceCard';
 
-const ServiceList = () => {
+const ServiceList = (props:any) => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
 
@@ -36,7 +34,7 @@ const ServiceList = () => {
               alignSelf: 'flex-start',
             }}
             showsHorizontalScrollIndicator={true}>
-            <ServiceCard />
+            <ServiceCard {...props}/>
           </ScrollView>
           <Gap height={hp(2)} />
           <View

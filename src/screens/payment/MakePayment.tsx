@@ -18,7 +18,7 @@ import Container from '@components/common/container';
 import Header from '@src/constants/header';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {__, alert, getData, getSettings} from '@src/utils/helpers';
-import {useAppSelector} from '@src/store/store';
+import {useAppDispatch, useAppSelector} from '@src/store/store';
 import useStyles from '../BusinessRegistration/styles';
 import {Gap} from '@src/constants/gap';
 import {Line} from '@src/constants/Line';
@@ -35,6 +35,9 @@ import {
 import Popup from '@src/components/common/popup';
 import {Checkbox} from '@src/components/hocs/forms';
 import {serviceApi} from '@src/store/services/service';
+import {userApi} from '@src/store/services/user';
+import {saveUser} from '@src/navigators/Utils';
+import {setData} from '@src/store/services/storage';
 
 const AgreeTerms = (props: any) => {
   const colors = useThemeColors();
@@ -132,17 +135,34 @@ const ItumpMessage = () => {
 };
 
 const MakePayment = (props: any) => {
-  const {makePayment, paymentParams, order, mainServiceItem, serviceData} =
-    props;
+  const {
+    makePayment,
+    paymentParams,
+    order,
+    mainServiceItem,
+    serviceData,
+    invoiceData,
+    title,
+    disabled,
+    redirectParams,
+  } = props;
   const route: any = useRoute();
+  const dispatch = useAppDispatch();
   const navigation: any = useNavigation();
   const storage = useAppSelector(state => state.common.storage);
+
+  const [userApisQuery] = userApi.useLazyUserProfileQuery();
 
   const [createServiceOrderBindQuery] =
     serviceApi.useLazyCreateServiceOrderBindQuery();
 
   const [createServiceOrderVerifyQuery] =
     serviceApi.useLazyCreateServiceOrderVerifyQuery();
+
+  const [createActivationQuery] = serviceApi.useLazyCreateActivationQuery();
+  const [verifyActivationQuery] = serviceApi.useLazyVerifyActivationQuery();
+
+  const [payInvoiceQuery, payInvoiceData] = serviceApi.useLazyPayInvoiceQuery();
 
   const {
     user,
@@ -151,8 +171,14 @@ const MakePayment = (props: any) => {
 
   const stripePubKey = getSettings(settings, 'stripe_pub_key');
 
+  const [resetButton, setResetButton] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const {initPaymentSheet, presentPaymentSheet} = useStripe();
+  const {
+    initPaymentSheet,
+    presentPaymentSheet,
+    resetPaymentSheetCustomer,
+    retrievePaymentIntent,
+  } = useStripe();
   const [loading, setLoading] = useState(false);
   const [bindingPayment, setBindingPayment] = useState(true);
 
@@ -173,7 +199,7 @@ const MakePayment = (props: any) => {
       paymentIntentClientSecret: paymentIntent,
       // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
       //methods that complete payment after a delay, like SEPA Debit and Sofort.
-      allowsDelayedPaymentMethods: true,
+      // allowsDelayedPaymentMethods: true,
       defaultBillingDetails: billingDetails,
     });
     if (!error) {
@@ -209,6 +235,54 @@ const MakePayment = (props: any) => {
     }
   };
 
+  const createActivation = async () => {
+    const createActivationBindData = await createActivationQuery(
+      paymentParams.paymentData,
+    );
+    if (createActivationBindData.isSuccess) {
+      const activationData = getData(createActivationBindData);
+      await initializePaymentSheet({
+        paymentIntent: activationData.payment_intent.pi_client_secret,
+        ephemeralKey: activationData.payment_intent.ephemeral_key,
+        customer: activationData.payment_intent.customer,
+      });
+    }
+
+    if (createActivationBindData.isError) {
+      setLoading(false);
+      const error: any = createActivationBindData.error;
+      const data = error && error.data ? error.data : undefined;
+      if (data) {
+        alert(data.message);
+      }
+    }
+  };
+
+  const createInvoice = async () => {
+    const createInvoiceData = await payInvoiceQuery({
+      invoice_no: invoiceData.invoice.invoice_num,
+      data: paymentParams.paymentData,
+    });
+
+    if (createInvoiceData.isSuccess) {
+      const invoicePayData = getData(createInvoiceData);
+      await initializePaymentSheet({
+        paymentIntent: invoicePayData.paymentIntent.clientSecret,
+        ephemeralKey: invoicePayData.paymentIntent.ephemeralKey,
+        customer: invoicePayData.paymentIntent.customer,
+      });
+    }
+
+    if (createInvoiceData.isError) {
+      setLoading(false);
+      const error: any = createInvoiceData.error;
+      const data = error && error.data ? error.data : undefined;
+      if (data) {
+        alert(data.message);
+      }
+    }
+  };
+
   const processPayment = () => {
     if (!acceptTerms) {
       alert('please accept terms');
@@ -217,6 +291,10 @@ const MakePayment = (props: any) => {
     setLoading(true);
     if (paymentParams.paymentType === 'order') {
       createOrderIntent();
+    } else if (paymentParams.paymentType === 'activation') {
+      createActivation();
+    } else if (paymentParams.paymentType === 'invoice') {
+      createInvoice();
     }
   };
 
@@ -224,11 +302,15 @@ const MakePayment = (props: any) => {
     if (!bindingPayment) {
       (async () => {
         const {error} = await presentPaymentSheet();
-        setLoading(false);
         if (error) {
           if (error.code !== 'Canceled') {
             alert(`Error code: ${error.code} ${error.message}`);
           }
+          resetPaymentSheetCustomer();
+          setResetButton(true);
+          setTimeout(() => {
+            setResetButton(false);
+          }, 500);
         } else {
           // alert('Your order is confirmed!');
           setLoading(true);
@@ -243,19 +325,34 @@ const MakePayment = (props: any) => {
               });
 
             setLoading(false);
-            if(createServiceOrderVerifyData.isSuccess){
+            if (createServiceOrderVerifyData.isSuccess) {
               const data = getData(createServiceOrderVerifyData);
               if (mainServiceItem[0].service.tags === 'register_business') {
                 navigation.navigate('BusinessPaymentSuccess', {
                   orderDetail: serviceData,
                 });
+              } else if (redirectParams) {
+                navigation.navigate(redirectParams.screen, redirectParams.data);
               } else {
                 navigation.navigate('ServicePaymentSuccess', {
                   orderDetail: serviceData,
                 });
               }
             }
-            
+          } else if (paymentParams.paymentType === 'activation') {
+            const verifyActivationData = await verifyActivationQuery();
+            setLoading(false);
+            if (verifyActivationData.isSuccess) {
+              const userData = await userApisQuery();
+              saveUser({dispatch, setData, userData});
+              navigation.navigate('ConnectBank');
+            }
+          } else if (paymentParams.paymentType === 'invoice') {
+            setLoading(false);
+            navigation.navigate('InvoicePaySuccess', {
+              data: invoiceData,
+              payInvoiceData: getData(payInvoiceData),
+            });
           }
         }
       })();
@@ -268,15 +365,20 @@ const MakePayment = (props: any) => {
     }
   }, [paymentParams]);
 
+  if (resetButton) {
+    return null;
+  }
+
   return (
     <StripeProvider publishableKey={stripePubKey} urlScheme="itump">
       <AgreeTerms acceptTerms={acceptTerms} setAcceptTerms={setAcceptTerms} />
       <Gap height={hp(2)} />
       <Button
-        text="Make Payment"
+        text={title || 'Make Payment'}
         textColor="white"
         onPress={() => makePayment()}
         loader={loading}
+        disabled={disabled}
       />
       <Gap height={hp(2)} />
       <ItumpMessage />

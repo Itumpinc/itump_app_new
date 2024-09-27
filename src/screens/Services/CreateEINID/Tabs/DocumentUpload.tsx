@@ -48,7 +48,7 @@ export function DocumentUpload(props: any) {
               }}
             />
           </View>
-          <Gap height={hp(2)} />
+          {/* <Gap height={hp(2)} />
           <Text style={styles.mainText}>
             Upload Business Formation Document (Optional)
           </Text>
@@ -58,7 +58,7 @@ export function DocumentUpload(props: any) {
             type="text"
             value={schema.data.businessFormationDocument}
             saveusingName
-          />
+          /> */}
 
           <Gap height={hp(2)} />
 

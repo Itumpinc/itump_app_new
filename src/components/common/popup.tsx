@@ -20,9 +20,7 @@ import {getData, getSettings} from '@src/utils/helpers';
 import {commonApi} from '@src/store/services/common';
 import HTMLContent from './htmlContent';
 
-const PrivacyPolicy = ({
-  data: {type},
-}: any) => {
+const PrivacyPolicy = ({data: {type}}: any) => {
   const storage = useAppSelector(state => state.common.storage);
   const {
     initConfig: {settings},
@@ -61,6 +59,7 @@ const Popup = (props: any) => {
     children,
     heading,
     closeIcon = false,
+    webview = false,
   } = props;
 
   useEffect(() => {
@@ -86,8 +85,8 @@ const Popup = (props: any) => {
     <View>
       <RBSheet
         ref={refRBSheet}
-        draggable={true}
-        closeOnPressMask={true}
+        draggable={!webview}
+        closeOnPressMask={!webview}
         onClose={onClose}
         customStyles={{
           wrapper: {
@@ -100,7 +99,7 @@ const Popup = (props: any) => {
             height: hp(height),
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
-            backgroundColor: colors.background,
+            backgroundColor: webview ? '#fff' : colors.background,
           },
         }}>
         {heading && (
@@ -118,12 +117,16 @@ const Popup = (props: any) => {
           </View>
         )}
         {closeIcon && (
-          <View style={{position:'absolute', top: 10, right: 10, zIndex:1}}>
+          <View style={{position: 'absolute', top: 10, right: 10, zIndex: 1}}>
             <Gap height={hp(1)} />
             <View style={{alignItems: 'flex-end', marginRight: hp(1)}}>
               <TouchableOpacity onPress={onClose}>
                 <Image
-                  source={pictures.closeRBSheet}
+                  source={
+                    webview
+                      ? require('@images/closeRBSheet_light.png')
+                      : pictures.closeRBSheet
+                  }
                   style={{width: hp(4), height: hp(4)}}
                 />
               </TouchableOpacity>
@@ -132,7 +135,7 @@ const Popup = (props: any) => {
         )}
         <ScrollView>{html}</ScrollView>
 
-        <Gap height={hp(type == 'terms' ? 12 : 4)} />
+        {!webview && <Gap height={hp(type == 'terms' ? 12 : 4)} />}
         {type == 'terms' && (
           <View
             style={{

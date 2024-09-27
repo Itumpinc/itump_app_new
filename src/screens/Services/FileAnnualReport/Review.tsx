@@ -46,26 +46,50 @@ const Review = (props: any) => {
 
   const submit = async () => {
     setLoading(true);
+
+    const JSONData = {
+      company_id: schema.data.company_id,
+      company_industry: schema.data.company_industry,
+      company_registration_number: schema.data.company_registration_number,
+      company_establishment_date: schema.data.company_establishment_date,
+      first_name: schema.data.first_name,
+      last_name: schema.data.last_name,
+      email: schema.data.email,
+      phone: schema.data.phone,
+      country_id: schema.data.country_id,
+      state_id: schema.data.state_id,
+      city: schema.data.city,
+      address: schema.data.address,
+      address2: schema.data.address2,
+      zipcode: schema.data.zipcode,
+    };
+
     const serviceCreateData = await serviceCreateQuery({
       tag: serviceData.tags,
-      data: schema.data,
+      data: JSONData,
     });
     if (serviceCreateData.isSuccess) {
       const data = getData(serviceCreateData);
 
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: 'OrderSummary',
-            params: {
-              service_add_ons: [],
-              service_id: serviceData.id,
-              service_request_id: data.service.id,
-              business_id: schema.data.company_id,
-            },
-          },
-        ],
+      // navigation.reset({
+      //   index: 0,
+      //   routes: [
+      //     {
+      //       name: 'OrderSummary',
+      //       params: {
+      //         service_add_ons: [],
+      //         service_id: serviceData.id,
+      //         service_request_id: data.service.id,
+      //         business_id: schema.data.company_id,
+      //       },
+      //     },
+      //   ],
+      // });
+      navigation.navigate('OrderSummary', {
+        service_add_ons: [],
+        service_id: serviceData.id,
+        service_request_id: data.service.id,
+        business_id: schema.data.company_id,
       });
     }
 
@@ -138,21 +162,9 @@ const Review = (props: any) => {
               title="Business Information"
               editAction={() => editAction('BusinessInformation')}
               data={[
-                {heading: 'Email Address', text: schema.data.company_email},
-                {heading: 'Phone Number', text: schema.data.company_phone},
-                {
-                  heading: 'Address',
-                  text: formataddress({
-                    address: schema.data.company_address,
-                    address2: schema.data.company_address2,
-                    city: schema.data.company_city,
-                    zipcode: schema.data.company_zipcode,
-                    country_id: schema.data.company_country_id,
-                    state_id: schema.data.company_state_id,
-                    country: countryList,
-                    state: stateList,
-                  }),
-                },
+                {heading: 'Industry', text: schema.data.company_industry},
+                {heading: 'Registration Number', text: schema.data.company_registration_number},
+                {heading: 'Establishment On (MM-DD-YYYY)', text: schema.data.company_establishment_date},
               ]}
             />
           </View>

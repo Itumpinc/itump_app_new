@@ -19,7 +19,7 @@ const Error = ({activeMainScreens}: any) => {
   const navigation: any = useNavigation();
 
   const GoHomePress = () => {
-    navigation.navigate('Signup');
+    navigation.navigate('Startup');
   };
 
   return (

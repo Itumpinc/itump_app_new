@@ -7,68 +7,84 @@ import {
 } from 'react-native';
 
 import React, {useRef, useState} from 'react';
-import {useThemeImages} from '@constants/images';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {Text} from 'native-base';
 import {useThemeColors} from '@constants/colors';
-import {useNavigation} from '@react-navigation/native';
-import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
+import AvatarCard from './avatarCard';
 
-export const OrderCard = ({title, date, status, money, image}: any) => {
+export const OrderCard = ({title, date, status, money, image, avatar, myInvoice}: any) => {
   const colors = useThemeColors();
   const statusColor: any = {
     Pending: colors.lightOrange,
-    Done: colors.lightGreen,
     'In Progress': colors.lightOrange,
     Contract: colors.lightPrimary,
     Software: colors.lightPink,
-    Paid: colors.lightGreen,
-    'Awaiting Payment': colors.lightOrange,
+    paid: colors.successBackgroundColor,
+    raised: colors.lightOrange,
+    cancelled: colors.errorText+'30',
   };
+
   const textColor: any = {
     Pending: colors.darkOrange,
-    Done: colors.otpBorder,
     'In Progress': colors.darkOrange,
     Contract: colors.primary,
     Software: colors.pink,
-    Paid: colors.otpBorder,
-    'Awaiting Payment': colors.darkOrange,
+    paid: colors.otpBorder,
+    raised: colors.darkOrange,
+    cancelled: colors.errorText,
+  };
+
+  const statusList: any = {
+    raised: myInvoice ? 'Awaiting Payment' : 'Payment Pending',
+    paid: 'Paid',
+    cancelled: 'Cancelled'
   };
 
   return (
     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-      <Image
-        source={image}
-        style={{marginLeft: wp(5), height: hp(4), width: hp(4)}}
-      />
+      {image && (
+        <Image
+          source={image}
+          style={{marginLeft: wp(5), height: hp(4), width: hp(4)}}
+        />
+      )}
+
+      {avatar && (
+        <View style={{marginLeft: wp(5)}}>
+          <AvatarCard user={avatar} size={hp(4)} />
+        </View>
+      )}
+
       <View
         style={{
           marginLeft: '3%',
           height: '100%',
           flexDirection: 'column',
-          width: '57%',
+          width: '56%',
         }}>
-        <Text
-          style={[
-            styles.text,
-            {
-              alignSelf: 'flex-start',
-              paddingHorizontal: 10,
-              paddingVertical: 1,
-              backgroundColor: statusColor[status],
-              color: textColor[status],
-              fontFamily: 'Satoshi-Regular',
-              fontSize: hp(1.3),
-              borderRadius: 6,
-              overflow: 'hidden',
-            },
-          ]}>
-          {status}
-        </Text>
+        {statusList[status] && (
+          <Text
+            style={[
+              styles.text,
+              {
+                alignSelf: 'flex-start',
+                paddingHorizontal: 10,
+                paddingVertical: 1,
+                backgroundColor: statusColor[status],
+                color: textColor[status],
+                fontFamily: 'Satoshi-Regular',
+                fontSize: hp(1.3),
+                borderRadius: 6,
+                overflow: 'hidden',
+              },
+            ]}>
+            {statusList[status]}
+          </Text>
+        )}
 
         <Gap height={hp(1)} />
         <Text

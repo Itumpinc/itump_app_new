@@ -12,6 +12,8 @@ export {default as Survey} from './Auth/Survey/index';
 
 export {default as Home} from './Home/Home';
 export {default as Modules} from './Home/Modules';
+export {default as Health} from './Health/Health';
+
 export {default as AddaBusiness} from './BusinessRegistration/setup/AddaBusiness';
 export {default as ExistingBusiness} from './BusinessRegistration/ExistingBusiness/ExistingBusiness';
 export {default as NewBusiness} from './BusinessRegistration/NewBusiness/NewBusiness';
@@ -23,3 +25,15 @@ export {default as BusinessPaymentSuccess} from '@src/screens/BusinessRegistrati
 export {default as ServicePaymentSuccess} from '@src/screens/Services/ServicePaymentSuccess';
 
 export {default as ServiceList} from './Services/ServiceList';
+export {default as ActivateAccount} from './Invoice/ActivateAccount';
+export {default as ConnectBank} from './Invoice/ConnectBank';
+export {default as CreateInvoice} from './Invoice/CreateInvoice';
+export {default as InvoiceSummary} from './Invoice/InvoiceSummary';
+export {default as InvoiceSuccess} from './Invoice/InvoiceSuccess';
+export {default as InvoicePayment} from './Invoice/InvoicePay/InvoicePayment';
+export {default as InvoicePaySuccess} from './Invoice/InvoicePay/InvoicePaySuccess';
+export {default as InvoiceDetails} from './Invoice/InvoicePay/InvoiceDetails';
+
+export {default as Downloads} from './Downloads/Downloads';
+export {default as Concrypt} from './Concrypt/Concrypt';
+export {default as InvoiceList} from './FinanceList/InvoiceList';

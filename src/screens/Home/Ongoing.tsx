@@ -21,11 +21,60 @@ import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
 import Popup from '@src/components/common/popup';
 import Button from '@src/constants/button';
+import {orderApi} from '@src/store/services/order';
+import {getData} from '@src/utils/helpers';
 
-export default function Ongoing() {
+export default function Ongoing(props: any) {
   const colors = useThemeColors();
   const pictures = useThemeImages();
+  const navigation: any = useNavigation();
   const storage = useAppSelector(state => state.common.storage);
+
+  const {
+    allBusiness: {main_business: mainBusiness, other_business: otherBusiness},
+  } = props;
+
+  const gotoBusiness = (business: any) => {
+    navigation.navigate('AddBusiness', {
+      id: business.business.id,
+    });
+  };
+
+  const loadUsersOrderData = orderApi.useLoadUsersOrderQuery();
+
+  if (!loadUsersOrderData.isSuccess) return null;
+
+  const loadUsersOrder = getData(loadUsersOrderData);
+  const getOrderForBusiness = (businessId: number) => {
+    let hasOrder;
+    for (let index = 0; index < loadUsersOrder.rows.length; index++) {
+      const data = loadUsersOrder.rows[index];
+      if (!hasOrder) {
+        for (let index = 0; index < data.items.length; index++) {
+          const item = data.items[index];
+          if (item.service_request_id === businessId) {
+            hasOrder = true;
+            break;
+          }
+        }
+      }
+    }
+    return hasOrder;
+  };
+
+  const pendingBusiness = [];
+  for (let index = 0; index < mainBusiness.length; index++) {
+    const business = mainBusiness[index];
+    if (business.status === 'pending') {
+      const status = getOrderForBusiness(business.id) ? 'paid' : 'new';
+      pendingBusiness.push({
+        business,
+        status,
+      });
+    }
+  }
+
+  if (pendingBusiness.length === 0) return null;
 
   return (
     <>
@@ -60,58 +109,68 @@ export default function Ongoing() {
         </View>
         <Gap height={hp(1)} />
 
-        <TouchableOpacity onPress={() => {}}>
-          <View
-            style={{
-              borderWidth: 0.2,
-              padding: hp(1.5),
-              borderColor: colors.secondaryText,
-              width: '92%',
-              alignSelf: 'center',
-              marginTop: hp(1),
-              borderRadius: hp(1),
-            }}>
-            <Text
-              style={[
-                styles.text,
-                {
-                  color: colors.secondaryText,
-                  fontSize: hp(1.8),
-                  alignSelf: 'flex-start',
-                },
-              ]}>
-              Registration of New Business
-            </Text>
-            <Gap height={hp(0.5)} />
-            <View
-              style={{
-                marginVertical: -hp(1),
-                flexDirection: 'row',
-              }}>
-              <Text
-                style={[
-                  styles.text,
-                  {
-                    color: colors.primary,
-                    fontFamily: 'Satoshi-Medium',
-                    alignSelf: 'center',
-                  },
-                ]}>
-                Track Progress
-              </Text>
-              <Image
-                source={pictures.goToPrimary}
+        {pendingBusiness.map((business: any, index: number) => {
+          return (
+            <TouchableOpacity
+              onPress={() => gotoBusiness(business)}
+              key={index}>
+              <View
                 style={{
-                  height: hp(10),
-                  width: hp(10),
-                  marginTop: -hp(2.5),
-                  marginLeft: -wp(6),
-                  marginBottom: -hp(2),
-                }}
-              />
-            </View>
-          </View>
-        </TouchableOpacity>
+                  borderWidth: 0.2,
+                  padding: hp(1.5),
+                  borderColor: colors.secondaryText,
+                  width: '92%',
+                  alignSelf: 'center',
+                  marginTop: hp(1),
+                  borderRadius: hp(1),
+                }}>
+                <Text
+                  style={[
+                    styles.text,
+                    {
+                      color: colors.secondaryText,
+                      fontSize: hp(1.8),
+                      alignSelf: 'flex-start',
+                    },
+                  ]}>
+                  {business.status === 'new'
+                    ? `Action Required: Finish Setup for ${business.business.business_title}`
+                    : `Registration of ${business.business.business_title}, In progress`}
+                </Text>
+                <Gap height={hp(0.5)} />
+                <View
+                  style={{
+                    marginVertical: -hp(1),
+                    flexDirection: 'row',
+                  }}>
+                  <Text
+                    style={[
+                      styles.text,
+                      {
+                        color: colors.primary,
+                        fontFamily: 'Satoshi-Medium',
+                        alignSelf: 'center',
+                      },
+                    ]}>
+                    {business.status === 'new'
+                      ? 'Finish Now'
+                      : 'Track Progress'}
+                  </Text>
+                  <Image
+                    source={pictures.goToPrimary}
+                    style={{
+                      height: hp(10),
+                      width: hp(10),
+                      marginTop: -hp(2.5),
+                      marginLeft: -wp(6),
+                      marginBottom: -hp(2),
+                    }}
+                  />
+                </View>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
       </View>
       <Gap height={hp(2)} />
     </>

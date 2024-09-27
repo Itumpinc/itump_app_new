@@ -43,7 +43,7 @@ const BusinessPaymentSuccess = () => {
   const pictures = useThemeImages();
   const route: any = useRoute();
   const navigation: any = useNavigation();
-  
+
   const params = __(route, 'params');
   const orderDetail = params ? params.orderDetail : undefined;
 
@@ -53,13 +53,7 @@ const BusinessPaymentSuccess = () => {
       routes: [{name: 'Home'}],
     });
   };
-  const gotoConcrypt = () => {
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'Concrypt'}],
-    });
-  };
-
+  
   return (
     <Container>
       <View
@@ -88,18 +82,12 @@ const BusinessPaymentSuccess = () => {
                 fontSize: hp(1.8),
                 textAlign: 'center',
               }}>
-              Your business,{' '}
+              Your business{' '}
               <Text style={{fontFamily: 'Satoshi-Bold'}}>
-                {orderDetail ? orderDetail.company_title : ''}
+                {orderDetail ? orderDetail.business_title : ''}
               </Text>{' '}
-              is being confirmed.{'\n'}You may visit and update your information
-              in{' '}
-              <TouchableWithoutFeedback onPress={() => gotoConcrypt()}>
-                <Text style={{color: colors.primary, fontWeight: 700}}>
-                  Corpcrypt
-                </Text>
-              </TouchableWithoutFeedback>{' '}
-              at anytime.
+              is setup and in progress. We usually get back within 2 days,
+              please look out for updates on your mail.
             </Text>
             <Gap height={hp(4)} />
             <View>

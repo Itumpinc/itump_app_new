@@ -51,7 +51,6 @@ export function Contact(props: any) {
           state_id: user.state_id,
           city: user.city,
           address: user.address,
-          address2: user.address2,
           zipcode: user.zipcode,
         }),
       );
@@ -152,11 +151,6 @@ export function Contact(props: any) {
             name="address"
             value={schema.data.address}
             placeHolder="Street Address"
-          />
-          <RenderInput
-            name="address2"
-            value={schema.data.address2}
-            placeHolder="Address Line 2"
           />
           <RenderDropdown
             name="country_id"

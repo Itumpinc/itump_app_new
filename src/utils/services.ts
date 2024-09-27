@@ -107,7 +107,10 @@ export const industry = [
   {name: 'InformationServices', value: 'Information Services'},
   {name: 'Legal', value: 'Legal'},
   {name: 'Manufacturing', value: 'Manufacturing'},
-  {name: 'MediaEntertainmentPublishing', value: 'Media/Entertainment/Publishing'},
+  {
+    name: 'MediaEntertainmentPublishing',
+    value: 'Media/Entertainment/Publishing',
+  },
   {name: 'NonProfit', value: 'Non-Profit'},
   {name: 'RealEstate', value: 'Real Estate'},
   {name: 'Restaurant', value: 'Restaurant'},
@@ -190,5 +193,222 @@ export const taxDocument = [
   {
     name: 'TID',
     value: 'TID',
+  },
+];
+
+export const dbaReason = [
+  {
+    name: 'Branding Flexibility',
+    value: 'Branding Flexibility',
+  },
+  {
+    name: 'Expansion of Business Scope',
+    value: 'Expansion of Business Scope',
+  },
+  {
+    name: 'Legal Compliance',
+    value: 'Legal Compliance',
+  },
+  {
+    name: 'Cost-Effective Alternative to Creating a New Entity',
+    value: 'Cost-Effective Alternative to Creating a New Entity',
+  },
+  {
+    name: 'Ease of Banking and Payments',
+    value: 'Ease of Banking and Payments',
+  },
+  {
+    name: 'Privacy Protection',
+    value: 'Privacy Protection',
+  },
+  {
+    name: 'Rebranding without Reincorporating',
+    value: 'Rebranding without Reincorporating',
+  },
+  {
+    name: 'Localized or Niche Business Names',
+    value: 'Localized or Niche Business Names',
+  },
+  {
+    name: 'Professional Appearance',
+    value: 'Professional Appearance',
+  },
+  {
+    name: 'Multiple Businesses under One Legal Entity',
+    value: 'Multiple Businesses under One Legal Entity',
+  },
+];
+
+export const ipInfoProtection = [
+  {
+    name: 'Trademark',
+    value: 'Trademark',
+  },
+  {
+    name: 'Copyright',
+    value: 'Copyright',
+  },
+  {
+    name: 'Patent',
+    value: 'Patent',
+  },
+  {
+    name: 'Trade Secret',
+    value: 'Trade Secret',
+  },
+  {
+    name: 'Design Patent',
+    value: 'Design Patent',
+  },
+  {
+    name: 'Utility Patent',
+    value: 'Utility Patent',
+  },
+  {
+    name: 'Plant Patent',
+    value: 'Plant Patent',
+  },
+  {
+    name: 'Industrial Design Protection',
+    value: 'Industrial Design Protection',
+  },
+];
+
+export const ipInfoMarks = [
+  {
+    name: 'Word Mark',
+    value: 'Word Mark',
+  },
+  {
+    name: 'Design Mark (Logo)',
+    value: 'Design Mark (Logo)',
+  },
+  {
+    name: 'Combination Mark (Word + Design)',
+    value: 'Combination Mark (Word + Design)',
+  },
+  {
+    name: 'Slogan',
+    value: 'Slogan',
+  },
+  {
+    name: 'Sound Mark',
+    value: 'Sound Mark',
+  },
+  {
+    name: 'Color Mark',
+    value: 'Color Mark',
+  },
+  {
+    name: 'Shape Mark',
+    value: 'Shape Mark',
+  },
+  {
+    name: 'Motion Mark',
+    value: 'Motion Mark',
+  },
+  {
+    name: 'Pattern Mark',
+    value: 'Pattern Mark',
+  },
+  {
+    name: 'Position Mark',
+    value: 'Position Mark',
+  },
+  {
+    name: 'Hologram Mark',
+    value: 'Hologram Mark',
+  },
+];
+
+export const optionBoi = [
+  {
+    value: 'initial_report',
+    heading: 'Initial Report',
+    label: 'if this is the first BOIR filed for the reporting company.',
+  },
+  {
+    value: 'correct_prior_report',
+    heading: 'Correct Prior Report',
+    label:
+      'if the report corrects inaccurate information from a previously filed BOIR.',
+  },
+  {
+    value: 'update_prior_report',
+    heading: 'Update Prior Report',
+    label:
+      'if the report updates a previously filed BOIR, for example, to include one or more new beneficial owners.',
+  },
+  {
+    value: 'newly_prior_report',
+    heading: 'Newly Exempt Entity',
+    label:
+      'if, after having filed a BOIR, the reporting company is now exempt from BOI reporting requirements.',
+  },
+];
+
+export const taxIdType = [
+  {
+    name: 'EIN',
+    value: 'ein',
+  },
+  {
+    name: 'SSN/ITIN',
+    value: 'ssn_itin',
+  },
+  {
+    name: 'Foriegn',
+    value: 'foriegn',
+  },
+];
+
+export const gettaxIdType = (value: any) =>
+  taxIdType.find(l => l.value === value);
+export const getapplicantIdType = (value: any) =>
+  applicantIdType.find(l => l.value === value);
+
+export const applicantIdType = [
+  {
+    name: "State-issued driver's license",
+    value: 'driving_license',
+  },
+  {
+    name: 'State/local/tribe-issued ID',
+    value: 'state_issued_id',
+  },
+  {
+    name: 'U.S. Passport',
+    value: 'us_passport',
+  },
+  {
+    name: 'Foreign passport',
+    value: 'foriegn_passport',
+  },
+];
+
+export const documentType = [
+  {
+    name: 'Business Formation Document',
+    value: 'businessFormation',
+  },
+  {
+    name: 'EIN Document',
+    value: 'ein',
+  },
+  {
+    name: 'Other Document',
+    value: 'others',
+  },
+  {
+    name: 'Fincen BOI Document',
+    value: 'fincenboi',
+  },
+  {
+    name: 'US Passport',
+    value: 'us_passport',
+  },
+  {
+    name: 'Registration Document',
+    value: 'registration_document',
   },
 ];

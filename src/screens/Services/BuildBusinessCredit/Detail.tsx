@@ -12,12 +12,15 @@ import {useThemeImages} from '@src/constants/images';
 import {createImgUrl} from '@src/utils/helpers';
 import HTMLContent from '@src/components/common/htmlContent';
 import Button from '@src/constants/button';
+import {AlreadyDonePopup} from '../AlreadyDonePopup';
 
 const Detail = (props: any) => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const storage = useAppSelector(state => state.common.storage);
-  const {serviceData, stepAction} = props;
+  const {serviceData, stepAction, action, schema} = props;
+
+  const [alreadyDone, setAlreadyDone] = useState(false);
 
   const style = {
     p: {
@@ -36,20 +39,30 @@ const Detail = (props: any) => {
 
   return (
     <View style={{width: wp(90), marginTop: -25}}>
-      <Image
-        source={{
-          uri: createImgUrl(
-            serviceData.background_image,
-            storage.initConfig.config.media_host,
-          ),
-        }}
+      <View
         style={{
-          width: wp(100),
-          height: hp(40),
-          backgroundColor: 'blackr',
-          marginLeft: -wp(5),
-        }}
-      />
+          backgroundColor: serviceData.small_card_image,
+          width: wp(90),
+          height: hp(30),
+          borderRadius: 10,
+          marginBottom: 15,
+          padding: 20,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Image
+          source={{
+            uri: createImgUrl(
+              serviceData.background_image,
+              storage.initConfig.config.media_host,
+            ),
+          }}
+          style={{
+            width: '80%',
+            height: hp(20),
+          }}
+        />
+      </View>
       <HTMLContent htmlContent={serviceData.description} style={style} />
       <Gap height={hp(4)} />
       <Button
@@ -58,10 +71,20 @@ const Detail = (props: any) => {
         iconSource={pictures.arrowRightWhite}
         iconRight={true}
         onPress={() => {
-          stepAction('next');
+          action && action === 'done_already'
+            ? setAlreadyDone(true)
+            : stepAction('next');
         }}
       />
       <Gap height={hp(4)} />
+      {alreadyDone && (
+        <AlreadyDonePopup
+          alreadyDone={alreadyDone}
+          setAlreadyDone={setAlreadyDone}
+          schema={schema}
+          stepAction={stepAction}
+        />
+      )}
     </View>
   );
 };

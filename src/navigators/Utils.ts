@@ -66,21 +66,26 @@ export const resetBioMetricCredentials = async () => {
   }
 };
 
-export const afterLoginAction = ({dispatch, setData, data}: any) => {
-  dispatch(setData({key: 'user', value: data.user}));
-  dispatch(setData({key: 'tokens', value: data.tokens}));
+export const afterLoginAction = async ({dispatch, userApisQuery, setData, data}: any) => {
+  await dispatch(setData({key: 'tokens', value: data.tokens}));
+  const userData = await userApisQuery();
+  await saveUser({dispatch, setData, userData});
 };
 
 export const saveUser = async ({dispatch, setData, userData}: any) => {
   if (userData.isSuccess) {
     const data = userData.data.data;
     const {user, business} = data;
-    dispatch(setData({key: 'user', value: user}));
-    dispatch(setData({key: 'business', value: business}));
-    if(business && business.length>0){
-      dispatch(setData({key: 'primaryBusiness', value: business[0]}));
-    }else{
-      dispatch(setData({key: 'primaryBusiness', value: {id: 0}}));
+    await dispatch(setData({key: 'user', value: user}));
+    await dispatch(setData({key: 'business', value: business}));
+
+    if (business.main_business && business.main_business.length > 0) {
+      const data = business.main_business.find(
+        (b: any) => b.status === 'active',
+      );
+      await dispatch(setData({key: 'primaryBusiness', value: data || {id: 0}}));
+    } else {
+      await dispatch(setData({key: 'primaryBusiness', value: {id: 0}}));
     }
   }
 };

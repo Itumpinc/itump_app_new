@@ -1,9 +1,15 @@
 import {View} from 'react-native';
 import React from 'react';
 import {Avatar} from 'native-base';
+import { useThemeColors } from '@src/constants/colors';
 
 const AvatarCard = (props: any) => {
-  const {name, uri} = props;
+  const colors = useThemeColors();
+  const {user, size} = props;
+  if (!user) return null;
+
+  const name = `${user.first_name} ${user.last_name}`;
+  const uri = '';
 
   function getInitials() {
     const words = name.trim().split(' ');
@@ -22,8 +28,9 @@ const AvatarCard = (props: any) => {
   return (
     <View style={{}}>
       <Avatar
-        bg="green.500"
+        bg={colors.primary}
         mr="1"
+        size={size || "md"}
         source={{
           uri: uri || 'https://bit.ly/broken-link',
         }}>

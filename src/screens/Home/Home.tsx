@@ -8,7 +8,7 @@ import {
 import Container from '@components/common/container';
 import {Text} from 'native-base';
 import {Gap} from '@constants/gap';
-import {logoutAction} from '@src/store/services/storage';
+import {logoutAction, setData} from '@src/store/services/storage';
 import {useDispatch} from 'react-redux';
 import {StackActions, useNavigation} from '@react-navigation/native';
 import {useAppSelector} from '@src/store/store';
@@ -28,22 +28,30 @@ import {useThemeColors} from '@src/constants/colors';
 import Invoices from './Invoices';
 import {userApi} from '@src/store/services/user';
 import {getData, getSettings} from '@src/utils/helpers';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
+import { saveUser } from '@src/navigators/Utils';
 
 export default function Home() {
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const navigation: any = useNavigation();
-  const userApisData = userApi.useUserProfileQuery();
+  const [userApisQuery, userApisData] = userApi.useLazyUserProfileQuery();
+  useFocusedEffect(() => {
+    (async ()=>{
+      const userData = await userApisQuery();
+      saveUser({dispatch, setData, userData});
+    })()
+  }, []);
+
   const userProfile = getData(userApisData);
-
-  const logout = async () => {
-    await dispatch(logoutAction());
-    navigation.dispatch(StackActions.replace('Auth'));
-  };
-
   if (!(userProfile && userProfile.user)) return null;
-  const {user, business} = userProfile;
+  const {
+    user,
+    business: {main_business: mainBusiness, other_business: otherBusiness},
+  } = userProfile;
 
+  const allBusiness = [...mainBusiness, ...otherBusiness];
+  
   return (
     <Container>
       <Gap height={Platform.OS === 'android' ? hp(8) : 1} />
@@ -51,15 +59,22 @@ export default function Home() {
       <Gap height={hp(2)} />
       <WalletChart />
       <Gap height={hp(2)} />
-      <NewBusinessFormation />
-      {business.length > 0 && <ActivateAccount />}
-      {business.length === 0 && <NewBusinessFormation />}
+
+      {allBusiness.length > 0 &&
+        (user.is_pro_user === 0 ||
+          user.stripe_account_status === 'pending') && <ActivateAccount />}
+      {allBusiness.length === 0 && <NewBusinessFormation />}
+      {allBusiness.length > 0 && <Ongoing allBusiness={userProfile.business} />}
 
       {/* Dashboard 2 Component */}
       {/* <ItumpDebitCard /> */}
-      {business.length > 0 && <Ongoing />}
-      {business.length > 0 && <FixIssues business={business} />}
-      <LineOfCreditbanner />
+
+      {allBusiness.length > 0 && <FixIssues business={allBusiness} />}
+      {allBusiness.length > 0 && <LineOfCreditbanner />}
+      {allBusiness.length !== 0 && <NewBusinessFormation />}
+
+      <DuePayment />
+
       <Text
         style={[
           styles.text,
@@ -78,9 +93,7 @@ export default function Home() {
       <Invoices />
 
       {/* Dashboard 1 Component */}
-      <DuePayment />
       <RecentOrders />
-      <FixIssues />
     </Container>
   );
 }

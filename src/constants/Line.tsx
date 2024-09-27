@@ -1,14 +1,15 @@
 import {StyleSheet, View} from 'react-native';
 import React from 'react';
-import { useThemeColors } from './colors';
+import {useThemeColors} from './colors';
 
-export const Line = () => {
+export const Line = (props: any) => {
+  const {color} = props;
   const colors = useThemeColors();
   return (
     <View
       style={{
-        borderBottomColor: colors.line,
-        borderWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: color || colors.line,
+        borderBottomWidth: StyleSheet.hairlineWidth,
       }}
     />
   );

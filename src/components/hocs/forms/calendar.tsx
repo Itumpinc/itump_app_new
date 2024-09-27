@@ -35,6 +35,7 @@ const Calendar = (props: {
   onFocus: any;
   required: boolean;
   autofocus?: boolean;
+  minDate: any;
 }) => {
   const {
     name,
@@ -45,6 +46,8 @@ const Calendar = (props: {
     backgroundColor,
     textColor,
     onChange,
+    minDate,
+    disable,
   } = props;
   const pictures = useThemeImages();
   const colors = useThemeColors();
@@ -72,7 +75,8 @@ const Calendar = (props: {
         marginBottom: hp(1),
       }}>
       <TouchableOpacity
-        onPress={() => setOpen(true)}
+        onPress={() => (disable ? {} : setOpen(true))}
+        activeOpacity={disable ? 1 : 0.2}
         style={{
           backgroundColor: backgroundColor || colors.inputField,
           width: half == true ? wp(43) : wp(90),
@@ -132,6 +136,7 @@ const Calendar = (props: {
         date={date}
         onConfirm={(date: any) => setPickerData(date)}
         onCancel={() => cancelPickerData()}
+        minimumDate={minDate}
       />
     </View>
   );

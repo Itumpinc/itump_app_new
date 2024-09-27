@@ -1,4 +1,6 @@
 import {Alert} from 'react-native';
+import Toast from 'react-native-toast-message';
+import {documentType} from './services';
 
 export const makeId = (length = 8): string => {
   let result = '';
@@ -71,7 +73,15 @@ export const getfirstlastname = (fullName: string) => {
 };
 
 export function alert(message: string) {
-  Alert.alert(message);
+  Toast.show({
+    type: 'error',
+    text1: 'Error',
+    text2: message,
+    visibilityTime: 5000,
+    topOffset: 100,
+  });
+
+  // Alert.alert(message);
 }
 
 export function confirm({title, message, onConfirm, onCancel}: any) {
@@ -117,6 +127,9 @@ export function createImgUrl(url: string, imgEndPoint: string) {
   if (url.indexOf('http') !== -1) {
     return url;
   } else {
+    if (url.indexOf('/media') === -1) {
+      url = '/media' + url;
+    }
     if (url == '/') {
       return imgEndPoint.replace('http://', 'https://');
     }
@@ -196,3 +209,55 @@ export function getSettings(settings: any, key: any) {
   }
   return data;
 }
+
+export const getDocument = (documents: any[], document_type?: string) => {
+  if (!documents) return undefined;
+
+  if (!document_type) {
+    const documentArr = [];
+    for (let index = 0; index < documents.length; index++) {
+      const document = documents[index];
+      const dT = documentType.find(
+        (dt: any) => dt.value === document.document_type,
+      );
+
+      documentArr.push({
+        ...document,
+        ...{document_name: dT ? dT.name : document.document_type},
+      });
+    }
+    return documentArr;
+  }
+
+  let document = documents.find(
+    (document: any) => document.document_type === document_type,
+  );
+
+  if (document) {
+    const dT = documentType.find(
+      (dt: any) => dt.value === document.document_type,
+    );
+    if (dT) {
+      document = {
+        ...document,
+        ...{document_name: dT.name},
+      };
+    } else {
+      document = {
+        ...document,
+        ...{document_name: document.document_type},
+      };
+    }
+  }
+  return document;
+};
+
+export const getSelectedBusiness = (storage: any, businessId: number) => {
+  const {business} = storage;
+  const {main_business: mainBusiness, other_business: otherBusiness} = business;
+  const allBusiness = [...mainBusiness, ...otherBusiness];
+  const selectedbusiness = allBusiness.find(
+    (business: any) => business.id === businessId,
+  );
+  return selectedbusiness;
+};

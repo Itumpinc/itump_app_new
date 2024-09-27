@@ -29,7 +29,7 @@ export default function ExistingBusiness(props: any) {
 
   const {schema, setSchema, setParamsData, paramsData} = props;
 
-  console.log('paramsData', paramsData);
+  // console.log('paramsData', paramsData);
 
   let businessId = route.params ? route.params.id : 0;
   if (!businessId) {

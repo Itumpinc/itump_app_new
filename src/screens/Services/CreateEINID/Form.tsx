@@ -53,14 +53,13 @@ const Form = (props: any) => {
   };
 
   useEffect(() => {
-    console.log(route.params);
     if (route.params && route.params.tabId) {
       const tabId = route.params.tabId;
       toggleTab(tabId);
     }
   }, [route.params]);
 
-  console.log(schema.data, schema.valid, schema.errors);
+  // console.log(schema.data, schema.valid, schema.errors);
 
   return (
     <View style={{width: wp(90)}}>

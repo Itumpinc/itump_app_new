@@ -15,13 +15,17 @@ import {userApi} from '@src/store/services/user';
 import {serviceApi} from '@src/store/services/service';
 import {Button} from '@src/components/hocs/forms';
 import {generateInvoiceSerial} from '../Utils';
-import { useAppSelector } from '@src/store/store';
+import {useAppSelector} from '@src/store/store';
+import {saveUser} from '@src/navigators/Utils';
+import {useDispatch} from 'react-redux';
+import {setData} from '@src/store/services/storage';
 
 export function BusinessReview(props: any) {
   const {schema, stepAction, setParamsData} = props;
   const [loading, setLoading] = useState(false);
   const colors = useThemeColors();
-  
+  const dispatch = useDispatch();
+
   const storage = useAppSelector(state => state.common.storage);
   const {user} = storage;
 
@@ -32,13 +36,7 @@ export function BusinessReview(props: any) {
   const getEntitiesData = getData(getEntities);
 
   const [businessCreateQuery] = serviceApi.useLazyBusinessCreateQuery();
-
-  const serviceDetailData = serviceApi.useServiceListQuery({
-    user_id: user.id,
-  });
-  // const servicesList = getData(serviceDetailData);
-  // const businessService = servicesList ? servicesList.find((service:any) => service.tags.indexOf('register_business') > -1) : undefined;
-  // console.log('businessService===>', businessService);
+  const [userApisQuery] = userApi.useLazyUserProfileQuery();
 
   const submit = async () => {
     setLoading(true);
@@ -60,6 +58,8 @@ export function BusinessReview(props: any) {
     const businessCreateData = await businessCreateQuery(data);
     if (businessCreateData.isSuccess) {
       const businessData = getData(businessCreateData);
+      const userData = await userApisQuery();
+      saveUser({dispatch, setData, userData});
       setLoading(false);
       setParamsData(businessData);
       stepAction('next');

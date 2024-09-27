@@ -24,27 +24,37 @@ import {
   getStateOptions,
 } from '@src/screens/BusinessRegistration/Utils';
 import {commonApi} from '@src/store/services/common';
-import {getData} from '@src/utils/helpers';
+import {getData, getSelectedBusiness} from '@src/utils/helpers';
+import {updateSchema} from '@src/components/hocs/forms/form';
+import {serviceApi} from '@src/store/services/service';
 
 export function BusinessInformation(props: any) {
   const pictures = useThemeImages();
   const colors = useThemeColors();
 
-  const {schema} = props;
+  const {schema, setSchema} = props;
   const styles = useStyles();
   const {status, toggleTab} = props;
 
   const [stateOptions, setStateOptions] = useState([]);
   const storage = useAppSelector(state => state.common.storage);
-  const {countryList, user} = storage;
-  const options = getCountryOptions(countryList, true);
+  const {countryList} = storage;
 
+  const options = getCountryOptions(countryList, true);
   const [loadStateQuery] = commonApi.useLazyLoadStateQuery();
+
+  const selectedBusiness = getSelectedBusiness(storage, schema.data.company_id);
+
+  const [businessDetailQuery, businessDetailData] =
+    serviceApi.useLazyGetBusinessDetailQuery();
+  // console.log('🚀 ~ BusinessInformation ~ selectedBusiness:', selectedBusiness);
 
   useEffect(() => {
     (async () => {
       if (schema.data.company_country_id) {
-        const loadStateData = await loadStateQuery(schema.data.company_country_id);
+        const loadStateData = await loadStateQuery(
+          schema.data.company_country_id,
+        );
         if (loadStateData.isSuccess) {
           const stateList: any[] = getData(loadStateData);
           const sOptions = getStateOptions(stateList);
@@ -54,6 +64,30 @@ export function BusinessInformation(props: any) {
       }
     })();
   }, [schema.data.company_country_id]);
+
+  useEffect(() => {
+    if (businessDetailData.isSuccess) {
+      const businessData = getData(businessDetailData);
+      setSchema(
+        updateSchema(schema, 'data', '', {
+          company_country_id: businessData.country.id,
+          company_state_id: businessData.state.id,
+          company_city: businessData.detail.city,
+          company_address: businessData.detail.address1,
+          company_address2: businessData.detail.address2,
+          company_zipcode: businessData.detail.zipcode,
+          company_email: businessData.detail.email,
+          company_phone: businessData.detail.phone_num,
+        }),
+      );
+    }
+  }, [businessDetailData]);
+
+  useEffect(() => {
+    if (selectedBusiness) {
+      businessDetailQuery(selectedBusiness.id);
+    }
+  }, []);
 
   return (
     <View>

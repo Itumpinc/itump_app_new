@@ -24,13 +24,15 @@ import {
   getStateOptions,
 } from '@src/screens/BusinessRegistration/Utils';
 import {commonApi} from '@src/store/services/common';
-import {getData} from '@src/utils/helpers';
+import {getData, getSelectedBusiness} from '@src/utils/helpers';
+import { serviceApi } from '@src/store/services/service';
+import { updateSchema } from '@src/components/hocs/forms/form';
 
 export function BusinessInformation(props: any) {
   const pictures = useThemeImages();
   const colors = useThemeColors();
 
-  const {schema} = props;
+  const {schema, setSchema} = props;
   const styles = useStyles();
   const {status, toggleTab} = props;
 
@@ -40,6 +42,10 @@ export function BusinessInformation(props: any) {
   const options = getCountryOptions(countryList, true);
 
   const [loadStateQuery] = commonApi.useLazyLoadStateQuery();
+  const selectedBusiness = getSelectedBusiness(storage, schema.data.company_id);
+
+  const [businessDetailQuery, businessDetailData] =
+    serviceApi.useLazyGetBusinessDetailQuery();
 
   useEffect(() => {
     (async () => {
@@ -54,6 +60,30 @@ export function BusinessInformation(props: any) {
       }
     })();
   }, [schema.data.company_country_id]);
+
+  useEffect(() => {
+    if (businessDetailData.isSuccess) {
+      const businessData = getData(businessDetailData);
+      setSchema(
+        updateSchema(schema, 'data', '', {
+          company_type: businessData.industry_type,
+          company_title: businessData.business_title,
+          company_country_id: businessData.country.id,
+          company_state_id: businessData.state.id,
+          company_city: businessData.detail.city,
+          company_address: businessData.detail.address,
+          company_zipcode: businessData.detail.zipcode,
+
+        }),
+      );
+    }
+  }, [businessDetailData]);
+
+  useEffect(() => {
+    if (selectedBusiness) {
+      businessDetailQuery(selectedBusiness.id);
+    }
+  }, []);
 
   return (
     <View>
@@ -77,17 +107,28 @@ export function BusinessInformation(props: any) {
             />
           </View>
           <Gap height={hp(2)} />
+          <Text style={styles.mainText}>Business Details</Text>
+          <Gap height={hp(1)} />
+          <RenderDropdown
+            name="company_type"
+            value={schema.data.company_type}
+            placeHolder="Select Industry"
+            options={industry}
+          />
+
+          <RenderInput
+            name="company_title"
+            value={schema.data.company_title}
+            placeHolder="Business Name"
+          />
+
+          <Gap height={hp(2)} />
           <Text style={styles.mainText}>Business Address</Text>
           <Gap height={hp(1)} />
           <RenderInput
             name="company_address"
             value={schema.data.company_address}
             placeHolder="Street Address"
-          />
-          <RenderInput
-            name="company_address2"
-            value={schema.data.company_address2}
-            placeHolder="Address Line 2"
           />
           <RenderDropdown
             name="company_country_id"
@@ -115,26 +156,6 @@ export function BusinessInformation(props: any) {
             name="company_zipcode"
             value={schema.data.company_zipcode}
             placeHolder="Zip/Postal Code"
-          />
-
-          <Gap height={hp(2)} />
-          <Text style={styles.mainText}>Business Contacts</Text>
-          <Gap height={hp(1)} />
-
-          <RenderInput
-            name="company_email"
-            type="email"
-            value={schema.data.company_email}
-            placeHolder="Email Address"
-            backgroundColor={colors.inputField}
-            textColor={colors.primaryText}
-          />
-          <RenderPhone
-            name="company_phone"
-            value={schema.data.company_phone}
-            placeHolder="Phone"
-            backgroundColor={colors.inputField}
-            textColor={colors.primaryText}
           />
 
           <Gap height={hp(2)} />

@@ -56,16 +56,21 @@ export function ExistingBusinessAddDetails(props: any) {
       country_id: businessDetails.country.id,
       state_id: businessDetails.state.id,
       business_title: businessDetails.business_title,
+      service_id: businessDetails.service_id,
       detail: {
         business_id: businessDetails.id,
         address1: schema.data.businessAddress1,
         address2: schema.data.businessAddress2,
+        city: schema.data.businessCity,
         zipcode: schema.data.businesszipcode,
         phone_num: schema.data.businessPhone,
         ein: schema.data.ein,
         tax_id: schema.data.taxId,
-        form_owner: businessDetails.detail ? businessDetails.detail.form_owner : 'external',
-        formation_date: schema.data.haveFormedDate === 'yes' ? schema.data.formedDate : '',
+        form_owner: businessDetails.detail
+          ? businessDetails.detail.form_owner
+          : 'external',
+        formation_date:
+          schema.data.haveFormedDate === 'yes' ? schema.data.formedDate : '',
         email: schema.data.businessEmail,
       },
       users: [],
@@ -109,8 +114,6 @@ export function ExistingBusinessAddDetails(props: any) {
       }
     })();
   }, [schema.data.businessCountryId]);
-
-  console.log(schema.data);
 
   return (
     <>

@@ -7,6 +7,8 @@ import axios from 'axios';
 import type {AxiosRequestConfig, AxiosError} from 'axios';
 
 import {__} from '@utils/helpers';
+import {setData} from './services/storage';
+import {useAppDispatch} from './store';
 
 export const getApiEndpoint = (endpoint: string, localeId?: number) => {
   const apiParams: any[] = [];
@@ -53,11 +55,13 @@ const axiosBaseQuery: BaseQueryFn<
 ) => {
   const {i18n, common} = api.getState();
   const token = getToken(common.storage);
-  const endpointUrl = getApiEndpoint('http://localhost:3000' + url, i18n.id);
+  const endpointUrl = getApiEndpoint(process.env.API_URL + url, i18n.id);
+  const dispatch = api.dispatch; // Extract dispatch from api
 
   const headers = {
     Accept: 'application/json',
-    'Content-Type': 'application/json',
+    'Content-Type':
+      data instanceof FormData ? 'multipart/form-data' : 'application/json',
     ...(token && {Authorization: token}),
   };
   // console.log('token', token, headers);
@@ -72,12 +76,41 @@ const axiosBaseQuery: BaseQueryFn<
     return {data: result.data};
   } catch (axiosError) {
     const err = axiosError as AxiosError;
-    return {
-      error: {
-        status: err.response?.status,
-        data: err.response?.data || err.message,
-      },
-    };
+    const status = err.response?.status;
+    if (status === 401) {
+      try {
+        const result = await axios({
+          url: getApiEndpoint(
+            process.env.API_URL + '/v1/auth/refresh-tokens',
+            i18n.id,
+          ),
+          method: 'POST',
+          data: {
+            refresh_token: common.storage.tokens.refresh.token,
+          },
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+        dispatch(setData({key: 'tokens', value: result.data.data}));
+        return axiosBaseQuery({url, method, data, params}, api, extraOptions);
+      } catch (axiosError) {
+        return {
+          error: {
+            status: err.response?.status,
+            data: err.response?.data || err.message,
+          },
+        };
+      }
+    } else {
+      return {
+        error: {
+          status: err.response?.status,
+          data: err.response?.data || err.message,
+        },
+      };
+    }
   }
 };
 

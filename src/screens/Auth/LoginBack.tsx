@@ -52,6 +52,7 @@ const LoginBack = () => {
     userApi.useLazyLoginwithPasswordQuery();
   const [loginwithAuthcodeQuery, loginwithAuthcodeData] =
     userApi.useLazyLoginwithAuthcodeQuery();
+  const [userApisQuery] = userApi.useLazyUserProfileQuery();
 
   const {user} = getData(existUserQuery);
 
@@ -134,7 +135,7 @@ const LoginBack = () => {
     if (loginwithPasswordData.isSuccess) {
       const {user, tokens} = getData(loginwithPasswordData);
       setAfterLogin(true);
-      afterLoginAction({dispatch, setData, data: {user, tokens}});
+      afterLoginAction({dispatch, setData, userApisQuery, data: {user, tokens}});
     }
 
     if (loginwithPasswordData.isError) {
@@ -149,7 +150,7 @@ const LoginBack = () => {
     if (loginwithAuthcodeData.isSuccess) {
       const {user, tokens} = getData(loginwithAuthcodeData);
       setAfterLogin(true);
-      afterLoginAction({dispatch, setData, data: {user, tokens}});
+      afterLoginAction({dispatch, setData, userApisQuery, data: {user, tokens}});
     }
 
     if (loginwithAuthcodeData.isError) {

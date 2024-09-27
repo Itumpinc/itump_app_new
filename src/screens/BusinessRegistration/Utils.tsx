@@ -889,6 +889,7 @@ export const getNewBusinessSchema = (
       address1: Joi.string().required(),
       address2: Joi.string().allow('', null),
       zipcode: Joi.string().required(),
+      city: Joi.string().required(),
       phone_num: Joi.string().allow('', null),
       tax_id: Joi.string().trim().allow('', null),
 

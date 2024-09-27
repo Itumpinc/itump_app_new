@@ -31,6 +31,7 @@ export const Button = (props: any) => {
     iconSource,
     iconRight = false,
     half = false,
+    style={}
   } = props;
   const formContext: any = useContext(FormContext);
   const colors = useThemeColors();
@@ -68,7 +69,7 @@ export const Button = (props: any) => {
       <TouchableOpacity
         onPress={!disabled ? onPressAction : undefined}
         activeOpacity={disabled ? 1 : 0.2}
-        style={[commonStyles, check ? checkTrueStyles : checkFalseStyles]}>
+        style={[commonStyles, check ? checkTrueStyles : checkFalseStyles, style]}>
         {loader ? (
           <>
             <View style={{width: wp(2)}} />

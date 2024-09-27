@@ -74,8 +74,6 @@ export default function AddaBusiness(props: any) {
     ? countryList.find((option: any) => option.id === schema.data.countryId)
     : undefined;
 
-  console.log(schema.data);
-
   return (
     <Container>
       <View

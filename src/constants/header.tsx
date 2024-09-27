@@ -94,7 +94,7 @@ const Header = ({
             {/* <View style={{marginLeft:wp(1)}}/> */}
           </>
         )}
-        <View style={[styles.imageStyle, {alignItems: 'center'}]}>
+        {!secondLastRightImage && <View style={[styles.imageStyle, {alignItems: 'center'}]}>
           <View
             style={{
               flex: 1,
@@ -107,9 +107,20 @@ const Header = ({
               source={rightImage}
               style={[styles.rightImageStyle, {marginRight: 4}]}
             />
-            {rightTitle ? <Text style={{fontWeight: 400, fontSize:hp(1.6), color:colors.secondaryText}}>{rightTitle}</Text> : <Text />}
+            {rightTitle ? (
+              <Text
+                style={{
+                  fontWeight: 400,
+                  fontSize: hp(1.6),
+                  color: colors.secondaryText,
+                }}>
+                {rightTitle}
+              </Text>
+            ) : (
+              <Text />
+            )}
           </View>
-        </View>
+        </View>}
       </View>
       <View
         style={{

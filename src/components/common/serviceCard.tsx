@@ -17,18 +17,34 @@ import {
   makeId,
 } from '@src/utils/helpers';
 import {serviceApi} from '@src/store/services/service';
+import {useNavigation} from '@react-navigation/native';
+import useFocusedEffect from '../hooks/useFocusEffect';
 
 const ServiceCard = (props: any) => {
+  const {setSchema, setParamsData} = props;
+
   const pictures = useThemeImages();
   const colors = useThemeColors();
+  const navigation: any = useNavigation();
 
   const storage = useAppSelector(state => state.common.storage);
   const {user, primaryBusiness} = storage;
 
-  const serviceDetailData = serviceApi.useServiceListQuery({
-    business_id: primaryBusiness.id,
-    user_id: user.id,
-  });
+  const [serviceDetailQuery, serviceDetailData] =
+    serviceApi.useLazyServiceListQuery();
+
+  useFocusedEffect(() => {
+    serviceDetailQuery({
+      business_id: primaryBusiness.id,
+      user_id: user.id,
+    });
+  }, []);
+
+  const gotoService = (service: any) => {
+    setSchema();
+    setParamsData();
+    navigation.navigate(service.tags);
+  };
 
   if (!serviceDetailData.isSuccess) return null;
 
@@ -43,13 +59,17 @@ const ServiceCard = (props: any) => {
           service.tags.indexOf('register_business') > -1
         )
           return null;
+
         return (
-          <View
+          <TouchableOpacity
             key={makeId()}
+            onPress={() => gotoService(service)}
             style={{
               height: hp(55),
               flexDirection: 'row',
               marginRight: wp(3),
+              backgroundColor: service.small_card_image,
+              borderRadius: 10,
             }}>
             <ImageBackground
               key={makeId()}
@@ -65,7 +85,8 @@ const ServiceCard = (props: any) => {
                   service.background_image,
                   storage.initConfig.config.media_host,
                 ),
-              }}>
+              }}
+              resizeMode="contain">
               <View
                 style={{
                   flex: 1,
@@ -126,8 +147,7 @@ const ServiceCard = (props: any) => {
                       {service.short_description}
                     </Text>
                   </View>
-                  <TouchableOpacity
-                    onPress={() => {}}
+                  <View
                     style={{
                       backgroundColor: colors.background,
                       padding: 10,
@@ -141,12 +161,12 @@ const ServiceCard = (props: any) => {
                         height: hp(3),
                       }}
                     />
-                  </TouchableOpacity>
+                  </View>
                 </View>
               </View>
               <Gap height={hp(2)} />
             </ImageBackground>
-          </View>
+          </TouchableOpacity>
         );
       })}
     </>

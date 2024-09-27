@@ -15,6 +15,7 @@ import {StackActions, useNavigation} from '@react-navigation/native';
 import {logoutAction, setData} from '@src/store/services/storage';
 import {commonApi} from '@src/store/services/common';
 import {getData} from '@src/utils/helpers';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 
 const Startup = () => {
   const pictures = useThemeImages();
@@ -27,7 +28,6 @@ const Startup = () => {
   const loadInitData = commonApi.useLoadInitQuery();
   const [refreshTokenQuery] = userApi.useLazyRefreshTokenQuery();
   const [userApisQuery] = userApi.useLazyUserProfileQuery();
-
   const loadCountryData = commonApi.useLoadCountryQuery();
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const Startup = () => {
     }
   }, [loadCountryData]);
 
-  useEffect(() => {
+  useFocusedEffect(() => {
     (async () => {
       if (storage.user && storage.tokens && storage.tokens.refresh) {
         const refreshTokenData = await refreshTokenQuery(

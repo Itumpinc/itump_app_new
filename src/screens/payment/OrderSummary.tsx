@@ -176,10 +176,10 @@ const OrderSummary = () => {
   const navigation: any = useNavigation();
 
   const params = __(route, 'params');
-  const serviceId = params ? params.service_id : 1;
-  const serviceRequestId = params ? params.service_request_id : 18;
-  const serviceAddOns = params ? params.service_add_ons : [13, 18, 21];
-  const businessId = params ? params.business_id : 18;
+  const serviceId = params ? params.service_id : 0;
+  const serviceRequestId = params ? params.service_request_id : 0;
+  const serviceAddOns = params ? params.service_add_ons : [0];
+  const businessId = params ? params.business_id : 0;
 
   console.log('params===>', params);
 
@@ -699,6 +699,7 @@ const OrderSummary = () => {
             order={serviceOrderData.detail.order}
             mainServiceItem={mainServiceItem}
             serviceData={serviceOrderData.request_data}
+            redirectParams={params.redirectParams}
           />
           <Gap height={hp(6)} />
         </View>

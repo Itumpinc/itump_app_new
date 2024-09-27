@@ -22,8 +22,9 @@ import {useThemeImages} from '@src/constants/images';
 import ServiceCard from '@src/components/common/serviceCard';
 import useStyles from '../BusinessRegistration/styles';
 import {serviceApi} from '@src/store/services/service';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 
-const ServicePaymentSuccess = () => {
+const ServicePaymentSuccess = (props: any) => {
   const colors = useThemeColors();
   const styles = useStyles();
   const pictures = useThemeImages();
@@ -32,14 +33,19 @@ const ServicePaymentSuccess = () => {
 
   const params = __(route, 'params');
   const orderDetail = params ? params.orderDetail : undefined;
-  
-  const serviceDetailData = serviceApi.useServiceDetailQuery({
-    business_id: orderDetail.company_id,
-    id_tag: orderDetail.service_id,
-  });
-  const getBusinessDetail = serviceApi.useGetBusinessDetailQuery(
-    orderDetail.company_id,
-  );
+
+  const [serviceDetailQuery, serviceDetailData] =
+    serviceApi.useLazyServiceDetailQuery();
+  const [getBusinessDetailQuery, getBusinessDetail] =
+    serviceApi.useLazyGetBusinessDetailQuery();
+
+  useFocusedEffect(() => {
+    serviceDetailQuery({
+      business_id: orderDetail.company_id,
+      id_tag: orderDetail.service_id,
+    });
+    getBusinessDetailQuery(orderDetail.company_id);
+  }, []);
 
   const serviceData = getData(serviceDetailData);
   const businessData = getData(getBusinessDetail);
@@ -91,9 +97,12 @@ const ServicePaymentSuccess = () => {
                 {serviceData && serviceData.name ? serviceData.name : ''}
               </Text>{' '}
               for your company,{' '}
-              <TouchableWithoutFeedback onPress={() => gotoConcrypt()}><Text style={{color: colors.primary, fontFamily: 'Satoshi-Bold'}}>
-                {businessData ? businessData.business_title : ''}
-              </Text></TouchableWithoutFeedback>{' '}
+              <TouchableWithoutFeedback onPress={() => gotoConcrypt()}>
+                <Text
+                  style={{color: colors.primary, fontFamily: 'Satoshi-Bold'}}>
+                  {businessData ? businessData.business_title : ''}
+                </Text>
+              </TouchableWithoutFeedback>{' '}
               is in progress. We usually get back within 2 days, please look out
               for updates on your mail Your business,
             </Text>
@@ -122,7 +131,7 @@ const ServicePaymentSuccess = () => {
               alignSelf: 'flex-start',
             }}
             showsHorizontalScrollIndicator={true}>
-            <ServiceCard />
+            <ServiceCard {...props} />
           </ScrollView>
           <Gap height={hp(5)} />
         </View>

@@ -50,6 +50,7 @@ const Dropdown = (props: {
     options,
     half,
   } = props;
+  
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const [searchValue, setSearchValue] = useState('');
@@ -146,15 +147,17 @@ const Dropdown = (props: {
               </Text>
             )}
           </View>
-          <Image
-            resizeMode="contain"
-            style={{
-              width: hp(1.5),
-              height: hp(1.5),
-              marginLeft: wp(1),
-            }}
-            source={pictures.dropDown}
-          />
+          {!disable && (
+            <Image
+              resizeMode="contain"
+              style={{
+                width: hp(2),
+                height: hp(2),
+                marginLeft: wp(1),
+              }}
+              source={pictures.arrowDown}
+            />
+          )}
         </TouchableOpacity>
       </View>
       {error && (

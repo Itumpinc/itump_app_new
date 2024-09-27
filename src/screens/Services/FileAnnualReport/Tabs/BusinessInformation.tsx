@@ -10,6 +10,7 @@ import {Text} from 'native-base';
 import {useThemeColors} from '@constants/colors';
 import {Gap} from '@src/constants/gap';
 import {
+  RenderCalendar,
   RenderDropdown,
   RenderInput,
   RenderPhone,
@@ -24,13 +25,16 @@ import {
   getStateOptions,
 } from '@src/screens/BusinessRegistration/Utils';
 import {commonApi} from '@src/store/services/common';
-import {getData} from '@src/utils/helpers';
+import {getData, getSelectedBusiness} from '@src/utils/helpers';
+import {serviceApi} from '@src/store/services/service';
+import {updateSchema} from '@src/components/hocs/forms/form';
+import moment from 'moment';
 
 export function BusinessInformation(props: any) {
   const pictures = useThemeImages();
   const colors = useThemeColors();
 
-  const {schema} = props;
+  const {schema, setSchema} = props;
   const styles = useStyles();
   const {status, toggleTab} = props;
 
@@ -41,10 +45,17 @@ export function BusinessInformation(props: any) {
 
   const [loadStateQuery] = commonApi.useLazyLoadStateQuery();
 
+  const selectedBusiness = getSelectedBusiness(storage, schema.data.company_id);
+
+  const [businessDetailQuery, businessDetailData] =
+    serviceApi.useLazyGetBusinessDetailQuery();
+
   useEffect(() => {
     (async () => {
       if (schema.data.company_country_id) {
-        const loadStateData = await loadStateQuery(schema.data.company_country_id);
+        const loadStateData = await loadStateQuery(
+          schema.data.company_country_id,
+        );
         if (loadStateData.isSuccess) {
           const stateList: any[] = getData(loadStateData);
           const sOptions = getStateOptions(stateList);
@@ -54,6 +65,27 @@ export function BusinessInformation(props: any) {
       }
     })();
   }, [schema.data.company_country_id]);
+
+  useEffect(() => {
+    if (businessDetailData.isSuccess) {
+      const businessData = getData(businessDetailData);
+      setSchema(
+        updateSchema(schema, 'data', '', {
+          company_industry: businessData.industry_type,
+          company_establishment_date: moment(
+            businessData.detail.formation_date,
+            'YYYY-MM-DD',
+          ).format('MM-DD-YYYY'),
+        }),
+      );
+    }
+  }, [businessDetailData]);
+
+  useEffect(() => {
+    if (selectedBusiness) {
+      businessDetailQuery(selectedBusiness.id);
+    }
+  }, []);
 
   return (
     <View>
@@ -77,64 +109,26 @@ export function BusinessInformation(props: any) {
             />
           </View>
           <Gap height={hp(2)} />
-          <Text style={styles.mainText}>Business Address</Text>
+          <Text style={styles.mainText}>Business Details</Text>
           <Gap height={hp(1)} />
           <RenderInput
-            name="company_address"
-            value={schema.data.company_address}
-            placeHolder="Street Address"
+            name="company_registration_number"
+            value={schema.data.company_registration_number}
+            placeHolder="Company Registration Number"
           />
-          <RenderInput
-            name="company_address2"
-            value={schema.data.company_address2}
-            placeHolder="Address Line 2"
-          />
+
           <RenderDropdown
-            name="company_country_id"
-            value={schema.data.company_country_id}
-            placeHolder="Country"
-            options={options}
+            name="company_industry"
+            value={schema.data.company_industry}
+            placeHolder="Select Industry"
+            options={industry}
           />
-
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <RenderDropdown
-              name="company_state_id"
-              value={schema.data.company_state_id}
-              placeHolder="State"
-              options={stateOptions}
-              half
-            />
-            <RenderInput
-              name="company_city"
-              value={schema.data.company_city}
-              placeHolder="City"
-              half
-            />
-          </View>
-          <RenderInput
-            name="company_zipcode"
-            value={schema.data.company_zipcode}
-            placeHolder="Zip/Postal Code"
-          />
-
-          <Gap height={hp(2)} />
-          <Text style={styles.mainText}>Business Contacts</Text>
-          <Gap height={hp(1)} />
-
-          <RenderInput
-            name="company_email"
-            type="email"
-            value={schema.data.company_email}
-            placeHolder="Email Address"
-            backgroundColor={colors.inputField}
-            textColor={colors.primaryText}
-          />
-          <RenderPhone
-            name="company_phone"
-            value={schema.data.company_phone}
-            placeHolder="Phone"
-            backgroundColor={colors.inputField}
-            textColor={colors.primaryText}
+          <RenderCalendar
+            name="company_establishment_date"
+            value={schema.data.company_establishment_date}
+            placeHolder="MM-DD-YYYY"
+            type="text"
+            isCalender
           />
 
           <Gap height={hp(2)} />

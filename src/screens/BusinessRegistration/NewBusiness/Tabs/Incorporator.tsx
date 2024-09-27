@@ -89,7 +89,7 @@ export function Incorporator(props: any) {
           </View>
 
           <Gap height={hp(2)} />
-          <Text style={styles.mainText}>Incorporator Details</Text>
+          <Text style={styles.mainText}>Contact Person Details</Text>
           <Gap height={hp(1)} />
           <RenderInput
             name="incorporator_first_name"

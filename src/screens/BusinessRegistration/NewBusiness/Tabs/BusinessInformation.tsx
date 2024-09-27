@@ -88,6 +88,14 @@ export function BusinessInformation(props: any) {
             placeHolder="Address Line 2 (Optional)"
           />
 
+          <Text style={styles.mainText}>City</Text>
+          <Gap height={hp(1)} />
+          <RenderInput
+            name="city"
+            value={schema.data.city}
+            placeHolder="City"
+          />
+
           <Text style={styles.mainText}>Zip/Postal Code</Text>
           <Gap height={hp(1)} />
           <RenderInput

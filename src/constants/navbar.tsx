@@ -17,6 +17,8 @@ import {useThemeImages} from './images';
 import {Gap} from './gap';
 import {useSafeArea} from 'native-base';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
+import {useAppSelector} from '@src/store/store';
+import ActivateAccountPopup from '@src/screens/Home/ActivateAccountPopup';
 
 const Navbar = () => {
   const pictures = useThemeImages();
@@ -24,19 +26,30 @@ const Navbar = () => {
   const navigation: any = useNavigation();
   const [focus, setFocus] = useState('Home');
 
+  const [modalClose, setModalClose] = useState(false);
+  const storage = useAppSelector(state => state.common.storage);
+  const {user, business} = storage;
+  const allBusiness = business ? [...business.main_business, ...business.other_business] : [];
+
   const handleHome = () => {
     navigation.navigate('Home');
     setFocus('Home');
   };
   const handleSearch = () => {
-    setFocus('Search');
+    if(!(allBusiness.length > 0 && user.is_pro_user === 1)){
+      setModalClose(true);
+    }else{
+      navigation.navigate('InvoiceList');
+      setFocus('Invoice');
+    }
   };
   const handleAccount = () => {
     navigation.navigate('Account');
     setFocus('Account');
   };
   const handleUpdates = () => {
-    setFocus('Updates');
+    navigation.navigate('Wallet');
+    setFocus('Wallet');
   };
 
   return (
@@ -62,7 +75,7 @@ const Navbar = () => {
         style={{alignItems: 'center', justifyContent: 'center'}}>
         <Image
           source={
-            focus == 'Search' ? pictures.searchPrimary : pictures.searchGrey
+            focus == 'Invoice' ? pictures.moneyPurple : pictures.money
           }
           style={{height: hp(3), width: hp(3)}}
         />
@@ -70,9 +83,9 @@ const Navbar = () => {
         <Text
           style={[
             styles.textStyle,
-            {color: focus == 'Search' ? colors.primary : colors.primaryText},
+            {color: focus == 'Invoice' ? colors.primary : colors.primaryText},
           ]}>
-          Search
+          Invoice
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -80,17 +93,17 @@ const Navbar = () => {
         style={{alignItems: 'center', justifyContent: 'center'}}>
         <Image
           source={
-            focus == 'Updates' ? pictures.updatePrimary : pictures.updateGrey
+            focus == 'Wallet' ? pictures.wallet : pictures.walletIcon
           }
-          style={{height: hp(3), width: hp(3)}}
+          style={{height: hp(2.5), width: hp(2.5)}}
         />
-        <Gap height={hp(0.5)} />
+        <Gap height={hp(1)} />
         <Text
           style={[
             styles.textStyle,
-            {color: focus == 'Updates' ? colors.primary : colors.primaryText},
+            {color: focus == 'Wallet' ? colors.primary : colors.primaryText},
           ]}>
-          Updates
+          Wallet
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -111,6 +124,12 @@ const Navbar = () => {
           Account
         </Text>
       </TouchableOpacity>
+      {modalClose && (
+        <ActivateAccountPopup
+          modalClose={modalClose}
+          setModalClose={setModalClose}
+        />
+      )}
     </View>
   );
 };

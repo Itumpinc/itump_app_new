@@ -1,9 +1,14 @@
 import {api} from '@store/api';
 import {__} from '@utils/helpers';
 
-export const documentUploadFormData = (data: any) => {
+const documentUploadFormData = (data: any) => {
   const formData = new FormData();
-  formData.append('media', data.media);
+  formData.append(
+    'media',
+    data.media,
+    // @ts-ignore
+    data.media.name.toLowerCase().replace(/[^a-zA-Z0-9-_ .]/g, ''),
+  );
   formData.append('document_type', data.document_type);
   if (data.business_id) formData.append('business_id', data.business_id);
 
@@ -19,7 +24,7 @@ export const serviceApi = api.injectEndpoints({
   endpoints: builder => ({
     serviceList: builder.query<any, any>({
       query: ({business_id, user_id}: any) => {
-        let url = `/v1/master/service/list?user_id=${user_id}`;
+        let url = `/v1/master/service/list?status=active&limit=50&user_id=${user_id}`;
         if (business_id) {
           url += `&business_id=${business_id}`;
         }
@@ -42,6 +47,15 @@ export const serviceApi = api.injectEndpoints({
         if (business_id) {
           url += `?business_id=${business_id}`;
         }
+        return {
+          url,
+          method: 'GET',
+        };
+      },
+    }),
+    serviceRequestDetail: builder.query<any, any>({
+      query: ({service_id, tag}: {service_id: number; tag: string}) => {
+        let url = `/v1/service/detail/${tag}/${service_id}`;
         return {
           url,
           method: 'GET',
@@ -74,7 +88,7 @@ export const serviceApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
-    uploadDocument: builder.query<any, any>({
+    uploadDocument: builder.mutation<any, any>({
       query: (data: any) => {
         const formData = documentUploadFormData(data);
         return {
@@ -116,6 +130,47 @@ export const serviceApi = api.injectEndpoints({
     serviceCreate: builder.query<any, any>({
       query: ({tag, data}: any) => ({
         url: `/v1/service/create/${tag}`,
+        method: 'POST',
+        data,
+      }),
+    }),
+    serviceUpdate: builder.query<any, any>({
+      query: ({id, tag, data}: any) => ({
+        url: `/v1/service/update/${tag}/${id}`,
+        method: 'POST',
+        data,
+      }),
+    }),
+    createActivation: builder.query<any, any>({
+      query: (data: any) => ({
+        url: `/v1/users/activate-pro`,
+        method: 'POST',
+        data,
+      }),
+    }),
+    verifyActivation: builder.query<any, void>({
+      query: () => ({
+        url: `/v1/users/verify-pro`,
+        method: 'POST',
+        data: {},
+      }),
+    }),
+    connectAccount: builder.query<any, void>({
+      query: () => ({
+        url: `/v1/users/account/create`,
+        method: 'POST',
+      }),
+    }),
+    accountStatusUpdate: builder.query<any, any>({
+      query: (data: any) => ({
+        url: `/v1/users/account/update/status`,
+        method: 'POST',
+        data,
+      }),
+    }),
+    payInvoice: builder.query<any, any>({
+      query: ({invoice_no, data}: any) => ({
+        url: `/v1/users/invoice/pay/${invoice_no}`,
         method: 'POST',
         data,
       }),

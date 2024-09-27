@@ -21,10 +21,12 @@ export default function TopHeader() {
   const storage = useAppSelector(state => state.common.storage);
   const {user} = storage;
 
+  if (!user) return null;
+
   return (
     <View style={styles.topheader}>
       <View style={{flexDirection: 'row', width: wp(80), alignItems: 'center'}}>
-        <AvatarCard name={`${user.first_name} ${user.last_name}`} />
+        <AvatarCard user={user} />
         {/* <Image
           source={pictures.defaultProfile}
           style={{height: hp(5), width: hp(5), marginRight: hp(0.5)}}

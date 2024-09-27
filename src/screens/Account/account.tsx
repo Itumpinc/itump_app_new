@@ -1,4 +1,12 @@
-import {StyleSheet, Text, View, Platform, Image, StatusBar} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Platform,
+  Image,
+  StatusBar,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useEffect} from 'react';
 import {useThemeImages} from '@constants/images';
 import {Spinner} from 'native-base';
@@ -24,6 +32,11 @@ const Account = () => {
   const navigation: any = useNavigation();
   const dispatch = useAppDispatch();
   const storage = useAppSelector(state => state.common.storage);
+  const {user} = storage;
+  const logout = async () => {
+    await dispatch(logoutAction());
+    navigation.dispatch(StackActions.replace('Auth'));
+  };
 
   return (
     <Container backgroundColor="#7256FF">
@@ -40,9 +53,9 @@ const Account = () => {
         }}>
         <AvatarCard />
         <View style={{paddingLeft: 10}}>
-          <Text style={[styles.mainText, {color: '#fff'}]}>Obieze Doe</Text>
+          <Text style={[styles.mainText, {color: '#fff'}]}>{user.first_name} {user.last_name}</Text>
           <Text style={[styles.subText, {color: '#fff'}]}>
-            Fixtops AI{' '}
+            {user.email}{' '}
             <Image
               source={require('@images/star.png')}
               style={{height: 12, width: 11}}
@@ -153,7 +166,7 @@ const Account = () => {
           <Image source={pictures.arrowRight} style={{height: 20, width: 20}} />
         </View>
 
-        <View
+        <TouchableOpacity
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -161,7 +174,8 @@ const Account = () => {
             borderBottomWidth: 1,
             alignItems: 'center',
             paddingVertical: 20,
-          }}>
+          }}
+          onPress={() => logout()}>
           <View
             style={{
               flex: 1,
@@ -176,7 +190,7 @@ const Account = () => {
               <Text style={[styles.mainText, {color: '#F04438'}]}>Logout</Text>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     </Container>
   );

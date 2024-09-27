@@ -24,7 +24,7 @@ const Entity = (props: any) => {
   const colors = useThemeColors();
   const getEntities = userApi.useGetEntitiesQuery(countryId);
   const getEntitiesData = getData(getEntities);
-
+  
   const options = [];
   if (getEntitiesData && getEntitiesData.length > 0) {
     for (let index = 0; index < getEntitiesData.length; index++) {

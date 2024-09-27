@@ -18,13 +18,36 @@ import {useNavigation} from '@react-navigation/native';
 import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
 import {OrderCard} from '@src/components/common/ordercard';
+import {userApi} from '@src/store/services/user';
+import {formatAmount, getData, getfirstlastname} from '@src/utils/helpers';
+import moment from 'moment';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 
 export default function DuePayment() {
   const pictures = useThemeImages();
   const colors = useThemeColors();
+  const navigation: any = useNavigation();
   const storage = useAppSelector(state => state.common.storage);
-  const {user} = storage;
-  
+  const {user, countryList} = storage;
+
+  const [listInvoiceQuery, listInvoiceData] = userApi.useLazyListInvoiceQuery();
+  useFocusedEffect(() => {
+    listInvoiceQuery('?status=raised');
+  }, []);
+
+  if (!listInvoiceData.isSuccess) return null;
+
+  const invoiceList = getData(listInvoiceData);
+  const raisedInvoice = [];
+  for (let index = 0; index < invoiceList.rows.length; index++) {
+    const inv = invoiceList.rows[index];
+    if (inv.invoice.to_user_id === user.id && inv.invoice.status === 'raised') {
+      raisedInvoice.push(inv);
+    }
+  }
+
+  if (raisedInvoice.length === 0) return null;
+
   return (
     <>
       <View
@@ -35,14 +58,49 @@ export default function DuePayment() {
           width: '90%',
           alignSelf: 'center',
         }}>
-        <OrderCard
-          image={pictures.defaultProfile}
-          status={'Pending'}
-          title={'John Doe Co'}
-          date={'Due 22 Dec 2023'}
-          money={'$200.00'}
-        />
-        <Gap height={hp(2)} />
+        {raisedInvoice.map((list: any) => {
+          let avatar = list.invoice.user;
+          if (
+            list.invoice.user_business &&
+            list.invoice.user_business.business_title
+          ) {
+            const {firstName, lastName} = getfirstlastname(
+              list.invoice.user_business.business_title,
+            );
+            avatar = {
+              first_name: firstName,
+              last_name: lastName,
+            };
+          }
+
+          const country = countryList.find(
+            (c: any) => c.currency_code === list.invoice.currency,
+          );
+
+          return (
+            <TouchableOpacity
+              key={list.id}
+              onPress={() =>
+                navigation.navigate('InvoicePayment', {
+                  invoice_num: list.invoice.invoice_num,
+                })
+              }>
+              <OrderCard
+                avatar={avatar}
+                status={list.invoice.status}
+                title={avatar.first_name + ' ' + avatar.last_name}
+                date={`Due ${moment(list.invoice.due_date).format(
+                  'DD MMM YYYY',
+                )}`}
+                money={formatAmount(
+                  list.invoice.total_amount,
+                  country.currency_symbol,
+                )}
+              />
+              <Gap height={hp(2)} />
+            </TouchableOpacity>
+          );
+        })}
         <View
           style={{
             height: hp(0.1),
@@ -60,7 +118,7 @@ export default function DuePayment() {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
-          }}>
+          }} onPress={() => navigation.navigate('InvoiceList')}>
           <Text
             style={[
               styles.text,
@@ -71,7 +129,7 @@ export default function DuePayment() {
                 alignSelf: 'center',
               },
             ]}>
-            See Due Payments
+            See Due Invoice(s)
           </Text>
           <Image
             source={pictures.goToPrimary}

@@ -27,10 +27,7 @@ export function SuccessBusiness(props: any) {
   const pictures = useThemeImages();
   const navigation: any = useNavigation();
 
-  console.log('paramsData', paramsData);
-
   const submit = () => {
-    console.log('schema.data.businessOwner===>', schema.data.businessOwner, paramsData);
     if (schema.data.businessOwner === 'itump') {
       navigation.reset({
         index: 0,

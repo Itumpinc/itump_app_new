@@ -18,9 +18,7 @@ import {Spinner} from 'native-base';
 import {getData} from '@src/utils/helpers';
 
 export const ServiceHOC = (props: any) => {
-  const {paramsData, children, setParamsData} = props;
-
-  const navigation: any = useNavigation();
+  const {paramsData, children, setParamsData, setSchema} = props;
   const route: any = useRoute();
   const storage = useAppSelector(state => state.common.storage);
   const {primaryBusiness} = storage;
@@ -29,7 +27,13 @@ export const ServiceHOC = (props: any) => {
     serviceApi.useLazyServiceDetailQuery();
 
   useEffect(() => {
-    if (!(paramsData && paramsData.serviceData)) {
+    if (
+      (!(paramsData && paramsData.serviceData) ||
+        (paramsData &&
+          paramsData.serviceData &&
+          paramsData.serviceData.tags !== route.name)) &&
+      route.name.indexOf('_') > -1
+    ) {
       serviceDetailQuery({
         business_id: primaryBusiness.id,
         id_tag: route.name,
@@ -40,10 +44,14 @@ export const ServiceHOC = (props: any) => {
   useEffect(() => {
     if (serviceDetailData && serviceDetailData.isSuccess) {
       const data = getData(serviceDetailData);
-      setParamsData({serviceData: data});
-      // setServiceData(data);
+      setParamsData({serviceData: data, routeParams: route.params});
+    } else if (paramsData && paramsData.serviceData && route.name.indexOf('_') > -1) {
+      setParamsData({
+        serviceData: paramsData.serviceData,
+        routeParams: route.params,
+      });
     }
-  }, [serviceDetailData]);
+  }, [serviceDetailData, JSON.stringify(route.params)]);
 
   if (!(paramsData && paramsData.serviceData)) {
     return (

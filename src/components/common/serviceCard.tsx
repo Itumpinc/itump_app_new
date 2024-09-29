@@ -34,8 +34,9 @@ const ServiceCard = (props: any) => {
     serviceApi.useLazyServiceListQuery();
 
   useFocusedEffect(() => {
+    console.log(user.id);
     serviceDetailQuery({
-      business_id: primaryBusiness.id,
+      // business_id: primaryBusiness.id,
       user_id: user.id,
     });
   }, []);

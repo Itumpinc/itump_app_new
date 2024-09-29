@@ -197,8 +197,6 @@ const PlanSheet = (props: any) => {
 
   const {plans} = invoiceCalculateData;
 
-  console.log('🚀 ~ {plans.map ~ plansAvailable:', plansAvailable);
-
   return (
     <>
       <Gap height={hp(3)} />
@@ -384,7 +382,7 @@ const InvoicePayment = () => {
       }
 
       invoiceCalculateQuery({
-        is_sc_inclusive: invoiceData.invoice.scInclusive ? 0 : 1,
+        is_sc_inclusive: invoiceData.invoice.is_sc_inclusive ? 1 : 0,
         items,
       });
     }
@@ -432,6 +430,8 @@ const InvoicePayment = () => {
     (c: any) => c.currency_code === invoice.currency,
   );
   const calculateData = getData(invoiceCalculateData);
+  console.log("🚀 ~ InvoicePayment ~ calculateData:", calculateData)
+
   const plansAvailable = invoice.available_plans
     ? invoice.available_plans.split(',')
     : [];

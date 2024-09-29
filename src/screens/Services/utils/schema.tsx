@@ -203,8 +203,8 @@ export const fincenBoiSchema = (defaultData: any) => {
   const formationSchema = withSchemaData(
     Joi.object({
       service_id: Joi.number().required(),
+      service_request_id: Joi.number().allow('', 0),
       company_id: Joi.number().required(),
-      service_request_id: Joi.number().required(),
       filing_type: Joi.string().trim().required().messages({
         'string.empty': 'Please select type',
         'any.required': 'Please select type',
@@ -213,7 +213,7 @@ export const fincenBoiSchema = (defaultData: any) => {
       request_to_receive_fincen: Joi.boolean().allow(''), // new
       foriegn_pool_vehicle: Joi.boolean().allow(''), // new
       business_title: Joi.string().trim().required(), // new
-      alternate_company_name: Joi.string().trim().required(), // new
+      alternate_company_name: Joi.string().trim().allow(''), // new
       formation_date: Joi.string().trim().required(), // new
       jurisdiction_country_id: Joi.number().required().messages({
         'number.base': 'Please select type',
@@ -261,11 +261,7 @@ export const fincenBoiSchema = (defaultData: any) => {
         'string.empty': 'Please enter number',
         'any.required': 'Please enter number',
       }),
-      foreign_tax_country_id: Joi.string().required().messages({
-        // New
-        'string.empty': 'Please enter name',
-        'any.required': 'Please enter name',
-      }),
+      foreign_tax_country_id: Joi.string().trim().allow('', null),
 
       applicant_first_name: Joi.string().required().messages({
         'string.empty': 'Please enter name',
@@ -275,20 +271,8 @@ export const fincenBoiSchema = (defaultData: any) => {
         'string.empty': 'Please enter last name',
         'any.required': 'Please enter last name',
       }),
-      applicant_email: Joi.string() // remove
-        .email({tlds: {allow: false}})
-        .trim()
-        .required()
-        .messages({
-          'string.empty': 'Please enter email',
-          'any.required': 'Please enter email',
-        }),
+
       applicant_fincen_id: Joi.string().allow('', null),
-      applicant_phone: Joi.string().required().messages({
-        // remove
-        'string.empty': 'Please enter phone',
-        'any.required': 'Please enter phone',
-      }),
       applicant_country_id: Joi.number().required().messages({
         'number.base': 'Please select country',
         'string.empty': 'Please select country',
@@ -353,20 +337,22 @@ export const fincenBoiSchema = (defaultData: any) => {
       applicant_id_jurisdiction_country_id_1: Joi.number().allow('', null), // new
       applicant_id_document_1: Joi.object().allow('', null), // not need to add in db will upload in document // new
 
-      beneficial_first_name: Joi.string().allow('', null), // new
-      beneficial_last_name: Joi.string().allow('', null), // new
-      beneficial_country_id: Joi.number().allow('', null), // new
-      beneficial_state_id: Joi.number().allow('', null), // new
-      beneficial_city: Joi.string().allow('', null), // new
-      beneficial_address: Joi.string().allow('', null), // new
-      beneficial_dob: Joi.date().max(minBirthDate).allow('', null), // new
-      beneficial_address2: Joi.string().allow('', null), // New // new
-      beneficial_zipcode: Joi.string().allow('', null), // new
-      beneficial_id_type: Joi.string().allow('', null), // new
-      beneficial_id_number: Joi.string().allow('', null), // new
-      beneficial_id_jurisdiction_state_id: Joi.number().allow('', null), // new
-      beneficial_id_jurisdiction_country_id: Joi.number().allow('', null), // new
-      beneficial_id_document: Joi.object().allow('', null), // not need to add in db will upload in document // new
+      beneficiary_exempt: Joi.boolean().allow(''), // new
+      beneficiary_fincen_id: Joi.string().allow('', null), // new
+      beneficiary_first_name: Joi.string().allow('', null), // new
+      beneficiary_last_name: Joi.string().allow('', null), // new
+      beneficiary_country_id: Joi.number().allow('', null), // new
+      beneficiary_state_id: Joi.number().allow('', null), // new
+      beneficiary_city: Joi.string().allow('', null), // new
+      beneficiary_address: Joi.string().allow('', null), // new
+      beneficiary_dob: Joi.date().max(minBirthDate).allow('', null), // new
+      beneficiary_address2: Joi.string().allow('', null), // New // new
+      beneficiary_zipcode: Joi.string().allow('', null), // new
+      beneficiary_id_type: Joi.string().allow('', null), // new
+      beneficiary_id_number: Joi.string().allow('', null), // new
+      beneficiary_id_jurisdiction_state_id: Joi.number().allow('', null), // new
+      beneficiary_id_jurisdiction_country_id: Joi.number().allow('', null), // new
+      beneficiary_id_document: Joi.object().allow('', null), // not need to add in db will upload in document // new
 
       created_at: Joi.string().allow('', null),
     }),

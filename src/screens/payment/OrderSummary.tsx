@@ -30,6 +30,14 @@ const SelectPlanBlock = (props: any) => {
   const styles = useStyles();
   const {computationData, selectedplan, setSelectedplan, plans} = props;
 
+  let firstDepositAmount = 0;
+  for (let index = 0; index < computationData.computation.length; index++) {
+    const cD = computationData.computation[index];
+    if (cD.code === 'first_deposit_amount' && cD.amount > 0) {
+      firstDepositAmount = cD.amount;
+      break;
+    }
+  }
   return (
     <>
       <Gap height={hp(2)} />
@@ -164,6 +172,40 @@ const SelectPlanBlock = (props: any) => {
           </Text>
         </View>
       )}
+
+      <Line />
+      <Gap height={hp(2)} />
+      {firstDepositAmount > 0 && selectedplan && (
+        <>
+          {computationData.computation.map((com: any) => {
+            if (com.code !== 'net_payble') return null;
+
+            return (
+              <View
+                key={makeId()}
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                }}>
+                <Text style={styles.mainText}>Payable Now</Text>
+                <Text style={styles.mainText}>
+                  {formatAmount(
+                    selectedplan.emi + firstDepositAmount,
+                    computationData.country.currency_symbol,
+                  )}
+                </Text>
+              </View>
+            );
+          })}
+          {/* <Text style={{color: colors.secondaryText, opacity:0.6}}>
+            Next month onwords you need to pay{' '}
+            {formatAmount(
+              selectedplan.emi,
+              computationData.country.currency_symbol,
+            )}
+          </Text> */}
+        </>
+      )}
     </>
   );
 };
@@ -181,8 +223,6 @@ const OrderSummary = () => {
   const serviceAddOns = params ? params.service_add_ons : [0];
   const businessId = params ? params.business_id : 0;
 
-  console.log('params===>', params);
-
   const [createServiceOrderQuery, createServiceOrderData] =
     serviceApi.useLazyCreateServiceOrderQuery();
 
@@ -195,8 +235,6 @@ const OrderSummary = () => {
     id_tag: serviceId,
   });
   const serviceDetail = getData(serviceDetailData);
-
-  console.log('serviceDetail====>', serviceDetailData.isSuccess);
 
   const [
     createServiceOrderComputationQuery,
@@ -276,195 +314,6 @@ const OrderSummary = () => {
 
   const computationData = getData(createServiceOrderComputationData);
   const serviceOrderData = getData(createServiceOrderData);
-  // const serviceOrderData = {
-  //   detail: {
-  //     order: {
-  //       id: 68,
-  //       order_num: 'IT-000067',
-  //       user_id: 41,
-  //       sub_total: '339.00',
-  //       currency: 'usd',
-  //       tax: '45.80',
-  //       net_payble: '384.80',
-  //       payment_status: 'initiated',
-  //       payment_method: '',
-  //       is_recurring: 0,
-  //       recurring_months: 0,
-  //       status: 'initiated',
-  //       created_at: '2024-09-05T22:31:14.000Z',
-  //       user: {
-  //         id: 41,
-  //         email: 'rishabh.trivedi08+5@gmail.com',
-  //         is_first_pass_gen: 1,
-  //         first_name: 'Rishabh',
-  //         last_name: 'Trivedi',
-  //         user_type: 'partner',
-  //         phone: '',
-  //         address: '',
-  //         address2: '',
-  //         zipcode: '',
-  //         country_id: 226,
-  //         stripe_id: 'cus_QcRCh8tz8S8Ik1',
-  //         stripe_account_id: '',
-  //         stripe_account_status: 'pending',
-  //         is_mobile_verified: 0,
-  //         is_pro_user: 0,
-  //         pro_order_intent: '',
-  //         state_id: 0,
-  //         city: '',
-  //         status: 'active',
-  //         created_by: 0,
-  //         updated_by: 0,
-  //         partner_id: 10,
-  //         created_at: '2024-08-07T16:02:42.000Z',
-  //         updated_at: '2024-08-12T11:43:34.000Z',
-  //       },
-  //     },
-  //     items: [
-  //       {
-  //         id: 119,
-  //         service_id: 1,
-  //         service_addon_id: 0,
-  //         service_request_id: 3,
-  //         is_addon: 0,
-  //         price: '100.00',
-  //         first_deposit_amount: 120,
-  //         qty: 1,
-  //         tax: '22.00',
-  //         row_total: '242.00',
-  //         status: 'initiated',
-  //         service: {
-  //           id: 1,
-  //           name: 'Form New Business',
-  //           parent_service_id: 0,
-  //           short_description:
-  //             'Use this form to initiate the legal process of forming various business entities ...',
-  //           slug: 'form-new-business',
-  //           tags: 'register_business',
-  //         },
-  //       },
-  //       {
-  //         id: 120,
-  //         service_id: 1,
-  //         service_addon_id: 9,
-  //         service_request_id: 0,
-  //         is_addon: 1,
-  //         price: '10.00',
-  //         first_deposit_amount: 0,
-  //         qty: 1,
-  //         tax: '2.00',
-  //         row_total: '32.00',
-  //         status: 'initiated',
-  //         service: {
-  //           id: 1,
-  //           name: 'Form New Business',
-  //           parent_service_id: 0,
-  //           short_description:
-  //             'Use this form to initiate the legal process of forming various business entities ...',
-  //           slug: 'form-new-business',
-  //           tags: 'register_business',
-  //         },
-  //         service_addon: {
-  //           id: 9,
-  //           parent_service_id: 1,
-  //           name: 'Fast! Give me the rush filing.',
-  //           slug: 'fast!-give-me-the-rush-filing.',
-  //           short_description: '',
-  //           description:
-  //             'Want it FAST? No problem!\nYou will receive electronic copies of your documents in .',
-  //         },
-  //       },
-  //       {
-  //         id: 121,
-  //         service_id: 1,
-  //         service_addon_id: 11,
-  //         service_request_id: 0,
-  //         is_addon: 1,
-  //         price: '10.00',
-  //         first_deposit_amount: 0,
-  //         qty: 1,
-  //         tax: '2.00',
-  //         row_total: '32.00',
-  //         status: 'initiated',
-  //         service: {
-  //           id: 1,
-  //           name: 'Form New Business',
-  //           parent_service_id: 0,
-  //           short_description:
-  //             'Use this form to initiate the legal process of forming various business entities ...',
-  //           slug: 'form-new-business',
-  //           tags: 'register_business',
-  //         },
-  //         service_addon: {
-  //           id: 11,
-  //           parent_service_id: 1,
-  //           name: 'Select iTump to process your S-Corp form.',
-  //           slug: 'select-buzfolio-to-process-your-s-corp-form.',
-  //           short_description: '',
-  //           description:
-  //             'To successfully elect to be taxed as an S-Corporation, you must submit IRS Form 2553 Election signed by all shareholders. Buzfolio can help process this filing for you.',
-  //         },
-  //       },
-  //       {
-  //         id: 122,
-  //         service_id: 1,
-  //         service_addon_id: 19,
-  //         service_request_id: 0,
-  //         is_addon: 1,
-  //         price: '99.00',
-  //         first_deposit_amount: 0,
-  //         qty: 1,
-  //         tax: '19.80',
-  //         row_total: '121.00',
-  //         status: 'initiated',
-  //         service: {
-  //           id: 1,
-  //           name: 'Form New Business',
-  //           parent_service_id: 0,
-  //           short_description:
-  //             'Use this form to initiate the legal process of forming various business entities ...',
-  //           slug: 'form-new-business',
-  //           tags: 'register_business',
-  //         },
-  //         service_addon: {
-  //           id: 19,
-  //           parent_service_id: 1,
-  //           name: 'Add Personalized Corporate Kit and Seal',
-  //           slug: 'add-personalized-corporate-kit-and-seal',
-  //           short_description: '',
-  //           description:
-  //             'This kit includes:\nStock certificates\nCompany Binder enclosed in a matching clip-case and is custom embossed with your corporate name in gold on the spine\nPersonalized Corporate seal\nSample business forms',
-  //         },
-  //       },
-  //     ],
-  //   },
-  //   request_data: {
-  //     id: 3,
-  //     user_id: 41,
-  //     service_id: 1,
-  //     company_type: 'C_CORP',
-  //     company_title: 'Oval lorel',
-  //     address: '23 Cleremont Ave ',
-  //     city: 'Irvington',
-  //     state: 'Alabama',
-  //     country: 'United States',
-  //     zipcode: '07111',
-  //     company_about: 'Many things',
-  //     company_designation: 'Inc',
-  //     company_industry: 'ConstructionGeneralContracting',
-  //     primary_contact_firstname: 'Jesse',
-  //     primary_contact_lastname: 'Daniels ',
-  //     primary_contact_phone: '+19292895799',
-  //     ssn: '12345568',
-  //     stock: '1500',
-  //     stock_value: '1',
-  //     account_method: 'CASH_BASIS',
-  //     nonprofit_tax_exempt_type: '',
-  //     status: 'active',
-  //     created_at: '2024-05-15T19:42:49.000Z',
-  //     updated_at: '2024-05-15T19:42:49.000Z',
-  //   },
-  // };
 
   let plans = [];
   if (computationData.computation) {
@@ -483,10 +332,12 @@ const OrderSummary = () => {
     (item: any) => item.is_addon !== 0,
   );
 
-  console.log('============= computationData ===>');
-  console.log(computationData);
-  console.log('============= serviceOrderData ===>');
-  console.log(serviceOrderData);
+  // console.log('============= computationData ===>');
+  // console.log(computationData);
+  // console.log('============= serviceOrderData ===>');
+  // console.log(serviceOrderData);
+
+  const isRecurringEnabled = serviceOrderData.service.is_recurring_charge_allowed && plans.length>0;
 
   return (
     <Container>
@@ -531,7 +382,8 @@ const OrderSummary = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={() => toggleSwitch()}
+                  onPress={() => (isRecurringEnabled ? toggleSwitch() : {})}
+                  activeOpacity={isRecurringEnabled ? 0.2 : 0.6}
                   style={[
                     {
                       width: wp(43),
@@ -542,6 +394,7 @@ const OrderSummary = () => {
                         : colors.lightPrimary,
                       borderRadius: 10,
                     },
+                    isRecurringEnabled ? {} : {opacity: 0.6},
                   ]}>
                   <Image
                     source={pictures.logo}
@@ -549,11 +402,13 @@ const OrderSummary = () => {
                   />
                   <Gap height={hp(1)} />
                   <Text
-                    style={{
-                      color: !selectedRecurring
-                        ? colors.secondaryText
-                        : colors.primary,
-                    }}>
+                    style={[
+                      {
+                        color: !selectedRecurring
+                          ? colors.secondaryText
+                          : colors.primary,
+                      },
+                    ]}>
                     Pay with Itump Lo-fi
                   </Text>
                 </TouchableOpacity>

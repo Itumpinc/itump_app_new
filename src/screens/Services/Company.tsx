@@ -48,6 +48,7 @@ const Company = (props: any) => {
         textColor="white"
         iconSource={pictures.arrowRightWhite}
         iconRight={true}
+        disabled={!schema.data.company_id}
         onPress={() => {
           stepAction('next');
         }}

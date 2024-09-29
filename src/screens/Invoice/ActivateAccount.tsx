@@ -62,8 +62,6 @@ const ActivateAccount = () => {
   );
   if (data) amount = data.amount;
 
-  console.log(amount);
-
   const [schema, setSchema] = useState(
     withSchemaData(
       Joi.object({

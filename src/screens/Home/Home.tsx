@@ -1,4 +1,4 @@
-import {Platform, StyleSheet, TouchableOpacity} from 'react-native';
+import {Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
 
 import React from 'react';
 import {
@@ -6,7 +6,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Container from '@components/common/container';
-import {Text} from 'native-base';
+import {Spinner, Text} from 'native-base';
 import {Gap} from '@constants/gap';
 import {logoutAction, setData} from '@src/store/services/storage';
 import {useDispatch} from 'react-redux';
@@ -29,29 +29,51 @@ import Invoices from './Invoices';
 import {userApi} from '@src/store/services/user';
 import {getData, getSettings} from '@src/utils/helpers';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
-import { saveUser } from '@src/navigators/Utils';
+import {saveUser} from '@src/navigators/Utils';
 
 export default function Home() {
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const navigation: any = useNavigation();
   const [userApisQuery, userApisData] = userApi.useLazyUserProfileQuery();
+  const [getDashboardQuery, getDashboardData] =
+    userApi.useLazyGetDashboardQuery();
+
   useFocusedEffect(() => {
-    (async ()=>{
+    (async () => {
+      await getDashboardQuery();
       const userData = await userApisQuery();
       saveUser({dispatch, setData, userData});
-    })()
+    })();
   }, []);
 
   const userProfile = getData(userApisData);
-  if (!(userProfile && userProfile.user)) return null;
+
+  if (!(userProfile && userProfile.user))
+    return (
+      <Container>
+        <Gap height={Platform.OS === 'android' ? hp(8) : 1} />
+        <TopHeader />
+        <Gap height={hp(2)} />
+        <View
+          style={{
+            height: hp(70),
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Spinner />
+        </View>
+      </Container>
+    );
   const {
     user,
     business: {main_business: mainBusiness, other_business: otherBusiness},
   } = userProfile;
 
   const allBusiness = [...mainBusiness, ...otherBusiness];
-  
+
+  const dashboardData = getData(getDashboardData);
+
   return (
     <Container>
       <Gap height={Platform.OS === 'android' ? hp(8) : 1} />
@@ -74,7 +96,8 @@ export default function Home() {
       {allBusiness.length !== 0 && <NewBusinessFormation />}
 
       <DuePayment />
-
+      <RecentOrders />
+      
       <Text
         style={[
           styles.text,
@@ -93,7 +116,6 @@ export default function Home() {
       <Invoices />
 
       {/* Dashboard 1 Component */}
-      <RecentOrders />
     </Container>
   );
 }

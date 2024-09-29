@@ -12,10 +12,11 @@ import {useThemeImages} from '@src/constants/images';
 import * as Tabs from '@src/screens/Services/FincenBoi/Tabs/index';
 import Button from '@src/constants/button';
 import {useRoute} from '@react-navigation/native';
+import {updateSchema, validateForm} from '@src/components/hocs/forms/form';
 
 const Form = (props: any) => {
   const route: any = useRoute();
-  const {serviceData, stepAction, schema} = props;
+  const {serviceData, setSchema, stepAction, schema} = props;
   const [tabs, setTabs] = useState([
     {
       component: 'FilingInformation',
@@ -62,7 +63,14 @@ const Form = (props: any) => {
     }
   }, [route.params]);
 
-  // console.log(schema.data, schema.valid, schema.errors);
+  const gotoNext = () => {
+    if (schema.valid) {
+      stepAction('next');
+    } else {
+      const errors = validateForm(schema);
+      setSchema(updateSchema(schema, 'errors', '', errors));
+    }
+  };
 
   return (
     <View style={{width: wp(90)}}>
@@ -86,8 +94,8 @@ const Form = (props: any) => {
       <Button
         text="Continue"
         textColor="white"
-        onPress={() => stepAction('next')}
-        disabled={!schema.valid}
+        onPress={() => gotoNext()}
+        // disabled={!schema.valid}
       />
       <Gap height={hp(7)} />
     </View>

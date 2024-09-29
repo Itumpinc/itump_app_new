@@ -36,4 +36,8 @@ export {default as InvoiceDetails} from './Invoice/InvoicePay/InvoiceDetails';
 
 export {default as Downloads} from './Downloads/Downloads';
 export {default as Concrypt} from './Concrypt/Concrypt';
-export {default as InvoiceList} from './FinanceList/InvoiceList';
+export {default as InvoiceList} from './Wallet/InvoiceList';
+export {default as Wallet} from './Wallet/Wallet';
+export {default as OrderList} from './Wallet/OrderList';
+export {default as OrderDetails} from './Wallet/OrderDetails';
+export {default as TransactionList} from './Wallet/TransactionList';

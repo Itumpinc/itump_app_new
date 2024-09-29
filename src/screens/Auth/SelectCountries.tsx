@@ -60,8 +60,8 @@ const SelectCountry = () => {
   );
 
   const doSubmit = () => {
-    console.log('schema.data.phone', schema.data);
-    console.log('submit');
+    // console.log('schema.data.phone', schema.data);
+    // console.log('submit');
   };
 
   return (

@@ -16,7 +16,7 @@ export const AlreadyDonePopup = (props: any) => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const styles = useStyles();
-  const {setAlreadyDone, schema, stepAction} = props;
+  const {setAlreadyDone, schema, stepAction, noJump} = props;
 
   return (
     <Popup closeIcon close={() => setAlreadyDone(false)} height={60}>
@@ -52,7 +52,7 @@ export const AlreadyDonePopup = (props: any) => {
           iconRight={true}
           onPress={() => {
             setAlreadyDone(false);
-            stepAction('next', 2);
+            stepAction('next', noJump ? 1 : 2);
           }}
         />
       </View>

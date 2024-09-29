@@ -18,12 +18,29 @@ import {useNavigation} from '@react-navigation/native';
 import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
 import {OrderCard} from '@src/components/common/ordercard';
+import {orderApi} from '@src/store/services/order';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
+import {formatAmount, getData, getfirstlastname} from '@src/utils/helpers';
+import moment from 'moment';
+import {Line} from '@src/constants/Line';
 
 export default function RecentOrders() {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const storage = useAppSelector(state => state.common.storage);
-  const {user} = storage;
+  const {user, countryList, business} = storage;
+  const navigation: any = useNavigation();
+
+  const [loadUsersOrderQuery, loadUsersOrderData] =
+    orderApi.useLazyLoadUsersOrderQuery();
+
+  useFocusedEffect(() => {
+    loadUsersOrderQuery(`?page=1&limit=5`);
+  }, []);
+
+  if (!loadUsersOrderData.isSuccess) return null;
+
+  const data = getData(loadUsersOrderData);
 
   return (
     <>
@@ -49,46 +66,54 @@ export default function RecentOrders() {
             ]}>
             Recent Orders
           </Text>
-          <TouchableOpacity>
-            <Image
-              source={pictures.close}
-              style={{height: hp(2), width: hp(2)}}
-            />
-          </TouchableOpacity>
         </View>
         <Gap height={hp(2)} />
-        <OrderCard
-          image={pictures.buildings}
-          status={'Done'}
-          title={'Register New Business'}
-          date={'22 Jul 2023, 11:00 PM'}
-        />
-        <Gap height={hp(2)} />
-        <View
-          style={{
-            height: hp(0.1),
-            width: '92%',
-            alignSelf: 'center',
-            backgroundColor: colors.verticalLine,
-          }}
-        />
-        <Gap height={hp(2)} />
+        {data.rows.map((list: any, index: number) => {
+          let {firstName, lastName} = getfirstlastname(
+            list.service_detail.service.name,
+          );
 
-        <OrderCard
-          image={pictures.moneys}
-          status={'In Progress'}
-          title={'Get Business Loans'}
-          date={'22 Jul 2023, 11:00 PM'}
-        />
-        <Gap height={hp(2)} />
-        <View
-          style={{
-            height: hp(0.1),
-            width: '92%',
-            alignSelf: 'center',
-            backgroundColor: colors.verticalLine,
-          }}
-        />
+          const avatar = {
+            first_name: firstName,
+            last_name: lastName,
+          };
+
+          const country = countryList.find(
+            (c: any) => c.currency_code === list.order.currency,
+          );
+
+          return (
+            <TouchableOpacity
+              key={list.order.id}
+              onPress={() => {
+                navigation.navigate('OrderDetails', {
+                  order_num: list.order.order_num,
+                });
+              }}>
+              <OrderCard
+                avatar={avatar}
+                status={list.items[0].status}
+                isRecurring={
+                  list.order.is_recurring &&
+                  list.order.payment_status === 'partial_paid'
+                }
+                title={list.service_detail.service.name}
+                date={`Created on ${moment(list.order.created_at).format(
+                  'DD MMM YYYY',
+                )}`}
+                money={formatAmount(
+                  list.order.net_payble,
+                  country.currency_symbol,
+                )}
+                style={{paddingLeft: wp(6)}}
+                small
+              />
+              <Gap height={hp(2)} />
+              <Line />
+              <Gap height={hp(2)} />
+            </TouchableOpacity>
+          );
+        })}
         <Gap height={hp(1.5)} />
         <TouchableOpacity
           style={{
@@ -96,7 +121,7 @@ export default function RecentOrders() {
             paddingLeft: wp(4),
             flexDirection: 'row',
             alignItems: 'center',
-          }}>
+          }} onPress={()=>navigation.navigate('OrderList')}>
           <Text
             style={[
               styles.text,

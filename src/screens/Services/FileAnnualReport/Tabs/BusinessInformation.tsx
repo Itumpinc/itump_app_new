@@ -85,7 +85,7 @@ export function BusinessInformation(props: any) {
     if (selectedBusiness) {
       businessDetailQuery(selectedBusiness.id);
     }
-  }, []);
+  }, [selectedBusiness]);
 
   return (
     <View>

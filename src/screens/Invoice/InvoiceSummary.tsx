@@ -380,7 +380,6 @@ const InvoiceSummary = () => {
         },
       ],
     };
-    console.log('🚀 ~ sendInvoice ~ data:', data);
 
     const createInvoiceData = await createInvoiceQuery(data);
     if (createInvoiceData.isSuccess) {

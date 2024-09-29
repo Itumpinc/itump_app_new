@@ -131,6 +131,18 @@ export const userApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    getDashboard: builder.query<any, void>({
+      query: () => ({
+        url: `/v1/users/dashboard`,
+        method: 'GET',
+      }),
+    }),
+    getTransactions: builder.query<any, string>({
+      query: (query: string) => ({
+        url: `/v1/users/account-transactions${query}`,
+        method: 'GET',
+      }),
+    }),
   }),
   overrideExisting: false,
 });

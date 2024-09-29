@@ -8,11 +8,12 @@ import {
 import {Gap} from '@src/constants/gap';
 import * as Tabs from '@src/screens/Services/FileAnnualReport/Tabs/index';
 import Button from '@src/constants/button';
-import { useRoute } from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
+import {updateSchema, validateForm} from '@src/components/hocs/forms/form';
 
 const Form = (props: any) => {
-  const route:any = useRoute();
-  const {serviceData, stepAction, schema} = props;
+  const route: any = useRoute();
+  const {serviceData, stepAction, setSchema, schema} = props;
   const [tabs, setTabs] = useState([
     {
       component: 'Contact',
@@ -50,6 +51,15 @@ const Form = (props: any) => {
     }
   }, [route.params]);
 
+  const gotoNext = () => {
+    if (schema.valid) {
+      stepAction('next');
+    } else {
+      const errors = validateForm(schema);
+      setSchema(updateSchema(schema, 'errors', '', errors));
+    }
+  };
+
   // console.log(schema.valid, schema.errors);
 
   return (
@@ -74,7 +84,7 @@ const Form = (props: any) => {
       <Button
         text="Continue"
         textColor="white"
-        onPress={()=>stepAction('next')}
+        onPress={() => gotoNext()}
         disabled={!schema.valid}
       />
       <Gap height={hp(7)} />

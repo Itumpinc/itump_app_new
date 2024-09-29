@@ -105,17 +105,14 @@ const DotRBSheet = (props: any) => {
       if (res.statusCode === 200) {
         setOpenDotRB(false);
         alert(`Download Successful!!`);
-        console.log('File downloaded successfully: ', res);
       } else {
         setOpenDotRB(false);
         alert('Download Failed, Failed to download file.');
-        console.log('Download failed with status code: ', res.statusCode);
       }
     })
     .catch(err => {
       setOpenDotRB(false);
       alert('Download Failed, An error occurred while downloading the file.');
-      console.log('Download error: ', err);
     });
   };
 
@@ -559,15 +556,12 @@ const Downloads = () => {
     setShowSort(true);
   };
 
-  console.log('🚀 ~ Downloads ~ documentList:', docList);
-
   return (
     <Container source={pictures.welcome}>
       <View style={{width: wp(90), alignSelf: 'center'}}>
         <Header
           title="Download"
           source={pictures.arrowLeft}
-          onPress={headerPress}
           secondLastRightImage
           secondLastRightImageSource={pictures.arrowSwap}
           secondLastRightPress={rightPress}

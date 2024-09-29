@@ -289,6 +289,7 @@ const MakePayment = (props: any) => {
       return false;
     }
     setLoading(true);
+
     if (paymentParams.paymentType === 'order') {
       createOrderIntent();
     } else if (paymentParams.paymentType === 'activation') {

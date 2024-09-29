@@ -25,14 +25,18 @@ import {
   InvoiceDetails,
   Downloads,
   Concrypt,
-  InvoiceList
+  InvoiceList,
+  Wallet,
+  OrderList,
+  OrderDetails,
+  TransactionList,
 } from '@src/screens';
 import * as AddaBusinessScreens from '@src/screens/BusinessRegistration/setup/index';
 import * as ExistingBusinessScreens from '@src/screens/BusinessRegistration/ExistingBusiness/index';
 import * as NewBusinessInformation from '@src/screens/BusinessRegistration/NewBusiness/index';
 import * as ServiceModule from '@src/screens/Services/index';
 import {useThemeColors} from '@src/constants/colors';
-import { useAppSelector } from '@src/store/store';
+import {useAppSelector} from '@src/store/store';
 
 const Stack = createNativeStackNavigator();
 const MainNavigator = () => {
@@ -49,6 +53,7 @@ const MainNavigator = () => {
         style={{
           backgroundColor: colors.background,
           borderLeftColor: colors.success,
+          zIndex: 15,
         }}
         text1Style={{
           color: colors.success,
@@ -65,7 +70,11 @@ const MainNavigator = () => {
     error: (props: any) => (
       <ErrorToast
         {...props}
-        style={{backgroundColor: colors.background, borderLeftColor: '#EB5757'}}
+        style={{
+          backgroundColor: colors.background,
+          borderLeftColor: '#EB5757',
+          zIndex: 15,
+        }}
         text1Style={{
           color: '#EB5757',
           fontSize: 16,
@@ -87,7 +96,7 @@ const MainNavigator = () => {
   return (
     <>
       <Stack.Navigator
-        initialRouteName="Health"
+        initialRouteName="TransactionList"
         screenOptions={{headerShown: false, animation: 'none'}}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Modules" component={Modules} />
@@ -211,6 +220,10 @@ const MainNavigator = () => {
           )}
         />
         <Stack.Screen name="InvoiceList" component={InvoiceList} />
+        <Stack.Screen name="Wallet" component={Wallet} />
+        <Stack.Screen name="OrderList" component={OrderList} />
+        <Stack.Screen name="OrderDetails" component={OrderDetails} />
+        <Stack.Screen name="TransactionList" component={TransactionList} />
       </Stack.Navigator>
       <Navbar />
       <Toast config={toastConfig} />

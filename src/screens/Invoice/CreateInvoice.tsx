@@ -618,7 +618,6 @@ const CreateInvoice = () => {
 
   const {main_business: mainBusiness, other_business: otherBusiness} = business;
   const businesses = [...mainBusiness, ...otherBusiness];
-  console.log('businesses==>', businesses);
   const options = [];
   for (let index = 0; index < businesses.length; index++) {
     const bb = businesses[index];

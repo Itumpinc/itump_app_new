@@ -191,6 +191,9 @@ const Review = (props: any) => {
   const [stateList, setStateList] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const detailView =
+    paramsData && paramsData.routeParams && paramsData.routeParams.detailView;
+
   const needpayment =
     paramsData &&
     paramsData.routeParams &&
@@ -312,6 +315,8 @@ const Review = (props: any) => {
       }
     } catch (err) {
       console.log(err);
+      setLoading(false);
+      alert('Something Went wrong! Please try after some time');
     }
   };
 
@@ -339,7 +344,7 @@ const Review = (props: any) => {
             <ReviewCard
               title="Contact"
               open
-              editAction={() => editAction('Contact')}
+              editAction={detailView ? undefined : () => editAction('Contact')}
               data={[
                 {
                   heading: 'Full Name',
@@ -373,7 +378,9 @@ const Review = (props: any) => {
             <ReviewCard
               title="Business Information"
               open
-              editAction={() => editAction('BusinessInformation')}
+              editAction={
+                detailView ? undefined : () => editAction('BusinessInformation')
+              }
               data={[
                 {
                   heading: 'Industry',
@@ -413,12 +420,14 @@ const Review = (props: any) => {
         </View>
       </View>
       <Gap height={hp(3)} />
-      <Button
-        text={needpayment ? 'Proceed to Payment' : 'Save and Continue'}
-        textColor="white"
-        onPress={submit}
-        loader={loading}
-      />
+      {!detailView && (
+        <Button
+          text={needpayment ? 'Proceed to Payment' : 'Save and Continue'}
+          textColor="white"
+          onPress={submit}
+          loader={loading}
+        />
+      )}
       <Gap height={hp(7)} />
     </View>
   );

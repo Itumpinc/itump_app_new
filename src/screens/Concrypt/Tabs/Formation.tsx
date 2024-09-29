@@ -21,8 +21,7 @@ export function Formation(props: any) {
   const navigation: any = useNavigation();
   const styles = useStyles();
   const {status, schema, details} = props;
-  console.log('🚀 ~ Formation ~ details:', details);
-
+  
   const gotoEdit = (id: string) => {
     navigation.navigate('AddBusiness', {
       tabId: id,

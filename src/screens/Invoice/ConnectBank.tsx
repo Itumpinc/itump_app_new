@@ -212,7 +212,6 @@ const ConnectBank = () => {
     (async () => {
       const userApiData = await userApisQuery();
       const {user} = getData(userApiData);
-      console.log('🚀 ~ userData:', user);
       if (
         !(
           user.stripe_account_status == 'pending' ||
@@ -242,7 +241,6 @@ const ConnectBank = () => {
   };
 
   const closeAction = () => {
-    console.log('🚀 ~ closeAction ~ closeAction:');
     setOpenWebview(false);
   };
 

@@ -24,7 +24,8 @@ export const updateSchema = (
   if (key) {
     formStateClone[type][key] = value;
   } else {
-    formStateClone[type] = {...formStateClone[type], ...value};
+    formStateClone[type] =
+      type === 'data' ? {...formStateClone[type], ...value} : value;
   }
 
   if (type === 'data') {
@@ -68,6 +69,19 @@ const isSchemaValid = (schema: any, formState: any, data: any) => {
     valid: true,
     errors: {},
   };
+};
+
+export const validateForm = (schema: any) => {
+  const {error} = schema.schema.validate(schema.data, {abortEarly: false});
+  if (error) {
+    const errorForm: any = {};
+    for (let index = 0; index < error.details.length; index++) {
+      const ed = error.details[index];
+      errorForm[ed.path[0]] = ed.message;
+    }
+    return errorForm;
+  }
+  return {};
 };
 
 export const withSchemaData = (schema: any, defaultValue?: any) => {

@@ -814,11 +814,16 @@ const Concrypt = (props: any) => {
     }
   }, []);
 
+  let business;
+  if (businessDetailData.isSuccess) {
+    business = getData(businessDetailData);
+  }
+
   return (
     <Container source={pictures.welcome}>
       <View style={{width: wp(90), alignSelf: 'center'}}>
         <Header
-          title="Alps. Inc"
+          title={business ? business.business_title : ''}
           source={pictures.arrowLeft}
           secondLastRightImage
           secondLastRightImageSource={pictures.ThreeDotsHeaderImage}
@@ -831,6 +836,13 @@ const Concrypt = (props: any) => {
             <Spinner size={'lg'} />
           </View>
         )}
+
+        <Gap height={hp(2)} />
+        <Button
+          text="See Downloads"
+          textColor="white"
+          onPress={() => navigation.navigate('Downloads')}
+        />
       </View>
     </Container>
   );

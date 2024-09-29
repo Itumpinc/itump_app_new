@@ -44,8 +44,7 @@ const InvoiceSuccess = () => {
   };
 
   if (!params) return null;
-  console.log('🚀 ~ InvoiceSuccess ~ params:', params);
-
+  
   return (
     <Container>
       <View

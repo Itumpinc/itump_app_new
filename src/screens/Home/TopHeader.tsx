@@ -21,12 +21,17 @@ export default function TopHeader() {
   const storage = useAppSelector(state => state.common.storage);
   const {user} = storage;
 
-  if (!user) return null;
-
   return (
     <View style={styles.topheader}>
       <View style={{flexDirection: 'row', width: wp(80), alignItems: 'center'}}>
-        <AvatarCard user={user} />
+        <AvatarCard
+          user={
+            user || {
+              first_name: '',
+              last_name: '',
+            }
+          }
+        />
         {/* <Image
           source={pictures.defaultProfile}
           style={{height: hp(5), width: hp(5), marginRight: hp(0.5)}}
@@ -47,7 +52,7 @@ export default function TopHeader() {
                 color: colors.secondaryText,
               },
             ]}>
-            Welcome {user.first_name} 👋
+            Welcome {user ? user.first_name : ''} 👋
           </Text>
           <Text
             style={[

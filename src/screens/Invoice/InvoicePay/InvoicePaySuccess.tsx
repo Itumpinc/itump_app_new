@@ -32,9 +32,9 @@ const InvoicePaySuccess = () => {
   const invoiceData = route.params ? route.params.data : undefined;
   const payInvoiceData = route.params ? route.params.payInvoiceData : undefined;
 
-  console.log('🚀 ~ InvoicePaySuccess ~ payInvoiceData:', payInvoiceData);
-  console.log('=======');
-  console.log('🚀 ~ InvoicePaySuccess ~ route.params.data:', route.params.data);
+  // console.log('🚀 ~ InvoicePaySuccess ~ payInvoiceData:', payInvoiceData);
+  // console.log('=======');
+  // console.log('🚀 ~ InvoicePaySuccess ~ route.params.data:', route.params.data);
 
   const storage = useAppSelector(state => state.common.storage);
   const {user, countryList} = storage;

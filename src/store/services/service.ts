@@ -28,7 +28,6 @@ export const serviceApi = api.injectEndpoints({
         if (business_id) {
           url += `&business_id=${business_id}`;
         }
-
         return {
           url,
           method: 'GET',
@@ -54,8 +53,23 @@ export const serviceApi = api.injectEndpoints({
       },
     }),
     serviceRequestDetail: builder.query<any, any>({
-      query: ({service_id, tag}: {service_id: number; tag: string}) => {
-        let url = `/v1/service/detail/${tag}/${service_id}`;
+      query: ({
+        service_id,
+        tag,
+        business_id,
+      }: {
+        service_id?: number;
+        tag: string;
+        business_id?: number;
+      }) => {
+        let url = '';
+        if (service_id) {
+          url = `/v1/service/detail/${tag}/${service_id}`;
+        }
+        if (business_id) {
+          url = `/v1/service/detail_business/${tag}/${business_id}`;
+        }
+
         return {
           url,
           method: 'GET',
@@ -159,6 +173,13 @@ export const serviceApi = api.injectEndpoints({
       query: () => ({
         url: `/v1/users/account/create`,
         method: 'POST',
+      }),
+    }),
+    payoutAccount: builder.query<any, any>({
+      query: (data: any) => ({
+        url: `/v1/users/wallet/payout`,
+        method: 'POST',
+        data,
       }),
     }),
     accountStatusUpdate: builder.query<any, any>({

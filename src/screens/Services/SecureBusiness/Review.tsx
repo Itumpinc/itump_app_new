@@ -22,21 +22,35 @@ import useStyles from '@src/screens/BusinessRegistration/styles';
 import {withSchemaData} from '@src/components/hocs/forms/form';
 import Joi from 'joi';
 import {RenderRadio} from '@src/components/hocs/forms';
+import moment from 'moment';
 
 const Review = (props: any) => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const storage = useAppSelector(state => state.common.storage);
-  const {serviceData, stepAction, schema} = props;
+  const {serviceData, stepAction, schema, paramsData} = props;
   const {countryList, user} = storage;
   const navigation: any = useNavigation();
 
   const [serviceCreateQuery] = serviceApi.useLazyServiceCreateQuery();
+  const [serviceUpdateQuery] = serviceApi.useLazyServiceUpdateQuery();
+
   const [loadStateQuery] = commonApi.useLazyLoadStateQuery();
   const [stateList, setStateList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [uploadDocumentQuery] = serviceApi.useUploadDocumentMutation();
+
+
+  const detailView =
+    paramsData && paramsData.routeParams && paramsData.routeParams.detailView;
+
+  const needpayment =
+    paramsData &&
+    paramsData.routeParams &&
+    typeof paramsData.routeParams.takePayment !== 'undefined'
+      ? false
+      : true;
 
   useEffect(() => {
     (async () => {
@@ -53,72 +67,110 @@ const Review = (props: any) => {
 
   const submit = async () => {
     setLoading(true);
+    try {
+      let JSONData = {
+        company_id: schema.data.company_id,
+        first_name: schema.data.first_name,
+        last_name: schema.data.last_name,
+        email: schema.data.email,
+        phone: schema.data.phone,
+        country_id: schema.data.country_id,
+        state_id: schema.data.state_id,
+        city: schema.data.city,
+        address: schema.data.address,
+        address2: schema.data.address2,
+        zipcode: schema.data.zipcode,
 
-    const JSONData = {
-      company_id: schema.data.company_id,
-      first_name: schema.data.first_name,
-      last_name: schema.data.last_name,
-      email: schema.data.email,
-      phone: schema.data.phone,
-      country_id: schema.data.country_id,
-      state_id: schema.data.state_id,
-      city: schema.data.city,
-      address: schema.data.address,
-      address2: schema.data.address2,
-      zipcode: schema.data.zipcode,
+        protection_type: schema.data.protection_type,
+        ip_description: schema.data.ip_description,
+        marks_in_claim: schema.data.marks_in_claim,
+        secure_name: schema.data.secure_name,
+      };
 
-      protection_type: schema.data.protection_type,
-      ip_description: schema.data.ip_description,
-      marks_in_claim: schema.data.marks_in_claim,
-      secure_name: schema.data.secure_name,
-    };
+      if (schema.data.created_at) {
+        JSONData = {
+          ...JSONData,
+          ...{
+            created_at: moment(schema.data.created_at, 'MM-DD-YYYY').format(
+              'YYYY-MM-DD HH:mm:ss',
+            ),
+          },
+        };
+      }
 
-    const serviceCreateData = await serviceCreateQuery({
-      tag: serviceData.tags,
-      data: JSONData,
-    });
+      if (
+        paramsData.routeParams &&
+        paramsData.routeParams.action === 'done_already'
+      ) {
+        JSONData = {
+          ...JSONData,
+          ...{status: 'already_done'},
+        };
+      }
 
-    if (serviceCreateData.isSuccess) {
-      const data = getData(serviceCreateData);
-      
-      if (schema.data.docforSecure) {
-        await uploadDocumentQuery({
-          media: schema.data.docforSecure,
-          document_type: `Others##${schema.data.docforSecureName}`,
-          service_id: data.service.service_id,
-          service_request_id: data.service.id
+      let serviceCreateUpdateData;
+      if (paramsData.routeParams && paramsData.routeParams.serviceRequestId) {
+        serviceCreateUpdateData = await serviceUpdateQuery({
+          id: paramsData.routeParams.serviceRequestId,
+          tag: serviceData.tags,
+          data: JSONData,
+        });
+      } else {
+        serviceCreateUpdateData = await serviceCreateQuery({
+          tag: serviceData.tags,
+          data: JSONData,
         });
       }
 
-      // navigation.reset({
-      //   index: 0,
-      //   routes: [
-      //     {
-      //       name: 'OrderSummary',
-      //       params: {
-      //         service_add_ons: [],
-      //         service_id: serviceData.id,
-      //         service_request_id: data.service.id,
-      //         business_id: schema.data.company_id,
-      //       },
-      //     },
-      //   ],
-      // });
-      navigation.navigate('OrderSummary', {
-        service_add_ons: [],
-        service_id: serviceData.id,
-        service_request_id: data.service.id,
-        business_id: schema.data.company_id,
-      });
-    }
+      if (serviceCreateUpdateData && serviceCreateUpdateData.isSuccess) {
+        const data = getData(serviceCreateUpdateData);
 
-    if (serviceCreateData.isError) {
-      setLoading(false);
-      const error: any = serviceCreateData.error;
-      const data = error && error.data ? error.data : undefined;
-      if (data) {
-        alert(data.message);
+        if (schema.data.docforSecure) {
+          await uploadDocumentQuery({
+            media: schema.data.docforSecure,
+            document_type: `Others##${schema.data.docforSecureName}`,
+            service_id: data.service.service_id,
+            service_request_id: data.service.id,
+          });
+        }
+        if (needpayment) {
+          // navigation.reset({
+          //   index: 0,
+          //   routes: [
+          //     {
+          //       name: 'OrderSummary',
+          //       params: {
+          //         service_add_ons: [],
+          //         service_id: serviceData.id,
+          //         service_request_id: data.service.id,
+          //         business_id: schema.data.company_id,
+          //       },
+          //     },
+          //   ],
+          // });
+          navigation.navigate('OrderSummary', {
+            service_add_ons: [],
+            service_id: serviceData.id,
+            service_request_id: data.service.id,
+            business_id: schema.data.company_id,
+          });
+        } else {
+          navigation.navigate('Health');
+        }
       }
+
+      if (serviceCreateUpdateData && serviceCreateUpdateData.isError) {
+        setLoading(false);
+        const error: any = serviceCreateUpdateData.error;
+        const data = error && error.data ? error.data : undefined;
+        if (data) {
+          alert(data.message);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+      alert('Something Went wrong! Please try after some time');
     }
   };
 
@@ -180,7 +232,7 @@ const Review = (props: any) => {
             <ReviewCard
               title="Intellectual Property Info"
               open
-              editAction={() => editAction('IPInfo')}
+              editAction={detailView ? undefined : () => editAction('IPInfo')}
               data={[
                 {
                   heading: 'Type of Protection',
@@ -203,7 +255,7 @@ const Review = (props: any) => {
             <ReviewCard
               title="Items to Secure"
               open
-              editAction={() => editAction('Secureitems')}
+              editAction={detailView ? undefined : () => editAction('Secureitems')}
               data={[
                 {
                   heading: 'Marks in Claim',
@@ -225,12 +277,12 @@ const Review = (props: any) => {
         </View>
       </View>
       <Gap height={hp(3)} />
-      <Button
+      {!detailView && <Button
         text="Proceed to Payment"
         textColor="white"
         onPress={submit}
         loader={loading}
-      />
+      />}
       <Gap height={hp(7)} />
     </View>
   );

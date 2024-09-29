@@ -71,7 +71,7 @@ export default function ExistingBusiness(props: any) {
 
   if (!schema) return null;
 
-  console.log(schema.data);
+  // console.log(schema.data);
 
   return (
     <Container>

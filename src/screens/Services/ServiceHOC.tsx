@@ -50,6 +50,11 @@ export const ServiceHOC = (props: any) => {
         serviceData: paramsData.serviceData,
         routeParams: route.params,
       });
+    }else if (paramsData && paramsData.serviceData && route.name === 'BoiForm' && route.params && route.params.businessID) {
+      setParamsData({
+        serviceData: paramsData.serviceData,
+        routeParams: route.params,
+      });
     }
   }, [serviceDetailData, JSON.stringify(route.params)]);
 

@@ -366,6 +366,8 @@ export const gettaxIdType = (value: any) =>
   taxIdType.find(l => l.value === value);
 export const getapplicantIdType = (value: any) =>
   applicantIdType.find(l => l.value === value);
+export const getboiType = (value: any) =>
+  optionBoi.find(l => l.value === value);
 
 export const applicantIdType = [
   {

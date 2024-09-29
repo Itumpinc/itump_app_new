@@ -28,7 +28,7 @@ const ServiceSteps = (props: any) => {
 
   const {steps, currentStep, currentIndex} = getServicesteps(
     serviceData.tags,
-    paramsData.routeParams && paramsData.routeParams.serviceRequestId
+    paramsData.routeParams && paramsData.routeParams.serviceRequestId && route.name !== 'BoiForm'
       ? 'Review'
       : route.name,
   );

@@ -20,6 +20,9 @@ import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
 import {OrderCard} from '@src/components/common/ordercard';
 import ProgressBox from '@src/constants/ProgressBox';
+import {userApi} from '@src/store/services/user';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
+import {getData} from '@src/utils/helpers';
 
 const IssueLayout = ({text, onPress}: any) => {
   const pictures = useThemeImages();
@@ -70,7 +73,31 @@ export default function FixIssues(props: any) {
   const navigation: any = useNavigation();
   const storage = useAppSelector(state => state.common.storage);
   const {user, primaryBusiness} = storage;
-  
+
+  const [getHealthQuery, getHealthData] = userApi.useLazyGetHealthQuery();
+
+  useFocusedEffect(() => {
+    if (primaryBusiness) {
+      getHealthQuery(primaryBusiness.id);
+    }
+  }, [primaryBusiness]);
+
+  const healthData = getData(getHealthData);
+  let percentage = 0;
+  let title = '';
+  if (healthData && healthData.health) {
+    percentage = healthData.health;
+    if (percentage <= 40) {
+      title = 'Fix Issues Now';
+    } else if (percentage > 40 && percentage <= 60) {
+      title = 'Some Issue Need to Fix';
+    } else if (percentage > 60 && percentage <= 80) {
+      title = 'You are almost there!';
+    } else if (percentage > 80) {
+      title = 'Check it out!';
+    }
+  }
+
   return (
     <>
       <View
@@ -92,58 +119,13 @@ export default function FixIssues(props: any) {
                 justifyContent: 'space-between',
                 paddingRight: wp(4),
               }}>
-              <View
-                style={{
-                  flexDirection: 'column',
-                  alignSelf: 'center',
-                  paddingLeft: wp(4),
-                }}>
-                <Text
-                  style={[
-                    styles.text,
-                    {
-                      color: colors.secondaryText,
-                      fontFamily: 'Satoshi-Medium',
-                      fontSize: hp(2),
-                    },
-                  ]}>
-                  Fix Issues Now
-                </Text>
-                <Text
-                  style={[
-                    styles.text,
-                    {
-                      color: colors.primary,
-                      fontFamily: 'Satoshi-Medium',
-                      alignSelf: 'flex-start',
-                    },
-                  ]}>
-                  Itump Health
-                </Text>
-              </View>
-              <Image
-                source={pictures.dummyProgress}
-                style={{height: hp(8), width: hp(8)}}
-              />
-            </View>
-            <Gap height={hp(1)} />
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                width: '100%',
-                height: hp(9),
-                justifyContent: 'space-between',
-                paddingRight: wp(4),
-              }}>
               <Pressable
                 onPress={() => {
-                  navigation.navigate('health');
+                  navigation.navigate('Health');
                 }}
                 style={{
                   flexDirection: 'column',
                   alignSelf: 'center',
-                  paddingLeft: wp(4),
                 }}>
                 <Text
                   style={[
@@ -152,23 +134,36 @@ export default function FixIssues(props: any) {
                       color: colors.secondaryText,
                       fontFamily: 'Satoshi-Medium',
                       fontSize: hp(2),
+                      marginLeft: -wp(3)
                     },
                   ]}>
-                  You are almost there!
+                  {title}
                 </Text>
-                <Text
-                  style={[
-                    styles.text,
-                    {
-                      color: colors.primary,
-                      fontFamily: 'Satoshi-Medium',
-                      alignSelf: 'flex-start',
-                    },
-                  ]}>
-                  Itump Health
-                </Text>
+                <View style={{flexDirection: 'row', paddingLeft: wp(4)}}>
+                  <Text
+                    style={[
+                      styles.text,
+                      {
+                        color: colors.primary,
+                        fontFamily: 'Satoshi-Medium',
+                        alignSelf: 'flex-start',
+                      },
+                    ]}>
+                    Itump Health
+                  </Text>
+                  <Image
+                    source={pictures.goToPrimary}
+                    style={{
+                      height: hp(10),
+                      width: hp(10),
+                      marginTop: -hp(4),
+                      marginLeft: -wp(6),
+                      marginBottom: -hp(4),
+                    }}
+                  />
+                </View>
               </Pressable>
-              <ProgressBox percentage={50} />
+              <ProgressBox percentage={healthData.health} />
             </View>
             <View
               style={{
@@ -208,11 +203,6 @@ export default function FixIssues(props: any) {
         <TouchableOpacity
           onPress={() => navigation.navigate('build_business_credit')}>
           <IssueLayout text={'Business Business Credit'} />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('CreateInvoice')}>
-          <IssueLayout text={'Invoice'} />
         </TouchableOpacity>
       </View>
       <Gap height={hp(2)} />

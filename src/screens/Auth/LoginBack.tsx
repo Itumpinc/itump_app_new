@@ -84,7 +84,7 @@ const LoginBack = () => {
 
   const biometricLogin = async () => {
     const {email, password} = await getBioMetricCredentials();
-    console.log(email, password);
+    // console.log(email, password);
     if (email && password) {
       loginwithPasswordQuery({
         email,

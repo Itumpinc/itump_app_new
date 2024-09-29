@@ -16,7 +16,18 @@ import {useThemeColors} from '@constants/colors';
 import {Gap} from '@src/constants/gap';
 import AvatarCard from './avatarCard';
 
-export const OrderCard = ({title, date, status, money, image, avatar, myInvoice}: any) => {
+export const OrderCard = ({
+  title,
+  date,
+  status,
+  money,
+  image,
+  avatar,
+  isRecurring,
+  myInvoice,
+  style,
+  small
+}: any) => {
   const colors = useThemeColors();
   const statusColor: any = {
     Pending: colors.lightOrange,
@@ -25,66 +36,106 @@ export const OrderCard = ({title, date, status, money, image, avatar, myInvoice}
     Software: colors.lightPink,
     paid: colors.successBackgroundColor,
     raised: colors.lightOrange,
-    cancelled: colors.errorText+'30',
+    cancelled: colors.errorText + '30',
+    confirm: colors.lightPrimary,
+    processing: colors.lightOrange,
+    completed: colors.successBackgroundColor,
+    tried: colors.errorText + '30',
   };
 
   const textColor: any = {
     Pending: colors.darkOrange,
-    'In Progress': colors.darkOrange,
     Contract: colors.primary,
     Software: colors.pink,
     paid: colors.otpBorder,
     raised: colors.darkOrange,
     cancelled: colors.errorText,
+    confirm: colors.primary,
+    processing: colors.darkOrange,
+    completed: colors.success,
+    tried: colors.errorText,
   };
 
   const statusList: any = {
     raised: myInvoice ? 'Awaiting Payment' : 'Payment Pending',
     paid: 'Paid',
-    cancelled: 'Cancelled'
+    cancelled: 'Cancelled',
+    confirm: 'Paid and Confirmed',
+    processing: 'In Progress',
+    completed: 'Completed',
+    tried: 'Tried and Failed'
   };
 
   return (
-    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: small ? wp(80) : wp(90),
+        ...style,
+      }}>
       {image && (
-        <Image
-          source={image}
-          style={{marginLeft: wp(5), height: hp(4), width: hp(4)}}
-        />
+        <View style={{width: wp(5)}}>
+          <Image source={image} style={{height: hp(4), width: hp(4)}} />
+        </View>
       )}
 
       {avatar && (
-        <View style={{marginLeft: wp(5)}}>
+        <View style={{width: wp(5)}}>
           <AvatarCard user={avatar} size={hp(4)} />
         </View>
       )}
 
       <View
         style={{
-          marginLeft: '3%',
+          paddingLeft: small ? wp(6) : wp(3),
           height: '100%',
           flexDirection: 'column',
-          width: '56%',
+          width: wp(50),
         }}>
-        {statusList[status] && (
-          <Text
-            style={[
-              styles.text,
-              {
-                alignSelf: 'flex-start',
-                paddingHorizontal: 10,
-                paddingVertical: 1,
-                backgroundColor: statusColor[status],
-                color: textColor[status],
-                fontFamily: 'Satoshi-Regular',
-                fontSize: hp(1.3),
-                borderRadius: 6,
-                overflow: 'hidden',
-              },
-            ]}>
-            {statusList[status]}
-          </Text>
-        )}
+        <View style={{flexDirection: 'row'}}>
+          {statusList[status] && (
+            <Text
+              style={[
+                styles.text,
+                {
+                  alignSelf: 'flex-start',
+                  paddingHorizontal: 10,
+                  paddingVertical: 1,
+                  backgroundColor: statusColor[status],
+                  color: textColor[status],
+                  fontFamily: 'Satoshi-Regular',
+                  fontSize: hp(1.3),
+                  borderRadius: 6,
+                  overflow: 'hidden',
+                  marginRight: 5,
+                },
+              ]}>
+              {statusList[status]}
+            </Text>
+          )}
+
+          {isRecurring ? (
+            <Text
+              style={[
+                styles.text,
+                {
+                  alignSelf: 'flex-start',
+                  paddingHorizontal: 10,
+                  paddingVertical: 1,
+                  backgroundColor: colors.lightOrange,
+                  color: colors.darkOrange,
+                  fontFamily: 'Satoshi-Regular',
+                  fontSize: hp(1.3),
+                  borderRadius: 6,
+                  overflow: 'hidden',
+                },
+              ]}>
+              Recurring
+            </Text>
+          ) : null}
+        </View>
 
         <Gap height={hp(1)} />
         <Text
@@ -113,16 +164,19 @@ export const OrderCard = ({title, date, status, money, image, avatar, myInvoice}
         </Text>
       </View>
       {money && (
-        <Text
-          style={[
-            {
-              fontFamily: 'Satoshi-Black',
-              fontSize: hp(2),
-              color: colors.secondaryText,
-            },
-          ]}>
-          {money}
-        </Text>
+        <View style={{width: wp(25)}}>
+          <Text
+            style={[
+              {
+                textAlign: 'right',
+                fontFamily: 'Satoshi-Black',
+                fontSize: hp(2),
+                color: colors.secondaryText,
+              },
+            ]}>
+            {money}
+          </Text>
+        </View>
       )}
     </View>
   );

@@ -72,16 +72,18 @@ export const getfirstlastname = (fullName: string) => {
   return {firstName, lastName};
 };
 
-export function alert(message: string) {
-  Toast.show({
-    type: 'error',
-    text1: 'Error',
-    text2: message,
-    visibilityTime: 5000,
-    topOffset: 100,
-  });
-
-  // Alert.alert(message);
+export function alert(message: string, native = false) {
+  if (native) {
+    Alert.alert(message);
+  } else {
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: message,
+      visibilityTime: 5000,
+      topOffset: 100,
+    });
+  }
 }
 
 export function confirm({title, message, onConfirm, onCancel}: any) {

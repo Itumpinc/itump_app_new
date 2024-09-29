@@ -15,10 +15,11 @@ import useStyles from '@src/screens/BusinessRegistration/styles';
 import {serviceApi} from '@src/store/services/service';
 import {getData} from '@src/utils/helpers';
 import {useNavigation} from '@react-navigation/native';
+import {updateSchema} from '@src/components/hocs/forms/form';
 
 const Company = (props: any) => {
   const styles = useStyles();
-  const {schema, serviceData, stepAction} = props;
+  const {schema, serviceData, paramsData, setSchema, stepAction} = props;
 
   const pictures = useThemeImages();
   const navigation: any = useNavigation();
@@ -26,6 +27,13 @@ const Company = (props: any) => {
   const [serviceCreateQuery] = serviceApi.useLazyServiceCreateQuery();
   const storage = useAppSelector(state => state.common.storage);
   const {business} = storage;
+
+  const needpayment =
+    paramsData &&
+    paramsData.routeParams &&
+    typeof paramsData.routeParams.takePayment !== 'undefined'
+      ? false
+      : true;
 
   const {main_business: mainBusiness, other_business: otherBusiness} = business;
   const allBusiness = [...mainBusiness, ...otherBusiness];
@@ -41,29 +49,58 @@ const Company = (props: any) => {
   }
 
   const createServiceAndmakepayment = async () => {
-    const serviceCreateData = await serviceCreateQuery({
-      tag: serviceData.tags,
-      data: {
-        company_id: schema.data.company_id,
-      },
-    });
-
-    if (serviceCreateData.isSuccess) {
-      const data = getData(serviceCreateData);
-      navigation.navigate('OrderSummary', {
-        service_add_ons: [],
-        service_id: serviceData.id,
-        service_request_id: data.service.id,
-        business_id: schema.data.company_id,
-        redirectParams: {
-          screen: 'BoiForm',
-          data:{
-            service_id: serviceData.id,
-            service_request_id: data.service.id,
-            business_id: schema.data.company_id,
-          }
-        }
+    if (needpayment) {
+      const serviceCreateData = await serviceCreateQuery({
+        tag: serviceData.tags,
+        data: {
+          company_id: schema.data.company_id,
+        },
       });
+
+      if (serviceCreateData.isSuccess) {
+        const data = getData(serviceCreateData);
+        navigation.navigate('OrderSummary', {
+          service_add_ons: [],
+          service_id: serviceData.id,
+          service_request_id: data.service.id,
+          business_id: schema.data.company_id,
+          redirectParams: {
+            screen: 'BoiForm',
+            data: {
+              businessID: schema.data.company_id,
+              service_id: serviceData.id,
+              serviceRequestId: data.service.id
+            },
+          },
+        });
+      }
+    } else {
+      if (paramsData.routeParams && paramsData.routeParams.serviceRequestId) {
+        setSchema(
+          updateSchema(
+            schema,
+            'data',
+            'service_request_id',
+            paramsData.routeParams.serviceRequestId,
+          ),
+        );
+        stepAction('next');
+      } else {
+        const serviceCreateData = await serviceCreateQuery({
+          tag: serviceData.tags,
+          data: {
+            company_id: schema.data.company_id,
+          },
+        });
+
+        if (serviceCreateData.isSuccess) {
+          const data = getData(serviceCreateData);
+          setSchema(
+            updateSchema(schema, 'data', 'service_request_id', data.service.id),
+          );
+          stepAction('next');
+        }
+      }
     }
   };
 
@@ -84,8 +121,9 @@ const Company = (props: any) => {
         textColor="white"
         iconSource={pictures.arrowRightWhite}
         iconRight={true}
-        onPress={() => stepAction('next')}
-        // onPress={() => createServiceAndmakepayment()}
+        disabled={!schema.data.company_id}
+        // onPress={() => stepAction('next')}
+        onPress={() => createServiceAndmakepayment()}
       />
       <Gap height={hp(4)} />
     </View>

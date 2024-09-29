@@ -306,7 +306,7 @@ const TimeLine = (props: any) => {
   const colors = useThemeColors();
   const {invoiceData, user, country} = props;
   const {invoice, items, payments} = invoiceData;
-
+  
   let is_recurring = invoice.is_recurring;
   let recurring_months = invoice.recurring_months;
 
@@ -380,7 +380,7 @@ const TimeLine = (props: any) => {
     });
   }
 
-  history.reverse();
+  // history.reverse();
 
   if (history.length === 0 || !invoice.stripe_subscription_id) return null;
 

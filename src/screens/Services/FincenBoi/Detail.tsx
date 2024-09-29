@@ -88,6 +88,7 @@ const Detail = (props: any) => {
           setAlreadyDone={setAlreadyDone}
           schema={schema}
           stepAction={stepAction}
+          noJump={true}
         />
       )}
     </View>

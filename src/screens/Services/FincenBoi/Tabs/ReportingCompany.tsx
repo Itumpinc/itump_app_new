@@ -40,14 +40,110 @@ export function ReportingCompany(props: any) {
   const {countryList, user} = storage;
   const options = getCountryOptions(countryList, true);
 
-  const {schema, setSchema} = props;
+  const {schema, status, toggleTab, setSchema} = props;
   const styles = useStyles();
-  const {status, toggleTab} = props;
+
+  const selectedBusiness = getSelectedBusiness(storage, schema.data.company_id);
+
+  const [businessDetailQuery, businessDetailData] =
+    serviceApi.useLazyGetBusinessDetailQuery();
+
+  const [serviceRequestDetailQuery, serviceRequestDetailData] =
+    serviceApi.useLazyServiceRequestDetailQuery();
+
+  useEffect(() => {
+    if (serviceRequestDetailData.isSuccess) {
+      const serviceRequestDetail = getData(serviceRequestDetailData);
+      setTimeout(() => {
+        setSchema(
+          updateSchema(
+            schema,
+            'data',
+            'alternate_company_name',
+            serviceRequestDetail.dba_name,
+          ),
+        );
+      }, 500);
+    }
+  }, [serviceRequestDetailData]);
+
+  useEffect(() => {
+    if (businessDetailData.isSuccess) {
+      const businessData = getData(businessDetailData);
+      
+      let fillData = {
+        business_title: businessData.business_title,
+        jurisdiction_country_id: businessData.country.id,
+        company_country_id: businessData.country.id,
+        company_state_id: businessData.state.id,
+        company_city: businessData.detail.city,
+        company_address: businessData.detail.address1,
+        company_address2: businessData.detail.address2,
+        company_zipcode: businessData.detail.zipcode,
+        company_email: businessData.detail.email,
+        company_phone: businessData.detail.phone_num,
+      };
+
+      if (businessData.detail.ein) {
+        fillData = {
+          ...fillData,
+          ...{
+            tax_identification: 'ein',
+            tax_identification_number: businessData.detail.ein,
+          },
+        };
+      }
+
+      if (businessData.detail.formation_date) {
+        fillData = {
+          ...fillData,
+          ...{
+            formation_date: businessData.detail.formation_date,
+          },
+        };
+      }
+
+      const incorporator = businessData.users.find(
+        (u: any) => u.business_user_type === 'incorporator',
+      );
+      if (incorporator) {
+        fillData = {
+          ...fillData,
+          ...{
+            applicant_first_name: incorporator.first_name,
+            applicant_last_name: incorporator.last_name,
+            applicant_country_id: incorporator.country_id,
+            applicant_state_id: incorporator.state_id,
+            applicant_city: incorporator.city,
+            applicant_address: incorporator.address,
+            applicant_address2: incorporator.address2,
+            applicant_zipcode: incorporator.zipcode,
+            applicant_id_jurisdiction_state_id: incorporator.state_id,
+            applicant_id_jurisdiction_country_id: incorporator.country_id,
+          },
+        };
+      }
+
+      setSchema(updateSchema(schema, 'data', '', fillData));
+    }
+  }, [businessDetailData]);
+
+  useEffect(() => {
+    if (selectedBusiness) {
+      businessDetailQuery(selectedBusiness.id);
+      serviceRequestDetailQuery({
+        business_id: selectedBusiness.id,
+        tag: 'dba_registration',
+      });
+    }
+  }, [selectedBusiness]);
 
   useEffect(() => {
     (async () => {
       if (schema.data.company_country_id) {
-        const loadStateData = await loadStateQuery(schema.data.company_country_id);
+        const loadStateData = await loadStateQuery(
+          schema.data.company_country_id,
+        );
         if (loadStateData.isSuccess) {
           const stateList: any[] = getData(loadStateData);
           const sOptions = getStateOptions(stateList);

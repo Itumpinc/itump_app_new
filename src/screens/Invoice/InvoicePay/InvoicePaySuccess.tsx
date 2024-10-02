@@ -31,7 +31,7 @@ const InvoicePaySuccess = () => {
   const route: any = useRoute();
   const invoiceData = route.params ? route.params.data : undefined;
   const payInvoiceData = route.params ? route.params.payInvoiceData : undefined;
-
+  
   // console.log('🚀 ~ InvoicePaySuccess ~ payInvoiceData:', payInvoiceData);
   // console.log('=======');
   // console.log('🚀 ~ InvoicePaySuccess ~ route.params.data:', route.params.data);
@@ -71,6 +71,8 @@ const InvoicePaySuccess = () => {
       last_name: lastName,
     };
   }
+
+  // console.log("🚀 ~ InvoicePaySuccess ~ payInvoiceData:", payInvoiceData)
 
   return (
     <Container>
@@ -136,7 +138,9 @@ const InvoicePaySuccess = () => {
           <View style={{alignItems: 'center'}}>
             <Button
               text="See Details"
-              onPress={() => {}}
+              onPress={() => navigation.navigate('InvoiceDetails', {
+                invoice_num: payInvoiceData.invoice.invoice_num,
+              })}
               backgroundColor={'transparent'}
               textColor={colors.primary}
               borderColor={colors.primary}

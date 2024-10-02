@@ -73,13 +73,13 @@ export default function Home() {
   const allBusiness = [...mainBusiness, ...otherBusiness];
 
   const dashboardData = getData(getDashboardData);
-
+  
   return (
     <Container>
       <Gap height={Platform.OS === 'android' ? hp(8) : 1} />
       <TopHeader />
       <Gap height={hp(2)} />
-      <WalletChart />
+      <WalletChart dashboardData={dashboardData} />
       <Gap height={hp(2)} />
 
       {allBusiness.length > 0 &&
@@ -97,21 +97,7 @@ export default function Home() {
 
       <DuePayment />
       <RecentOrders />
-      
-      <Text
-        style={[
-          styles.text,
-          {
-            color: colors.secondaryText,
-            alignSelf: 'flex-start',
-            fontFamily: 'Satoshi-Black',
-            fontSize: hp(2.2),
-            marginLeft: wp(6),
-          },
-        ]}>
-        Finances
-      </Text>
-      <Gap height={hp(2)} />
+
       <Transaction />
       <Invoices />
 

@@ -32,12 +32,14 @@ import {Card} from './Card';
 import {Steps} from './Steps';
 import {Steps2} from './Steps2';
 import ServiceCompletion from './ServiceCompletion';
+import {getBioMetricCredentials} from '@src/navigators/Utils';
 
 const Health = () => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
 
+  const [loginwithPasswordQuery] = userApi.useLazyLoginwithPasswordQuery();
   const storage = useAppSelector(state => state.common.storage);
   const {user, countryList, business, primaryBusiness} = storage;
   const [selectedBusiness, setSelectedBusiness] = useState(
@@ -74,6 +76,19 @@ const Health = () => {
     setSelectedBusiness(primaryBusiness ? primaryBusiness.id : 0);
   }, [primaryBusiness]);
 
+  const gotoConcrypt = async () => {
+    const {email, password} = await getBioMetricCredentials();
+    if (email && password) {
+      const loginwithPasswordData = await loginwithPasswordQuery({
+        email,
+        password,
+      });
+      if (loginwithPasswordData.isSuccess) {
+        navigation.navigate('Concrypt', {id: businessDetails.id});
+      }
+    }
+  };
+
   if (
     !(
       getBusinessDetailData.isSuccess &&
@@ -97,6 +112,7 @@ const Health = () => {
           setSelectedBusiness={setSelectedBusiness}
           primaryBusiness={primaryBusiness}
           businessDetails={businessDetails}
+          gotoConcrypt={gotoConcrypt}
         />
         <Gap height={hp(3)} />
         <Shield percentage={healthDetails.health} />
@@ -145,9 +161,7 @@ const Health = () => {
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          onPress={() =>
-            navigation.navigate('Concrypt', {id: businessDetails.id})
-          }>
+          onPress={gotoConcrypt}>
           <Text
             style={[
               styles.text,

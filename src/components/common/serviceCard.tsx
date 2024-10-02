@@ -34,7 +34,6 @@ const ServiceCard = (props: any) => {
     serviceApi.useLazyServiceListQuery();
 
   useFocusedEffect(() => {
-    console.log(user.id);
     serviceDetailQuery({
       // business_id: primaryBusiness.id,
       user_id: user.id,
@@ -46,6 +45,8 @@ const ServiceCard = (props: any) => {
     setParamsData();
     navigation.navigate(service.tags);
   };
+
+  console.log("🚀 ~ ServiceCard ~ serviceDetailData:", serviceDetailData)
 
   if (!serviceDetailData.isSuccess) return null;
 
@@ -173,5 +174,6 @@ const ServiceCard = (props: any) => {
     </>
   );
 };
+
 
 export default ServiceCard;

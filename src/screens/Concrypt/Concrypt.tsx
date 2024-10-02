@@ -31,6 +31,7 @@ import {getData} from '@src/utils/helpers';
 import {useAppSelector} from '@src/store/store';
 import Joi from 'joi';
 import {withSchemaData} from '@src/components/hocs/forms/form';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 
 const formatBusinessDefaultData = (user: any, data: any) => {
   const {detail, users} = data;
@@ -783,7 +784,7 @@ const Concrypt = (props: any) => {
   const [businessDetailQuery, businessDetailData] =
     serviceApi.useLazyGetBusinessDetailQuery();
 
-  const rightPress = () => {};
+  // const rightPress = () => {};
 
   useEffect(() => {
     if (businessDetailData.isSuccess) {
@@ -802,7 +803,7 @@ const Concrypt = (props: any) => {
     }
   }, [businessDetailData]);
 
-  useEffect(() => {
+  useFocusedEffect(() => {
     setParamsData({id: businessId});
     if (businessId) {
       businessDetailQuery(businessId);
@@ -825,9 +826,9 @@ const Concrypt = (props: any) => {
         <Header
           title={business ? business.business_title : ''}
           source={pictures.arrowLeft}
-          secondLastRightImage
-          secondLastRightImageSource={pictures.ThreeDotsHeaderImage}
-          secondLastRightPress={rightPress}
+          // secondLastRightImage
+          // secondLastRightImageSource={pictures.ThreeDotsHeaderImage}
+          // secondLastRightPress={rightPress}
         />
         {businessDetailData.isSuccess && schema && schema.data ? (
           <Details details={getData(businessDetailData)} {...props} />
@@ -847,40 +848,5 @@ const Concrypt = (props: any) => {
     </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  image: {
-    width: hp(2.5),
-    height: hp(2.5),
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: hp(2),
-  },
-  modalView: {
-    // margin: 20,
-    borderRadius: 20,
-    // padding: 15,
-    // alignItems: 'center',
-    elevation: 5,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    padding: 10,
-  },
-  button: {
-    borderRadius: 28,
-    padding: 10,
-    // elevation: 2,
-    width: wp(34),
-    marginHorizontal: 10,
-  },
-});
 
 export default Concrypt;

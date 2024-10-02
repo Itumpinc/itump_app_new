@@ -237,6 +237,16 @@ export const Steps = (props: any) => {
     setBusinessDoneStep1(count + 1);
   }, [healthDetails]);
 
+  let action = () => {};
+  if (businessDetails.is_business_existing === 1 && !businessDetails.detail) {
+    action = () =>
+      navigation.navigate('ExistingBusinessAddFormation', {
+        id: businessDetails.id,
+      });
+  } else {
+    action = () => navigation.navigate('AddBusiness', {id: businessDetails.id});
+  }
+
   return (
     <View>
       <View
@@ -321,9 +331,7 @@ export const Steps = (props: any) => {
               ? ''
               : 'Add Details'
           }
-          onPressAction={() =>
-            navigation.navigate('AddBusiness', {id: businessDetails.id})
-          }
+          onPressAction={action}
         />
 
         {/* Get a Professional Website */}

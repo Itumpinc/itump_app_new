@@ -36,7 +36,9 @@ const EmailOtp = () => {
   const storage = useAppSelector(state => state.common.storage);
   const email = route.params ? route.params.email : '';
   const password = route.params ? route.params.password : '';
+  const [loader, setLoader] = useState(false);
 
+  const [userApisQuery] = userApi.useLazyUserProfileQuery();
   const [resendSignupCodeQuery] = userApi.useLazyResendSignupCodeQuery();
   const [verifySignUpQuery, verifySignUpData] =
     userApi.useLazyVerifySignUpQuery();
@@ -54,15 +56,19 @@ const EmailOtp = () => {
   );
 
   const resendCode = async () => {
+    setLoader(true);
     const resendSignupCodeData = await resendSignupCodeQuery({
       email,
     });
     if (resendSignupCodeData.isSuccess) {
-      alert('Code sent,\n Please check your email.');
+      setLoader(false);
+      setSchema(updateSchema(schema, 'data', 'otp', ''));
+      alert('Code sent,\n Please check your email.', true);
     }
 
     if (resendSignupCodeData.isError) {
-      alert('There is some error is sending a code to your email.');
+      setLoader(false);
+      alert('There is some error is sending a code to your email.', true);
     }
   };
 
@@ -79,19 +85,32 @@ const EmailOtp = () => {
   }, [storage.user, storage.tokens]);
 
   useEffect(() => {
-    if (verifySignUpData.isSuccess) {
-      const {user, tokens} = getData(verifySignUpData);
-      afterLoginAction({dispatch, setData, data: {user, tokens}});
-    }
+    (async () => {
+      if (verifySignUpData.isSuccess) {
+        setLoader(false);
+        const {user, tokens} = getData(verifySignUpData);
+        afterLoginAction({dispatch, userApisQuery, setData, data: {user, tokens}});
+      }
+      if (verifySignUpData.isError) {
+        setLoader(false);
+        const error: any = verifySignUpData.error;
+        const data = error && error.data ? error.data : undefined;
+        if (data) {
+          setSchema(updateSchema(schema, 'errors', 'otp', data.message));
+        }
+      }
+    })();
   }, [verifySignUpData]);
 
   const doSubmit = () => {
+    setLoader(true);
     verifySignUpQuery({
       email,
       otp: schema.data.otp,
     });
   };
 
+  console.log(storage.tokens, storage.user);
   return (
     <Container>
       <View style={styles.container}>
@@ -140,6 +159,7 @@ const EmailOtp = () => {
             textColor="white"
             type="submit"
             check={false}
+            loader={loader}
             disabled={!schema.valid}
           />
         </Form>

@@ -53,7 +53,9 @@ const Account = () => {
         }}>
         <AvatarCard />
         <View style={{paddingLeft: 10}}>
-          <Text style={[styles.mainText, {color: '#fff'}]}>{user.first_name} {user.last_name}</Text>
+          <Text style={[styles.mainText, {color: '#fff'}]}>
+            {user.first_name} {user.last_name}
+          </Text>
           <Text style={[styles.subText, {color: '#fff'}]}>
             {user.email}{' '}
             <Image
@@ -73,7 +75,7 @@ const Account = () => {
           paddingHorizontal: 20,
           paddingTop: 10,
         }}>
-        <View
+        <TouchableOpacity
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -81,7 +83,8 @@ const Account = () => {
             borderBottomWidth: 1,
             alignItems: 'center',
             paddingVertical: 20,
-          }}>
+          }}
+          onPress={() => navigation.navigate('AccountOption')}>
           <View
             style={{
               flex: 1,
@@ -101,7 +104,7 @@ const Account = () => {
           </View>
 
           <Image source={pictures.arrowRight} style={{height: 20, width: 20}} />
-        </View>
+        </TouchableOpacity>
 
         <View
           style={{

@@ -44,7 +44,7 @@ const InvoiceSuccess = () => {
   };
 
   if (!params) return null;
-  
+
   return (
     <Container>
       <View
@@ -77,7 +77,7 @@ const InvoiceSuccess = () => {
                   fontSize: 16,
                   color: colors.primaryText,
                   textAlign: 'center',
-                  lineHeight: 27
+                  lineHeight: 27,
                 }}>
                 Your invoice of{' '}
                 <Text
@@ -105,7 +105,7 @@ const InvoiceSuccess = () => {
           <View style={{alignItems: 'center'}}>
             <Button
               text="Go to Wallet"
-              onPress={() => {}}
+              onPress={() => navigation.navigate('InvoiceList')}
               textColor="white"
               backgroundColor={colors.primary}
               borderColor={colors.primary}

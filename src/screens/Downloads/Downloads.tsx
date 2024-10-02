@@ -665,7 +665,7 @@ const Downloads = () => {
               height: hp(60),
               justifyContent: 'center',
             }}>
-            {allBusiness.length === 0 && (
+            {allBusiness.length === 0 || selectedBusiness !== 0 && (
               <View
                 style={{
                   width: wp(90),

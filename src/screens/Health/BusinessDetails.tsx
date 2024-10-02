@@ -35,6 +35,7 @@ export const BusinessDetails = ({
   setSelectedBusiness,
   primaryBusiness,
   businessDetails,
+  gotoConcrypt,
 }: any) => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
@@ -142,13 +143,13 @@ export const BusinessDetails = ({
             color: colors.secondaryText,
           },
         ]}>
-        {businessDetails.detail.description || 'No description added'}
+        {businessDetails.detail && businessDetails.detail.description
+          ? businessDetails.detail.description
+          : 'No description added'}
       </Text>
       <Gap height={hp(2)} />
       <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('Concrypt', {id: businessDetails.id})
-        }
+        onPress={gotoConcrypt}
         style={{
           alignSelf: 'center',
           flexDirection: 'row',

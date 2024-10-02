@@ -8,13 +8,17 @@ import {
 } from 'react-native-responsive-screen';
 import {useNavigation} from '@react-navigation/native';
 import {Line} from '@src/constants/Line';
-import {formatAmount, getCurrency, getfirstlastname} from '@src/utils/helpers';
+import {
+  formatAmount,
+  getCurrency,
+  getfirstlastname,
+  makeId,
+} from '@src/utils/helpers';
 import {OrderCard} from '@src/components/common/ordercard';
 import {useAppSelector} from '@src/store/store';
 import moment from 'moment';
 
 const TransactionCard = ({item}: any) => {
-  const pictures = useThemeImages();
   const navigation: any = useNavigation();
 
   const storage = useAppSelector(state => state.common.storage);
@@ -28,7 +32,7 @@ const TransactionCard = ({item}: any) => {
       item.order_detail.service_detail.service.name,
     );
     transactions.push(
-      <View>
+      <View key={makeId()}>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('OrderDetails', {
@@ -58,22 +62,23 @@ const TransactionCard = ({item}: any) => {
     );
   }
   if (item.metadata.type === 'invoice') {
-    const myInvoice = user.id === item.metadata.from_user_id;
+    console.log("🚀 ~ TransactionCard ~ item:", item)
+    const myInvoice = user.id == item.metadata.from_user_id;
     const name = myInvoice
       ? item.metadata.from_customer_name
       : item.metadata.to_customer_name;
     const {firstName, lastName} = getfirstlastname(name || '');
 
     let title = myInvoice
-      ? `You have paid invoice to ${item.metadata.from_customer_name}`
-      : `You have recieved money from ${item.metadata.to_customer_name}`;
+      ? `Sent invoice to ${item.metadata.to_customer_name}`
+      : `${item.metadata.from_customer_name}`;
 
     transactions.push(
-      <View>
+      <View key={makeId()}>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('OrderDetails', {
-              order_num: item.order_detail.order.order_num,
+            navigation.navigate('InvoiceDetails', {
+              invoice_num: item.metadata.invoice_num,
             })
           }>
           <OrderCard
@@ -97,23 +102,26 @@ const TransactionCard = ({item}: any) => {
     );
   } else if (item.metadata.type === 'activation') {
     transactions.push(
-      <View>
+      <View key={makeId()}>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('InvoiceDetails', {
               invoice_num: item.metadata.invoice_num,
             })
           }>
-        <OrderCard
-          avatar={pictures.defaultProfile}
-          title={'Payment for activation your account'}
-          date={moment.unix(item.created).format('DD MMM yyyy, hh:mm A')}
-          money={formatAmount(
-            item.amount_received / 100,
-            currency.currency_symbol,
-          )}
-          small
-        />
+          <OrderCard
+            avatar={{
+              first_name: 'Activation',
+              last_name: '',
+            }}
+            title={'Activation'}
+            date={moment.unix(item.created).format('DD MMM yyyy, hh:mm A')}
+            money={formatAmount(
+              item.amount_received / 100,
+              currency.currency_symbol,
+            )}
+            small
+          />
         </TouchableOpacity>
 
         <Gap height={hp(2)} />

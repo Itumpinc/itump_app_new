@@ -70,7 +70,7 @@ const Wallet = () => {
   const refreshData = () => {
     getDashboardQuery();
     connectAccountQuery();
-  }
+  };
 
   const headerPress = () => {
     navigation.navigate('Home');
@@ -168,8 +168,7 @@ const Wallet = () => {
                       : 1
                   }
                   onPress={() =>
-                    typeof dashboardData.account_balance !== 'undefined' &&
-                    dashboardData.account_balance.total_balance
+                    typeof dashboardData.account_balance !== 'undefined'
                       ? setShowDetails(true)
                       : {}
                   }>
@@ -246,20 +245,6 @@ const Wallet = () => {
         )}
       {allBusiness.length === 0 && <NewBusinessFormation />}
 
-      <Text
-        style={[
-          styles.text,
-          {
-            color: colors.secondaryText,
-            alignSelf: 'flex-start',
-            fontFamily: 'Satoshi-Black',
-            fontSize: hp(2.2),
-            marginLeft: wp(6),
-          },
-        ]}>
-        Finances
-      </Text>
-      <Gap height={hp(2)} />
       <Transaction />
       <Gap height={hp(2)} />
       <Invoices />

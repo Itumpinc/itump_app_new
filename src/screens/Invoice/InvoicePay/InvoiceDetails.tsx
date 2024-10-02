@@ -42,11 +42,10 @@ const CancelInvoice = ({setOpenCancel, openCancel, invoiceNum}: any) => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
 
-  const navigation:any = useNavigation();
+  const navigation: any = useNavigation();
 
   const [loader, setLoader] = useState(false);
-  const [cancelInvoiceQuery] =
-    userApi.useLazyCancelInvoiceQuery();
+  const [cancelInvoiceQuery] = userApi.useLazyCancelInvoiceQuery();
 
   const [schema, setSchema] = useState(
     withSchemaData(
@@ -69,14 +68,14 @@ const CancelInvoice = ({setOpenCancel, openCancel, invoiceNum}: any) => {
       },
     });
 
-    if(cancelInvoiceData.isSuccess){
+    if (cancelInvoiceData.isSuccess) {
       setLoader(false);
       alert('Invoice Cancelled Succesfully!.');
-      setOpenCancel(false)
+      setOpenCancel(false);
       navigation.navigate('InvoiceList');
     }
 
-    if(cancelInvoiceData.isError){
+    if (cancelInvoiceData.isError) {
       setLoader(false);
       const error: any = cancelInvoiceData.error;
       const data = error && error.data ? error.data : undefined;
@@ -86,11 +85,9 @@ const CancelInvoice = ({setOpenCancel, openCancel, invoiceNum}: any) => {
     }
   };
 
-  if(!openCancel) return null;
-
+  if (!openCancel) return null;
 
   return (
-    
     <Popup close={() => setOpenCancel(false)} height={50} closeIcon>
       <View style={{width: wp(90), alignSelf: 'center'}}>
         <Gap height={hp(5)} />
@@ -306,7 +303,7 @@ const TimeLine = (props: any) => {
   const colors = useThemeColors();
   const {invoiceData, user, country} = props;
   const {invoice, items, payments} = invoiceData;
-  
+
   let is_recurring = invoice.is_recurring;
   let recurring_months = invoice.recurring_months;
 
@@ -417,6 +414,7 @@ const InvoiceDetails = () => {
   const colors = useThemeColors();
   const route: any = useRoute();
   const params = route.params;
+  const navigation: any = useNavigation();
 
   const [openCancel, setOpenCancel] = useState(false);
   const storage = useAppSelector(state => state.common.storage);
@@ -444,7 +442,7 @@ const InvoiceDetails = () => {
     avatar = {
       first_name: firstName,
       last_name: lastName,
-      email: invoice.user_business.detail.email
+      email: invoice.user_business.detail.email,
     };
   }
 
@@ -458,12 +456,14 @@ const InvoiceDetails = () => {
     raised: myInvoice ? 'Awaiting Payment' : 'Payment Pending',
     paid: myInvoice ? 'Successful' : 'Paid',
     cancelled: 'Cancelled',
+    partial_paid: 'Recurring',
   };
 
   const dateList: any = {
     raised: 'Raised on',
     paid: 'Paid on',
-    cancelled: 'Cancelled At'
+    partial_paid: 'Recurring started on',
+    cancelled: 'Cancelled At',
   };
 
   let date = moment(invoice.updated_at).format('DD MMM YYYY, hh:mm A');
@@ -476,14 +476,18 @@ const InvoiceDetails = () => {
   const statusColor: any = {
     paid: colors.successBackgroundColor,
     raised: colors.lightOrange,
-    cancelled: colors.errorText+'30',
+    cancelled: colors.errorText + '30',
+    partial_paid: colors.lightOrange,
   };
 
   const textColor: any = {
     paid: colors.otpBorder,
     raised: colors.darkOrange,
     cancelled: colors.errorText,
+    partial_paid: colors.darkOrange,
   };
+
+  console.log('invoice.status', invoice.status);
 
   return (
     <Container>
@@ -492,7 +496,11 @@ const InvoiceDetails = () => {
           alignSelf: 'center',
           width: wp(90),
         }}>
-        <Header title="Transaction Details" source={pictures.arrowLeft} />
+        <Header
+          title="Transaction Details"
+          source={pictures.arrowLeft}
+          onPress={() => navigation.navigate('InvoiceList')}
+        />
         <View style={{width: wp(90)}}>
           <View
             style={{

@@ -43,12 +43,14 @@ export default function Invoices() {
     userApi.useLazyGetTransactionsQuery();
 
   useFocusedEffect(() => {
-    getTransactionsQuery('?type=invoice&limit=5');
+    getTransactionsQuery('?type=invoice&limit=3');
   }, []);
 
   if (!getTransactionsData.isSuccess) return null;
 
   const transactions = getData(getTransactionsData);
+  if (!(transactions.data && transactions.data.length > 0)) return null;
+  
   return (
     <>
       <View

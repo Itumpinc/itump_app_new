@@ -30,6 +30,11 @@ import {
   OrderList,
   OrderDetails,
   TransactionList,
+  AccountOption,
+  CloseAccount,
+  Profile,
+  Security,
+  ChangePassoword,
 } from '@src/screens';
 import * as AddaBusinessScreens from '@src/screens/BusinessRegistration/setup/index';
 import * as ExistingBusinessScreens from '@src/screens/BusinessRegistration/ExistingBusiness/index';
@@ -96,7 +101,7 @@ const MainNavigator = () => {
   return (
     <>
       <Stack.Navigator
-        initialRouteName="TransactionList"
+        initialRouteName="Home"
         screenOptions={{headerShown: false, animation: 'none'}}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Modules" component={Modules} />
@@ -224,6 +229,11 @@ const MainNavigator = () => {
         <Stack.Screen name="OrderList" component={OrderList} />
         <Stack.Screen name="OrderDetails" component={OrderDetails} />
         <Stack.Screen name="TransactionList" component={TransactionList} />
+        <Stack.Screen name="AccountOption" component={AccountOption} />
+        <Stack.Screen name="CloseAccount" component={CloseAccount} />
+        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="Security" component={Security} />
+        <Stack.Screen name="ChangePassoword" component={ChangePassoword} />
       </Stack.Navigator>
       <Navbar />
       <Toast config={toastConfig} />

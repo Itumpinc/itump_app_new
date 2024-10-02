@@ -60,7 +60,7 @@ const Form = (props: any) => {
     }
   };
 
-  // console.log(schema.data, schema.valid, schema.errors);
+  console.log(schema.data, schema.valid, schema.errors);
 
   return (
     <View style={{width: wp(90)}}>
@@ -85,7 +85,6 @@ const Form = (props: any) => {
         text="Continue"
         textColor="white"
         onPress={() => gotoNext()}
-        disabled={!schema.valid}
       />
       <Gap height={hp(7)} />
     </View>

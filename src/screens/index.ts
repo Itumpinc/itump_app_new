@@ -19,7 +19,6 @@ export {default as ExistingBusiness} from './BusinessRegistration/ExistingBusine
 export {default as NewBusiness} from './BusinessRegistration/NewBusiness/NewBusiness';
 
 export {default as OrderSummary} from './payment/OrderSummary';
-export {default as Account} from './Account/account';
 export {default as MakePayment} from './payment/MakePayment';
 export {default as BusinessPaymentSuccess} from '@src/screens/BusinessRegistration/NewBusiness/BusinessPaymentSuccess';
 export {default as ServicePaymentSuccess} from '@src/screens/Services/ServicePaymentSuccess';
@@ -41,3 +40,10 @@ export {default as Wallet} from './Wallet/Wallet';
 export {default as OrderList} from './Wallet/OrderList';
 export {default as OrderDetails} from './Wallet/OrderDetails';
 export {default as TransactionList} from './Wallet/TransactionList';
+
+export {default as Account} from './Account/account';
+export {default as AccountOption} from './Account/AccountOption';
+export {default as CloseAccount} from './Account/CloseAccount';
+export {default as Profile} from './Account/Profile';
+export {default as Security} from './Account/Security';
+export {default as ChangePassoword} from './Account/ChangePassoword';

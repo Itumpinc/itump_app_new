@@ -35,13 +35,13 @@ export default function RecentOrders() {
     orderApi.useLazyLoadUsersOrderQuery();
 
   useFocusedEffect(() => {
-    loadUsersOrderQuery(`?page=1&limit=5`);
+    loadUsersOrderQuery(`?page=1&limit=2`);
   }, []);
 
   if (!loadUsersOrderData.isSuccess) return null;
 
   const data = getData(loadUsersOrderData);
-
+  if(!(data.rows && data.rows.length > 0)) return null;
   return (
     <>
       <View

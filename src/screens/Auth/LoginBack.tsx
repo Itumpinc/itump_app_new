@@ -43,6 +43,7 @@ const LoginBack = () => {
   const [resendAuthCodeQuery] = userApi.useLazyResendSignupCodeQuery();
 
   const storage = useAppSelector(state => state.common.storage);
+  const {faceid_enabled} = storage;
   let email = route.params ? route.params.email : '';
   if (!email) {
     email = storage.user ? storage.user.email : storage.email;
@@ -135,7 +136,12 @@ const LoginBack = () => {
     if (loginwithPasswordData.isSuccess) {
       const {user, tokens} = getData(loginwithPasswordData);
       setAfterLogin(true);
-      afterLoginAction({dispatch, setData, userApisQuery, data: {user, tokens}});
+      afterLoginAction({
+        dispatch,
+        setData,
+        userApisQuery,
+        data: {user, tokens},
+      });
     }
 
     if (loginwithPasswordData.isError) {
@@ -150,7 +156,12 @@ const LoginBack = () => {
     if (loginwithAuthcodeData.isSuccess) {
       const {user, tokens} = getData(loginwithAuthcodeData);
       setAfterLogin(true);
-      afterLoginAction({dispatch, setData, userApisQuery, data: {user, tokens}});
+      afterLoginAction({
+        dispatch,
+        setData,
+        userApisQuery,
+        data: {user, tokens},
+      });
     }
 
     if (loginwithAuthcodeData.isError) {
@@ -295,7 +306,7 @@ const LoginBack = () => {
                 onPress={() =>
                   navigation.navigate('ForgotPassword', {
                     type: 'forgot_password',
-                    email: user.email
+                    email: user.email,
                   })
                 }
                 style={{alignSelf: 'flex-start'}}>
@@ -323,23 +334,26 @@ const LoginBack = () => {
             />
 
             <Gap height={hp(10)} />
-            {hasBiometricCre && user && user.is_first_pass_gen !== 0 && (
-              <TouchableOpacity
-                style={{flexDirection: 'row', alignItems: 'center'}}
-                onPress={() => biometricLogin()}>
-                <View>
-                  <Image source={pictures.faceId} style={styles.faceId} />
-                </View>
-                <Text
-                  style={{
-                    color: colors.secondaryText,
-                    fontFamily: 'Satoshi-Regular',
-                    fontSize: 15,
-                  }}>
-                  {'  '}Tap to log in
-                </Text>
-              </TouchableOpacity>
-            )}
+            {hasBiometricCre &&
+              user &&
+              user.is_first_pass_gen !== 0 &&
+              faceid_enabled && (
+                <TouchableOpacity
+                  style={{flexDirection: 'row', alignItems: 'center'}}
+                  onPress={() => biometricLogin()}>
+                  <View>
+                    <Image source={pictures.faceId} style={styles.faceId} />
+                  </View>
+                  <Text
+                    style={{
+                      color: colors.secondaryText,
+                      fontFamily: 'Satoshi-Regular',
+                      fontSize: 15,
+                    }}>
+                    {'  '}Tap to log in
+                  </Text>
+                </TouchableOpacity>
+              )}
             <Gap height={hp(15)} />
             <View style={{flexDirection: 'row', alignSelf: 'center'}}>
               <Text

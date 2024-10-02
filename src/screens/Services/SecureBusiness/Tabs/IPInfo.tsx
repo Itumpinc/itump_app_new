@@ -72,17 +72,6 @@ export function IPInfo(props: any) {
     })();
   }, [schema.data.country_id]);
 
-  useEffect(() => {
-    if (stateOptions.length > 0) {
-      if (user.state_id)
-        setSchema(
-          updateSchema(schema, 'data', 'incorporator_state_id', user.state_id),
-        );
-      if (user.city)
-        setSchema(updateSchema(schema, 'data', 'incorporator_city', user.city));
-    }
-  }, [stateOptions]);
-
   return (
     <View>
       <GetTabHeader {...props} />

@@ -48,10 +48,23 @@ export const storageSlice = createSlice({
       };
       state.storage = newState.storage;
     },
+    closeAccountAction: state => {
+      const newState = {
+        storage: {
+          ...state.storage,
+          tokens: undefined,
+          user: undefined,
+          primaryBusiness: undefined,
+          business: undefined,
+          email: undefined,
+        },
+      };
+      state.storage = newState.storage;
+    },
   },
 });
 
-export const {setTheme, setData, logoutAction, removeData} =
+export const {setTheme, setData, logoutAction, closeAccountAction, removeData} =
   storageSlice.actions;
 
 export const storageReducer = storageSlice.reducer;

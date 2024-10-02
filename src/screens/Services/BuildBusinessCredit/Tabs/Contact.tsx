@@ -76,10 +76,12 @@ export function Contact(props: any) {
     if (stateOptions.length > 0) {
       if (user.state_id)
         setSchema(
-          updateSchema(schema, 'data', 'incorporator_state_id', user.state_id),
+          updateSchema(schema, 'data', 'state_id', user.state_id),
+          updateSchema(schema, 'data', 'company_state_id', user.state_id),
         );
       if (user.city)
-        setSchema(updateSchema(schema, 'data', 'incorporator_city', user.city));
+        setSchema(updateSchema(schema, 'data', 'city', user.city));
+      setSchema(updateSchema(schema, 'data', 'company_city', user.city));
     }
   }, [stateOptions]);
 

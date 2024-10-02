@@ -120,27 +120,39 @@ const TransactionList = () => {
     <Container source={pictures.welcome}>
       <View style={{width: wp(90), alignSelf: 'center'}}>
         <Header
-          title={`${titleCase(paramsType)} Transactions`}
+          title={`${
+            paramsType === 'invoice' ? titleCase(paramsType) : ''
+          } Transactions`}
           source={pictures.arrowLeft}
         />
         <Gap height={hp(2)} />
         {data.length > 0 ? (
-          <FlatList
-            data={data}
-            keyExtractor={item => makeId()} // Unique key for each item
-            renderItem={renderItem} // Function to render each item
-            onEndReached={() => {
-              if (!isEndReachedCalledDuringMomentum && hasMore) {
-                loadMore();
-                isEndReachedCalledDuringMomentum = true;
-              }
-            }}
-            onMomentumScrollBegin={() => {
-              isEndReachedCalledDuringMomentum = false;
-            }}
-            onEndReachedThreshold={0.9}
-            ListFooterComponent={renderFooter}
-          />
+          <View>
+            {data.length > 10 ? (
+              <FlatList
+                data={data}
+                keyExtractor={item => makeId()} // Unique key for each item
+                renderItem={renderItem} // Function to render each item
+                onEndReached={() => {
+                  if (!isEndReachedCalledDuringMomentum && hasMore) {
+                    loadMore();
+                    isEndReachedCalledDuringMomentum = true;
+                  }
+                }}
+                onMomentumScrollBegin={() => {
+                  isEndReachedCalledDuringMomentum = false;
+                }}
+                onEndReachedThreshold={0.9}
+                ListFooterComponent={renderFooter}
+              />
+            ) : (
+              <View>
+                {data.map((item: any, index: number) => {
+                  return <TransactionCard item={item} key={index} />;
+                })}
+              </View>
+            )}
+          </View>
         ) : (
           <View
             style={{

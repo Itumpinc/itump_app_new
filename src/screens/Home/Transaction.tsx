@@ -43,14 +43,31 @@ export default function Transaction() {
     userApi.useLazyGetTransactionsQuery();
 
   useFocusedEffect(() => {
-    getTransactionsQuery('?type=order&limit=5');
+    getTransactionsQuery('?type=order&limit=3');
   }, []);
 
   if (!getTransactionsData.isSuccess) return null;
-
   const transactions = getData(getTransactionsData);
+  
+  if (!(transactions.data && transactions.data.length > 0)) return null;
+
   return (
     <>
+      <Text
+        style={[
+          styles.text,
+          {
+            color: colors.secondaryText,
+            alignSelf: 'flex-start',
+            fontFamily: 'Satoshi-Black',
+            fontSize: hp(2.2),
+            marginLeft: wp(6),
+          },
+        ]}>
+        Finances
+      </Text>
+      <Gap height={hp(2)} />
+
       <View
         style={{
           backgroundColor: colors.activityBox,

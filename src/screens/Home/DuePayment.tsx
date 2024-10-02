@@ -58,7 +58,7 @@ export default function DuePayment() {
           width: '90%',
           alignSelf: 'center',
         }}>
-        {raisedInvoice.map((list: any) => {
+        {raisedInvoice.map((list: any, index:number) => {
           let avatar = list.invoice.user;
           if (
             list.invoice.user_business &&
@@ -76,6 +76,8 @@ export default function DuePayment() {
           const country = countryList.find(
             (c: any) => c.currency_code === list.invoice.currency,
           );
+
+          if(index > 1) return null;
 
           return (
             <TouchableOpacity
@@ -96,6 +98,8 @@ export default function DuePayment() {
                   list.invoice.total_amount,
                   country.currency_symbol,
                 )}
+                style={{paddingLeft: wp(6)}}
+                small
               />
               <Gap height={hp(2)} />
             </TouchableOpacity>
@@ -118,7 +122,8 @@ export default function DuePayment() {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
-          }} onPress={() => navigation.navigate('InvoiceList')}>
+          }}
+          onPress={() => navigation.navigate('InvoiceList')}>
           <Text
             style={[
               styles.text,

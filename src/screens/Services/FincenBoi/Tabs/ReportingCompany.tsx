@@ -255,6 +255,22 @@ export function ReportingCompany(props: any) {
           <Gap height={hp(2)} />
           <Line />
           <Gap height={hp(2)} />
+          <Text style={styles.mainText}>Basic Contact Info.</Text>
+          <Gap height={hp(1)} />
+          <RenderInput
+            name="company_email"
+            value={schema.data.company_email}
+            placeHolder="Email Address"
+          />
+          <RenderPhone
+            name="company_phone"
+            value={schema.data.company_phone}
+            placeHolder="Phone Number"
+          />
+
+          <Gap height={hp(2)} />
+          <Line />
+          <Gap height={hp(2)} />
           <Text style={styles.mainText}>Current U.S. address</Text>
           <Gap height={hp(1)} />
           <RenderInput

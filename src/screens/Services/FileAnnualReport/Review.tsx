@@ -17,19 +17,31 @@ import {formataddress} from '@src/screens/BusinessRegistration/Utils';
 import {commonApi} from '@src/store/services/common';
 import {useNavigation} from '@react-navigation/native';
 import {serviceApi} from '@src/store/services/service';
+import moment from 'moment';
 
 const Review = (props: any) => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const storage = useAppSelector(state => state.common.storage);
-  const {serviceData, stepAction, schema} = props;
+  const {serviceData, stepAction, schema, paramsData} = props;
   const {countryList, user} = storage;
   const navigation: any = useNavigation();
 
   const [serviceCreateQuery] = serviceApi.useLazyServiceCreateQuery();
+  const [serviceUpdateQuery] = serviceApi.useLazyServiceUpdateQuery();
+
   const [loadStateQuery] = commonApi.useLazyLoadStateQuery();
   const [stateList, setStateList] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const detailView =
+    paramsData && paramsData.routeParams && paramsData.routeParams.detailView;
+  const needpayment =
+    paramsData &&
+    paramsData.routeParams &&
+    typeof paramsData.routeParams.takePayment !== 'undefined'
+      ? false
+      : true;
 
   useEffect(() => {
     (async () => {
@@ -47,7 +59,7 @@ const Review = (props: any) => {
   const submit = async () => {
     setLoading(true);
 
-    const JSONData = {
+    let JSONData = {
       company_id: schema.data.company_id,
       company_industry: schema.data.company_industry,
       company_registration_number: schema.data.company_registration_number,
@@ -64,12 +76,43 @@ const Review = (props: any) => {
       zipcode: schema.data.zipcode,
     };
 
-    const serviceCreateData = await serviceCreateQuery({
-      tag: serviceData.tags,
-      data: JSONData,
-    });
-    if (serviceCreateData.isSuccess) {
-      const data = getData(serviceCreateData);
+    if (schema.data.created_at) {
+      JSONData = {
+        ...JSONData,
+        ...{
+          created_at: moment(schema.data.created_at, 'MM-DD-YYYY').format(
+            'YYYY-MM-DD HH:mm:ss',
+          ),
+        },
+      };
+    }
+
+    if (
+      paramsData.routeParams &&
+      paramsData.routeParams.action === 'done_already'
+    ) {
+      JSONData = {
+        ...JSONData,
+        ...{status: 'already_done'},
+      };
+    }
+
+    let serviceCreateUpdateData;
+    if (paramsData.routeParams && paramsData.routeParams.serviceRequestId) {
+      serviceCreateUpdateData = await serviceUpdateQuery({
+        id: paramsData.routeParams.serviceRequestId,
+        tag: serviceData.tags,
+        data: JSONData,
+      });
+    } else {
+      serviceCreateUpdateData = await serviceCreateQuery({
+        tag: serviceData.tags,
+        data: JSONData,
+      });
+    }
+
+    if (serviceCreateUpdateData && serviceCreateUpdateData.isSuccess) {
+      const data = getData(serviceCreateUpdateData);
 
       // navigation.reset({
       //   index: 0,
@@ -85,17 +128,22 @@ const Review = (props: any) => {
       //     },
       //   ],
       // });
-      navigation.navigate('OrderSummary', {
-        service_add_ons: [],
-        service_id: serviceData.id,
-        service_request_id: data.service.id,
-        business_id: schema.data.company_id,
-      });
+
+      if (needpayment) {
+        navigation.navigate('OrderSummary', {
+          service_add_ons: [],
+          service_id: serviceData.id,
+          service_request_id: data.service.id,
+          business_id: schema.data.company_id,
+        });
+      } else {
+        navigation.navigate('Health');
+      }
     }
 
-    if (serviceCreateData.isError) {
+    if (serviceCreateUpdateData && serviceCreateUpdateData.isError) {
       setLoading(false);
-      const error: any = serviceCreateData.error;
+      const error: any = serviceCreateUpdateData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
         alert(data.message);
@@ -127,7 +175,7 @@ const Review = (props: any) => {
             <ReviewCard
               title="Contact"
               open
-              editAction={() => editAction('Contact')}
+              editAction={detailView ? undefined : () => editAction('Contact')}
               data={[
                 {
                   heading: 'Full Name',
@@ -160,23 +208,33 @@ const Review = (props: any) => {
             }}>
             <ReviewCard
               title="Business Information"
-              editAction={() => editAction('BusinessInformation')}
+              editAction={
+                detailView ? undefined : () => editAction('BusinessInformation')
+              }
               data={[
                 {heading: 'Industry', text: schema.data.company_industry},
-                {heading: 'Registration Number', text: schema.data.company_registration_number},
-                {heading: 'Establishment On (MM-DD-YYYY)', text: schema.data.company_establishment_date},
+                {
+                  heading: 'Registration Number',
+                  text: schema.data.company_registration_number,
+                },
+                {
+                  heading: 'Establishment On (MM-DD-YYYY)',
+                  text: schema.data.company_establishment_date,
+                },
               ]}
             />
           </View>
         </View>
       </View>
       <Gap height={hp(3)} />
-      <Button
-        text="Proceed to Payment"
-        textColor="white"
-        onPress={submit}
-        loader={loading}
-      />
+      {!detailView && (
+        <Button
+          text={needpayment ? 'Proceed to Payment' : 'Save and Continue'}
+          textColor="white"
+          onPress={submit}
+          loader={loading}
+        />
+      )}
       <Gap height={hp(7)} />
     </View>
   );

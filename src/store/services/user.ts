@@ -143,6 +143,26 @@ export const userApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    updateProfile: builder.query<any, any>({
+      query: (data: any) => ({
+        url: `/v1/users/profile/update`,
+        method: 'POST',
+        data,
+      }),
+    }),
+    changePassword: builder.query<any, any>({
+      query: (data: any) => ({
+        url: `/v1/users/pass-gen`,
+        method: 'POST',
+        data,
+      }),
+    }),
+    closeAccount: builder.query<any, number>({
+      query: (userId: number) => ({
+        url: `/v1/users/delete/${userId}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
   overrideExisting: false,
 });

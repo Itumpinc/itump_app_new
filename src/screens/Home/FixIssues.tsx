@@ -23,12 +23,26 @@ import ProgressBox from '@src/constants/ProgressBox';
 import {userApi} from '@src/store/services/user';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 import {getData} from '@src/utils/helpers';
+import {Line} from '@src/constants/Line';
 
-const IssueLayout = ({text, onPress}: any) => {
+const IssueLayout = ({text, onPress, status}: any) => {
   const pictures = useThemeImages();
   const gapHeight = Platform.OS === 'ios' ? 24 : 20;
   const colors = useThemeColors();
   const navigation = useNavigation();
+
+  let icon = null;
+  switch (status) {
+    case 'done':
+      icon = pictures.tickPrimary;
+      break;
+    case 'pending':
+      icon = require('@images/more-circle.png');
+      break;
+    default:
+      icon = require('@images/go-to-2.png');
+      break;
+  }
 
   return (
     <View
@@ -38,7 +52,7 @@ const IssueLayout = ({text, onPress}: any) => {
         justifyContent: 'space-between',
         alignItems: 'center',
         alignSelf: 'center',
-        marginVertical: -hp(0.5),
+        marginVertical: hp(1.5),
       }}>
       <Text
         style={[
@@ -53,11 +67,11 @@ const IssueLayout = ({text, onPress}: any) => {
       </Text>
       <View>
         <Image
-          source={pictures.goTo}
+          source={icon}
           style={{
-            height: hp(8),
-            width: hp(8),
-            marginRight: -wp(6),
+            height: 20,
+            width: 20,
+            marginRight: wp(1),
             alignSelf: 'center',
           }}
         />
@@ -85,18 +99,40 @@ export default function FixIssues(props: any) {
   const healthData = getData(getHealthData);
   let percentage = 0;
   let title = '';
-  if (healthData && healthData.health) {
+  if (healthData && typeof healthData.health !== 'undefined') {
     percentage = healthData.health;
     if (percentage <= 40) {
       title = 'Fix Issues Now';
     } else if (percentage > 40 && percentage <= 60) {
       title = 'Some Issue Need to Fix';
-    } else if (percentage > 60 && percentage <= 80) {
+    } else if (percentage > 60 && percentage <= 90) {
       title = 'You are almost there!';
-    } else if (percentage > 80) {
-      title = 'Check it out!';
+    } else if (percentage > 90) {
+      title = 'Your business is doing great!';
     }
   }
+
+  function getDetailsUsingService(tag: string) {
+    let serviceItem;
+    if (healthData && healthData.services) {
+      for (let index = 0; index < healthData.services.length; index++) {
+        const hD = healthData.services[index];
+        if (hD.service === tag) {
+          serviceItem = hD;
+        }
+      }
+    }
+    return serviceItem;
+  }
+
+  if (!(healthData && healthData.services)) return null;
+
+  const registerBusiness = getDetailsUsingService('register_business');
+  // const serviceFincen = getDetailsUsingService('service_fincen_boi');
+  // const registerAgent = getDetailsUsingService('register_agent');
+  // const createAnnualReport = getDetailsUsingService('create_annual_report');
+  // const createEinId = getDetailsUsingService('create_ein_id');
+  // const secureBusiness = getDetailsUsingService('secure_business');
 
   return (
     <>
@@ -134,7 +170,7 @@ export default function FixIssues(props: any) {
                       color: colors.secondaryText,
                       fontFamily: 'Satoshi-Medium',
                       fontSize: hp(2),
-                      marginLeft: -wp(3)
+                      marginLeft: -wp(3),
                     },
                   ]}>
                   {title}
@@ -177,32 +213,30 @@ export default function FixIssues(props: any) {
         )}
 
         {/* <Gap height={hp(2)} /> */}
-        {business.length > 0 && user.is_pro_user === 0 && (
-          <IssueLayout text={'Activate Account'} />
-        )}
-        {/* <Gap height={hp(2)} /> */}
-        <View
-          style={{
-            height: hp(0.1),
-            width: '92%',
-            alignSelf: 'center',
-            backgroundColor: colors.verticalLine,
-          }}
+
+        <IssueLayout
+          text={'Setup Your Business'}
+          status={
+            registerBusiness.total_score === registerBusiness.score
+              ? 'done'
+              : 'pending'
+          }
         />
+        <Line />
+        <IssueLayout
+          text={'Activate Account'}
+          status={
+            business.length > 0 && user.is_pro_user === 0 ? 'pending' : 'done'
+          }
+        />
+        <Line />
         <TouchableOpacity onPress={() => navigation.navigate('ServiceList')}>
           <IssueLayout text={'Check Our Services'} />
         </TouchableOpacity>
-        <View
-          style={{
-            height: hp(0.1),
-            width: '92%',
-            alignSelf: 'center',
-            backgroundColor: colors.verticalLine,
-          }}
-        />
+        <Line />
         <TouchableOpacity
           onPress={() => navigation.navigate('build_business_credit')}>
-          <IssueLayout text={'Business Business Credit'} />
+          <IssueLayout text={'Build Business Credit'} />
         </TouchableOpacity>
       </View>
       <Gap height={hp(2)} />

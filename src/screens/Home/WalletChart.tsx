@@ -28,6 +28,7 @@ import {logoutAction} from '@src/store/services/storage';
 import {useDispatch} from 'react-redux';
 import {StackActions, useNavigation} from '@react-navigation/native';
 import {useAppSelector} from '@src/store/store';
+import {formatAmount, getCurrency, titleCase} from '@src/utils/helpers';
 
 const DotRow = () => {
   return (
@@ -39,8 +40,8 @@ const DotRow = () => {
   );
 };
 
-const GraphBackground = () => {
-  const yLabels = ['$15k', '$10k', '$5k', '$0'];
+const GraphBackground = ({yLabels}: {yLabels: string[]}) => {
+  // const yLabels = ['$15k', '$10k', '$5k', '$0'];
   return (
     <View style={[styles.container]}>
       <View style={styles.yAxis}>
@@ -59,49 +60,135 @@ const GraphBackground = () => {
   );
 };
 
-const Chart = () => {
+const Chart = ({monthsData, totalRange}: any) => {
+  const viewHeight = 105; // in px
+  const minHeight = 0.05 * viewHeight;
+
+  function calculatePillarHeights(item: any) {
+    const col1Height = Math.max(
+      (item.col1 / totalRange) * viewHeight,
+      minHeight,
+    );
+    const col2Height = Math.max(
+      (item.col2 / totalRange) * viewHeight,
+      minHeight,
+    );
+    const col3Height = Math.max(
+      (item.col3 / totalRange) * viewHeight,
+      minHeight,
+    );
+
+    return {
+      col1Height: col1Height,
+      col2Height: col2Height,
+      col3Height: col3Height,
+    };
+  }
+
   return (
     <View>
-      <View
-        style={[
-          styles.chartLine,
-          {
-            height: 50,
-            left: wp(10),
-          },
-        ]}></View>
-      <View
-        style={[
-          styles.chartLine,
-          {
-            height: 80,
-            left: wp(30),
-          },
-        ]}></View>
-      <View
-        style={[
-          styles.chartLine,
-          {
-            height: 50,
-            left: wp(55),
-          },
-        ]}></View>
-        <View
-        style={[
-          styles.chartLine,
-          {
-            height: 100,
-            left: wp(75),
-          },
-        ]}></View>
+      {monthsData.map((item: any, index: number) => {
+        const pillarHeights = calculatePillarHeights(item);
+        return (
+          <View key={index} style={{marginLeft: wp(index*30)}}>
+          <View
+            style={[
+              styles.chartLine,
+              {
+                height: pillarHeights.col1Height,
+                left: wp(index+1*10),
+              },
+            ]}
+            ></View>
+            <View
+            style={[
+              styles.chartLine,
+              {
+                height: pillarHeights.col2Height,
+                left: wp(index+1*13),
+              },
+            ]}
+            ></View>
+            <View
+            style={[
+              styles.chartLine,
+              {
+                height: pillarHeights.col3Height,
+                left: wp(index+1*16),
+              },
+            ]}
+            ></View>
+          </View>
+        );
+      })}
     </View>
   );
 };
 
-export default function WalletChart() {
+export default function WalletChart({dashboardData}: any) {
   const pictures = useThemeImages();
   const storage = useAppSelector(state => state.common.storage);
+  const currency = getCurrency(storage);
+
+  const {
+    user_personalisation: userPersonalisation,
+    account_balance: accountBalance,
+    summary,
+  } = dashboardData;
   
+  const months = [
+    'jan',
+    'feb',
+    'mar',
+    'apr',
+    'may',
+    'jun',
+    'jul',
+    'aug',
+    'sep',
+    'oct',
+    'nov',
+    'dec',
+  ];
+
+  function divideRange(maxValue: number, parts = 3) {
+    const step = maxValue / parts;
+    const result = [];
+
+    for (let i = 0; i <= parts; i++) {
+      const value = i * step;
+      // Convert to "k" format if >= 1000
+      const kForm =
+        // @ts-ignore
+        value >= 1000 ? parseInt(value / 1000, 10) + 'k' : parseInt(value, 10);
+      result.push(`${currency.currency_symbol}${kForm}`);
+    }
+
+    return result;
+  }
+
+  const totalRange =
+    userPersonalisation && userPersonalisation.monthly_transact_range
+      ? userPersonalisation.monthly_transact_range
+      : 25000;
+  const rangeArr = divideRange(totalRange);
+
+  const monthsData = [];
+  for (let index = 0; index < months.length; index++) {
+    const month = months[index];
+    if (summary && summary[month]) {
+      monthsData.push({
+        label: titleCase(month),
+        col1:
+          userPersonalisation && userPersonalisation.daily_transact_limit
+            ? userPersonalisation.daily_transact_limit
+            : 4000,
+        col2: summary[month].receive,
+        col3: summary[month].spend,
+      });
+    }
+  }
+
   return (
     <View>
       <Gap height={Platform.OS === 'android' ? hp(8) : 1} />
@@ -119,17 +206,24 @@ export default function WalletChart() {
                 letterSpacing: -1,
                 fontFamily: 'Satoshi-Bold',
               }}>
-              $0.00
+              {accountBalance && accountBalance.total_balance
+                ? formatAmount(
+                    accountBalance.total_balance,
+                    currency.currency_symbol,
+                  )
+                : formatAmount(0, currency.currency_symbol)}
             </Text>
             <View style={{position: 'relative'}}>
-              <GraphBackground />
-              <Chart />
+              <GraphBackground yLabels={rangeArr.reverse()} />
+              <Chart monthsData={monthsData} totalRange={totalRange} />
               <View style={styles.xAxis}>
-                {['Sep', 'Oct', 'Nov', 'Dec'].map((label, index) => (
-                  <Text key={index} style={styles.xLabel}>
-                    {label}
-                  </Text>
-                ))}
+                {monthsData.map((months: any, index: number) => {
+                  return (
+                    <Text key={index} style={styles.xLabel}>
+                      {months.label}
+                    </Text>
+                  );
+                })}
               </View>
             </View>
           </View>
@@ -180,8 +274,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: '#fff',
     bottom: 5,
-    width: 20,
+    width: 5,
     zIndex: 1,
+    borderTopLeftRadius:2,
+    borderTopRightRadius:2,
   },
   dot: {
     marginHorizontal: 4,

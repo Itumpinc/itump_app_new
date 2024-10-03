@@ -14,14 +14,17 @@ import useStyles from '@src/screens/BusinessRegistration/styles';
 import {GetTabHeader} from '@src/screens/BusinessRegistration/NewBusiness/Tabs/Utils';
 import {useNavigation} from '@react-navigation/native';
 import {formatAmount, getDocument, titleCase} from '@src/utils/helpers';
+import {useAppSelector} from '@src/store/store';
 
 export function Documents(props: any) {
   const colors = useThemeColors();
   const pictures = useThemeImages();
   const navigation: any = useNavigation();
   const styles = useStyles();
+  const storage = useAppSelector(state => state.common.storage);
+  const {user} = storage;
   const {status, schema, details} = props;
-  
+
   const gotoEdit = (id: string) => {
     navigation.navigate('AddBusiness', {
       tabId: id,
@@ -31,6 +34,7 @@ export function Documents(props: any) {
   };
 
   const documents = getDocument(details.documents);
+  console.log('🚀 ~ Documents ~ documents:', documents);
 
   return (
     <View>
@@ -42,9 +46,22 @@ export function Documents(props: any) {
           {documents.map((document: any, index: number) => {
             return (
               <View key={index}>
-                <Text style={styles.secondaryText}>
-                  {document.document_name}
-                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={styles.secondaryText}>
+                    {document.document_name}
+                  </Text>
+                  {document.uploaded_by !== user.id && (
+                    <View
+                      style={{
+                        backgroundColor: colors.lightPrimary,
+                        paddingHorizontal: 12,
+                        borderRadius: 15,
+                        marginLeft: 10,
+                      }}>
+                      <Text style={{color: colors.primary}}>itump</Text>
+                    </View>
+                  )}
+                </View>
                 <Gap height={hp(1)} />
                 <View
                   style={{
@@ -71,9 +88,9 @@ export function Documents(props: any) {
 
           <Gap height={hp(2)} />
           <Button
-            text="Edit"
+            text="See Downloads"
             textColor="white"
-            onPress={() => gotoEdit('Shareholder')}
+            onPress={() => navigation.navigate('Downloads')}
           />
           <Gap height={hp(4)} />
         </View>

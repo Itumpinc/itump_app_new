@@ -69,7 +69,7 @@ export function BusinessInformation(props: any) {
       const businessData = getData(businessDetailData);
       setSchema(
         updateSchema(schema, 'data', '', {
-          company_industry: businessData.industry_type,
+          company_industry: businessData.detail.industry_type,
           company_country_id: businessData.country.id,
           company_state_id: businessData.state.id,
           company_city: businessData.detail.city,

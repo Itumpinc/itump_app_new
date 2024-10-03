@@ -94,32 +94,32 @@ export const companyDesignation = {
 };
 
 export const industry = [
-  {name: 'AdvertisingMarketingPR', value: 'Advertising/Marketing/PR'},
+  {name: 'Advertising/Marketing/PR', value: 'AdvertisingMarketingPR'},
   {name: 'Agriculture', value: 'Agriculture'},
   {
-    name: 'ConstructionGeneralContracting',
-    value: 'Construction/General Contracting',
+    name: 'Construction/General Contracting',
+    value: 'ConstructionGeneralContracting',
   },
   {name: 'Consulting', value: 'Consulting'},
-  {name: 'EquipmentSalesService', value: 'Equipment Sales &amp; Service'},
-  {name: 'FinancialServices', value: 'Financial Services'},
+  {name: 'Equipment Sales & Service', value: 'EquipmentSalesService'},
+  {name: 'Financial Services', value: 'FinancialServices'},
   {name: 'Healthcare', value: 'Healthcare'},
-  {name: 'InformationServices', value: 'Information Services'},
+  {name: 'Information Services', value: 'InformationServices'},
   {name: 'Legal', value: 'Legal'},
   {name: 'Manufacturing', value: 'Manufacturing'},
   {
-    name: 'MediaEntertainmentPublishing',
-    value: 'Media/Entertainment/Publishing',
+    name: 'Media/Entertainment/Publishing',
+    value: 'MediaEntertainmentPublishing',
   },
-  {name: 'NonProfit', value: 'Non-Profit'},
-  {name: 'RealEstate', value: 'Real Estate'},
+  {name: 'Non-Profit', value: 'NonProfit'},
+  {name: 'Real Estate', value: 'RealEstate'},
   {name: 'Restaurant', value: 'Restaurant'},
   {name: 'Retail', value: 'Retail'},
-  {name: 'TechnologyComputerIt', value: 'Technology/Computer/IT'},
-  {name: 'TransportationLogistics', value: 'Transportation/Logistics'},
-  {name: 'TravelHospitality', value: 'Travel/Hospitality'},
+  {name: 'Technology/Computer/IT', value: 'TechnologyComputerIt'},
+  {name: 'Transportation/Logistics', value: 'TransportationLogistics'},
+  {name: 'Travel/Hospitality', value: 'TravelHospitality'},
   {name: 'Wholesale', value: 'Wholesale'},
-  {name: 'OtherServices', value: 'Other Services'},
+  {name: 'Other Services', value: 'OtherServices'},
 ];
 
 export const manageLLC = [
@@ -412,5 +412,9 @@ export const documentType = [
   {
     name: 'Registration Document',
     value: 'registration_document',
+  },
+  {
+    name: 'Registration Document',
+    value: 'register_business',
   },
 ];

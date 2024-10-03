@@ -70,12 +70,18 @@ const DotRBSheet = (props: any) => {
       setLoader(false);
       setOpenDotRB(false);
       setShowDeleteModal(false);
-      alert('Document Deleted Succesfully!!');
+      alert({
+        type: 'success',
+        text: 'Document Deleted Succesfully!!',
+      });
       refreshList();
     }
     if (deleteDocumentData.isError) {
       setLoader(false);
-      alert('There is some error during deleting.');
+      alert({
+        type: 'error',
+        text: 'There is some error during deleting.',
+      });
     }
   };
 
@@ -104,15 +110,24 @@ const DotRBSheet = (props: any) => {
     .then(res => {
       if (res.statusCode === 200) {
         setOpenDotRB(false);
-        alert(`Download Successful!!`);
+        alert({
+          type: 'success',
+          text: 'Download Successful!!',
+        });
       } else {
         setOpenDotRB(false);
-        alert('Download Failed, Failed to download file.');
+        alert({
+          type: 'error',
+          text: 'Download Failed, Failed to download file.',
+        });
       }
     })
     .catch(err => {
       setOpenDotRB(false);
-      alert('Download Failed, An error occurred while downloading the file.');
+      alert({
+        type: 'error',
+        text: 'Download Failed, An error occurred while downloading the file.',
+      });
     });
   };
 

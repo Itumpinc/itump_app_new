@@ -91,10 +91,13 @@ export default function FixIssues(props: any) {
   const [getHealthQuery, getHealthData] = userApi.useLazyGetHealthQuery();
 
   useFocusedEffect(() => {
-    if (primaryBusiness) {
+    if (primaryBusiness && primaryBusiness.id) {
       getHealthQuery(primaryBusiness.id);
     }
-  }, [primaryBusiness]);
+    // else if (business && business.length > 0) {
+    //   getHealthQuery(business[0].id);
+    // }
+  }, [primaryBusiness, business]);
 
   const healthData = getData(getHealthData);
   let percentage = 0;
@@ -170,7 +173,7 @@ export default function FixIssues(props: any) {
                       color: colors.secondaryText,
                       fontFamily: 'Satoshi-Medium',
                       fontSize: hp(2),
-                      marginLeft: -wp(3),
+                      paddingLeft: wp(4),
                     },
                   ]}>
                   {title}
@@ -247,7 +250,6 @@ export default function FixIssues(props: any) {
 const styles = StyleSheet.create({
   text: {
     fontFamily: 'Satoshi-Bold',
-    alignSelf: 'center',
     textAlign: 'left',
   },
   image: {

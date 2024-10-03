@@ -263,7 +263,7 @@ const OrderSummary = () => {
       const error: any = createServiceOrderData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({ type: 'error', text: data.message });
       }
     }
 
@@ -281,7 +281,7 @@ const OrderSummary = () => {
 
   const makePayment = () => {
     if (selectedRecurring && !selectedplan) {
-      alert('Please select Plan');
+      alert({ type: 'error', text: 'Please select Plan' });
       return false;
     }
 
@@ -289,12 +289,19 @@ const OrderSummary = () => {
       is_recurring: 0,
       recurring_months: 0,
     };
-    if (selectedplan) {
+    if (selectedplan && selectedRecurring) {
       paymentData = {
         is_recurring: 1,
         recurring_months: selectedplan.months,
       };
     }
+
+    console.log({
+      paymentType: 'order',
+      card_type: 'small',
+      paymentData,
+      emi: selectedplan,
+    });
 
     setPaymentProcessData({
       paymentType: 'order',

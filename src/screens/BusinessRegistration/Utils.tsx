@@ -439,6 +439,7 @@ export const getJSONdatatoSave = (businessData: any, schemaData: any) => {
       description: schemaData.description,
       address1: schemaData.address1,
       address2: schemaData.address2,
+      city: schemaData.city,
       zipcode: schemaData.zipcode,
       phone_num: schemaData.phone_num,
       tax_id: schemaData.tax_id,

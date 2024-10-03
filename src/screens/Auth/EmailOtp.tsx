@@ -63,12 +63,18 @@ const EmailOtp = () => {
     if (resendSignupCodeData.isSuccess) {
       setLoader(false);
       setSchema(updateSchema(schema, 'data', 'otp', ''));
-      alert('Code sent,\n Please check your email.', true);
+      alert({
+        type: 'success',
+        text: 'Code sent, Please check your email.',
+      });
     }
 
     if (resendSignupCodeData.isError) {
       setLoader(false);
-      alert('There is some error is sending a code to your email.', true);
+      alert({
+        type: 'error',
+        text: 'There is some error is sending a code to your email.',
+      });
     }
   };
 

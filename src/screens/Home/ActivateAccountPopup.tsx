@@ -13,12 +13,15 @@ import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
 import Popup from '@src/components/common/popup';
 import Button from '@src/constants/button';
+import NewBusinessFormation from './NewBusinessFormation';
 
 export default function ActivateAccountPopup({modalClose, setModalClose}: any) {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
-  
+  const storage = useAppSelector(state => state.common.storage);
+  const {business} = storage;
+
   const details = [
     {
       image: pictures.global,
@@ -45,74 +48,89 @@ export default function ActivateAccountPopup({modalClose, setModalClose}: any) {
     },
   ];
 
+  const allBusiness = [...business.main_business, ...business.other_business];
+
   return (
     <>
       {modalClose && (
-        <Popup close={() => setModalClose(false)} closeIcon height={90}>
-          <Image
-            source={pictures.startup}
-            style={{width: hp(25), height: hp(25), alignSelf: 'center'}}
-          />
-          <Gap height={hp(1)} />
-          <View style={{alignItems: 'center'}}>
-            <Text
-              style={{
-                color: colors.boldText,
-                fontFamily: 'Satoshi-Bold',
-                fontSize: 18,
-                marginBottom: hp(1),
-              }}>
-              Activate Your Account
-            </Text>
-            <Gap height={hp(2)} />
-            {details.map((item, index) => (
-              <View key={index} style={{width: '90%'}}>
-                <View
+        <Popup
+          close={() => setModalClose(false)}
+          closeIcon
+          height={allBusiness.length > 0 ? 90 : 50}>
+          {allBusiness.length > 0 ? (
+            <>
+              <Image
+                source={pictures.startup}
+                style={{width: hp(25), height: hp(25), alignSelf: 'center'}}
+              />
+              <Gap height={hp(1)} />
+              <View style={{alignItems: 'center'}}>
+                <Text
                   style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    // justifyContent: 'center',
-                    width: '90%',
+                    color: colors.boldText,
+                    fontFamily: 'Satoshi-Bold',
+                    fontSize: 18,
+                    marginBottom: hp(1),
                   }}>
-                  <Image source={item.image} style={styles.image} />
-                  <View style={{marginLeft: wp(2)}}>
-                    <Text
-                      style={{
-                        color: colors.boldText,
-                        fontFamily: 'Satoshi-Medium',
-                        fontSize: 15,
-                        // flexShrink: 1,
-                      }}>
-                      {item.title}
-                    </Text>
-                    <Text
-                      style={{
-                        color: colors.primaryText,
-                        fontFamily: 'Satoshi-Regular',
-                        fontSize: 13,
-                        // flexShrink: 1,
-                      }}>
-                      {item.description}
-                    </Text>
-                  </View>
-                </View>
+                  Activate Your Account
+                </Text>
                 <Gap height={hp(2)} />
-              </View>
-            ))}
+                {details.map((item, index) => (
+                  <View key={index} style={{width: '90%'}}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        // justifyContent: 'center',
+                        width: '90%',
+                      }}>
+                      <Image source={item.image} style={styles.image} />
+                      <View style={{marginLeft: wp(2)}}>
+                        <Text
+                          style={{
+                            color: colors.boldText,
+                            fontFamily: 'Satoshi-Medium',
+                            fontSize: 15,
+                            // flexShrink: 1,
+                          }}>
+                          {item.title}
+                        </Text>
+                        <Text
+                          style={{
+                            color: colors.primaryText,
+                            fontFamily: 'Satoshi-Regular',
+                            fontSize: 13,
+                            // flexShrink: 1,
+                          }}>
+                          {item.description}
+                        </Text>
+                      </View>
+                    </View>
+                    <Gap height={hp(2)} />
+                  </View>
+                ))}
 
-            <Gap height={hp(2)} />
-            <Button
-              text="Activate"
-              onPress={() => {
-                setModalClose(false);
-                navigation.navigate('ActivateAccount');
-              }}
-              textColor="white"
-              iconSource={pictures.rightArrow}
-              check={false}
-              iconRight={true}
-            />
-          </View>
+                <Gap height={hp(2)} />
+                <Button
+                  text="Activate"
+                  onPress={() => {
+                    setModalClose(false);
+                    navigation.navigate('ActivateAccount');
+                  }}
+                  textColor="white"
+                  iconSource={pictures.rightArrow}
+                  check={false}
+                  iconRight={true}
+                />
+              </View>
+            </>
+          ) : (
+            <View style={{alignItems: 'center'}}>
+              <Gap height={hp(4)} />
+              <NewBusinessFormation closeAction={() => setModalClose(false)} />
+            </View>
+          )}
+
           <Gap height={hp(4)} />
         </Popup>
       )}

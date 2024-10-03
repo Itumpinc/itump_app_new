@@ -230,7 +230,7 @@ const MakePayment = (props: any) => {
       const error: any = createServiceOrderBindData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({ type: 'error', text: data.message });
       }
     }
   };
@@ -253,7 +253,7 @@ const MakePayment = (props: any) => {
       const error: any = createActivationBindData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({ type: 'error', text: data.message });
       }
     }
   };
@@ -278,14 +278,14 @@ const MakePayment = (props: any) => {
       const error: any = createInvoiceData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({ type: 'error', text: data.message });
       }
     }
   };
 
   const processPayment = () => {
     if (!acceptTerms) {
-      alert('please accept terms');
+      alert({ type: 'error', text: 'please accept terms' });
       return false;
     }
     setLoading(true);
@@ -305,7 +305,7 @@ const MakePayment = (props: any) => {
         const {error} = await presentPaymentSheet();
         if (error) {
           if (error.code !== 'Canceled') {
-            alert(`Error code: ${error.code} ${error.message}`);
+            alert({ type: 'error', text: `Error code: ${error.code} ${error.message}` });
           }
           resetPaymentSheetCustomer();
           setResetButton(true);

@@ -66,12 +66,12 @@ export function BusinessInformation(props: any) {
       const businessData = getData(businessDetailData);
       setSchema(
         updateSchema(schema, 'data', '', {
-          company_type: businessData.industry_type,
+          company_type: businessData.detail.industry_type,
           company_title: businessData.business_title,
           company_country_id: businessData.country.id,
           company_state_id: businessData.state.id,
           company_city: businessData.detail.city,
-          company_address: businessData.detail.address,
+          company_address: businessData.detail.address1,
           company_zipcode: businessData.detail.zipcode,
 
         }),
@@ -84,6 +84,8 @@ export function BusinessInformation(props: any) {
       businessDetailQuery(selectedBusiness.id);
     }
   }, []);
+
+  console.log(schema.data);
 
   return (
     <View>

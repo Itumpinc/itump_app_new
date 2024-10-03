@@ -393,7 +393,7 @@ const InvoiceSummary = () => {
       const error: any = createInvoiceData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({ type: 'error', text: data.message });
       }
     }
   };

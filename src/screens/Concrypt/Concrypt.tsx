@@ -1,14 +1,4 @@
-import {
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  TextInput,
-  Switch,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  Modal,
-} from 'react-native';
+import {View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useThemeImages} from '@constants/images';
 import {Gap} from '@src/constants/gap';
@@ -17,13 +7,10 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {useThemeColors} from '@constants/colors';
-import useStyles from '@src/screens/BusinessRegistration/styles';
 import Container from '@src/components/common/container';
 import Header from '@src/constants/header';
 import Button from '@src/constants/button';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {Line} from '@src/constants/Line';
-import Popup from '@src/components/common/popup';
 import {Spinner} from 'native-base';
 import Details from './Details';
 import {serviceApi} from '@src/store/services/service';
@@ -839,11 +826,7 @@ const Concrypt = (props: any) => {
         )}
 
         <Gap height={hp(2)} />
-        <Button
-          text="See Downloads"
-          textColor="white"
-          onPress={() => navigation.navigate('Downloads')}
-        />
+        
       </View>
     </Container>
   );

@@ -127,11 +127,17 @@ const ConfirmAccount = () => {
     });
 
     if (resendSignupCodeData.isSuccess) {
-      alert('Code sent,\n Please check your email.');
+      alert({
+        type: 'success',
+        text: 'Code sent, Please check your email.',
+      });
     }
 
     if (resendSignupCodeData.isError) {
-      alert('There is some error is sending a code to your email.');
+      alert({
+        type: 'error',
+        text: 'There is some error is sending a code to your email.',
+      });
     }
   };
 
@@ -160,7 +166,7 @@ const ConfirmAccount = () => {
       const error: any = resetPasswordData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({ type: 'error', text: data.message });
       }
     }
   };

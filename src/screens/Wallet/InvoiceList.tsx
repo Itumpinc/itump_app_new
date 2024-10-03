@@ -106,6 +106,7 @@ const InvoiceList = () => {
   }, []);
 
   const renderItem = ({item: list}: any) => {
+    console.log('🚀 ~ renderItem ~ list:', list);
     let avatar = list.invoice.user;
     if (
       list.invoice.user_business &&
@@ -163,7 +164,7 @@ const InvoiceList = () => {
             'DD MMM YYYY',
           )}`}
           money={formatAmount(
-            list.invoice.total_amount,
+            myInvoice ? list.invoice.invoice_amount : list.invoice.total_amount,
             country.currency_symbol,
           )}
           isRecurring={list.invoice.is_recurring}
@@ -257,7 +258,7 @@ const InvoiceList = () => {
         {data.length > 0 ? (
           <FlatList
             data={data}
-            keyExtractor={(item) => item.invoice.invoice_num} // Unique key for each item
+            keyExtractor={item => item.invoice.invoice_num} // Unique key for each item
             renderItem={renderItem} // Function to render each item
             onEndReached={() => {
               if (!isEndReachedCalledDuringMomentum && hasMore) {
@@ -265,7 +266,9 @@ const InvoiceList = () => {
                 isEndReachedCalledDuringMomentum = true;
               }
             }}
-            onMomentumScrollBegin={() => { isEndReachedCalledDuringMomentum = false; }}
+            onMomentumScrollBegin={() => {
+              isEndReachedCalledDuringMomentum = false;
+            }}
             onEndReachedThreshold={0.9}
             ListFooterComponent={renderFooter}
           />

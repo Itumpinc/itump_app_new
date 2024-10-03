@@ -82,7 +82,7 @@ export function AddBusiness(props: any) {
       const error: any = businessUpdateData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({ type: 'error', text: data.message });
       }
     }
   };

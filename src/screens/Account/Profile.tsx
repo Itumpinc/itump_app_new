@@ -116,14 +116,17 @@ const Profile = () => {
 
     const updateProfileData = await updateProfileQuery(data);
     if (updateProfileData.isSuccess) {
-      alert('Profile Updated Successfully', true);
+      alert({
+        type: 'success',
+        text: 'Profile Updated Successfully',
+      });
       navigation.goBack();
     }
     if (updateProfileData.isError) {
       const error: any = updateProfileData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({ type: 'error', text: data.message });
       }
     }
   };

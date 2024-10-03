@@ -35,16 +35,23 @@ export default function Ongoing(props: any) {
   } = props;
 
   const gotoBusiness = (business: any) => {
-    navigation.navigate('AddBusiness', {
-      id: business.business.id,
-    });
+    if (business.status === 'new') {
+      navigation.navigate('AddBusiness', {
+        id: business.business.id,
+      });
+    } else {
+      navigation.navigate('OrderDetails', {
+        order_num: business.order.order_num,
+      });
+    }
   };
 
-  const loadUsersOrderData = orderApi.useLoadUsersOrderQuery();
+  const loadUsersOrderData = orderApi.useLoadUsersOrderQuery('');
 
   if (!loadUsersOrderData.isSuccess) return null;
 
   const loadUsersOrder = getData(loadUsersOrderData);
+
   const getOrderForBusiness = (businessId: number) => {
     let hasOrder;
     for (let index = 0; index < loadUsersOrder.rows.length; index++) {
@@ -53,7 +60,7 @@ export default function Ongoing(props: any) {
         for (let index = 0; index < data.items.length; index++) {
           const item = data.items[index];
           if (item.service_request_id === businessId) {
-            hasOrder = true;
+            hasOrder = data.order;
             break;
           }
         }
@@ -65,10 +72,12 @@ export default function Ongoing(props: any) {
   const pendingBusiness = [];
   for (let index = 0; index < mainBusiness.length; index++) {
     const business = mainBusiness[index];
-    if (business.status === 'pending') {
-      const status = getOrderForBusiness(business.id) ? 'paid' : 'new';
+    if (business.status === 'pending' || business.status === 'processing') {
+      const order = getOrderForBusiness(business.id);
+      const status = order ? 'paid' : 'new';
       pendingBusiness.push({
         business,
+        order,
         status,
       });
     }

@@ -91,7 +91,10 @@ const CloseAccount = () => {
     setLoader(true);
     const closeAccountData = await closeAccountQuery(user.id);
     if (closeAccountData.isSuccess) {
-      alert('Your account has been closed successfully!');
+      alert({
+        type: 'success',
+        text: 'Your account has been closed successfully!',
+      });
       await dispatch(closeAccountAction());
       navigation.dispatch(StackActions.replace('Auth'));
     }
@@ -100,7 +103,7 @@ const CloseAccount = () => {
       const error: any = closeAccountData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({ type: 'error', text: data.message });
       }
     }
   };

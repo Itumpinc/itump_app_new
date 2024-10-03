@@ -94,7 +94,10 @@ const LoginBack = () => {
     } else {
       setBiometricCre(false);
       resetBioMetricCredentials();
-      alert('There is some issue with auth, Please login with password.');
+      alert({
+        type: 'success',
+        text: 'There is some issue with auth, Please login with password.',
+      });
     }
   };
 
@@ -147,7 +150,10 @@ const LoginBack = () => {
     if (loginwithPasswordData.isError) {
       setBiometricCre(false);
       resetBioMetricCredentials();
-      alert('There is some issue with auth, Please login with password.');
+      alert({
+        type: 'error',
+        text: 'There is some issue with auth, Please login with password.',
+      });
       setSchema(updateSchema(schema, 'errors', 'password', ''));
     }
   }, [loginwithPasswordData]);
@@ -190,11 +196,17 @@ const LoginBack = () => {
       email,
     });
     if (resendSignupCodeData.isSuccess) {
-      alert('Code sent,\n Please check your email.');
+      alert({
+        type: 'success',
+        text: 'Code sent, Please check your email.',
+      });
     }
 
     if (resendSignupCodeData.isError) {
-      alert('There is some error is sending a code to your email.');
+      alert({
+        type: 'error',
+        text: 'There is some error is sending a code to your email.',
+      });
     }
   };
 

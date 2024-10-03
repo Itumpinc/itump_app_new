@@ -9,18 +9,19 @@ import {
 import {Text} from 'native-base';
 import {useThemeColors} from '@constants/colors';
 import {Gap} from '@src/constants/gap';
-import {RenderDropdown, RenderInput} from '@src/components/hocs/forms';
+import {RenderDropdown, RenderInput, RenderPhone} from '@src/components/hocs/forms';
 import useStyles from '../../styles';
 import {industry} from '@src/utils/services';
 import {GetTabHeader} from './Utils';
 import Button from '@src/constants/button';
+import {Line} from '@src/constants/Line';
 
 export function BusinessInformation(props: any) {
   const pictures = useThemeImages();
-
+  const colors = useThemeColors();
   const {schema} = props;
   const styles = useStyles();
-  const { status, toggleTab} = props;
+  const {status, toggleTab} = props;
 
   return (
     <View>
@@ -104,8 +105,31 @@ export function BusinessInformation(props: any) {
             placeHolder="Enter Zipcode"
           />
 
+          <Gap height={hp(1)} />
+          <Line />
           <Gap height={hp(2)} />
-          <Button text="Next" textColor='white' onPress={()=>toggleTab('Shares')}/>
+          <Text style={styles.mainText}>Business Email (Optional)</Text>
+          <Gap height={hp(1)} />
+          <RenderInput
+            name="email"
+            value={schema.data.city}
+            placeHolder="Email"
+          />
+
+          <Text style={styles.mainText}>Business Phone (Optional)</Text>
+          <Gap height={hp(1)} />
+          <RenderPhone
+            name="phone_num"
+            value={schema.data.zipcode}
+            placeHolder="Phone Number"
+          />
+
+          <Gap height={hp(2)} />
+          <Button
+            text="Next"
+            textColor="white"
+            onPress={() => toggleTab('Shares')}
+          />
           <Gap height={hp(4)} />
         </View>
       )}

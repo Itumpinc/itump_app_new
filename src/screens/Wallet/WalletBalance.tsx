@@ -112,7 +112,7 @@ const ConnectedAccount = ({externalAccount}: any) => {
         )}
         <View>
           <View style={[{flexDirection: 'row'}]}>
-            <Text style={[{fontFamily: 'Satoshi-Bold'}]}>
+            <Text style={[{fontFamily: 'Satoshi-Bold', color:colors.secondaryText}]}>
               {externalAccount.bank_name ||
                 externalAccount.brand.toUpperCase() +
                   ' ' +
@@ -147,7 +147,7 @@ const ConnectedAccount = ({externalAccount}: any) => {
             </View>
           </View>
 
-          <Text style={[{fontFamily: 'Satoshi-Bold'}]}>
+          <Text style={[{fontFamily: 'Satoshi-Bold', color:colors.secondaryText}]}>
             •••• •••• •••• {externalAccount.last4}
           </Text>
         </View>

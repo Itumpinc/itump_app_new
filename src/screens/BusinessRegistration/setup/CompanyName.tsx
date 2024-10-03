@@ -51,7 +51,7 @@ export function CompanyName(props: any) {
         textColor={colors.primaryText}
       />
 
-      <Gap height={hp(15)} />
+      <Gap height={hp(48)} />
       <Button
         text="Next"
         textColor="white"

@@ -341,7 +341,7 @@ const InvoicePayment = () => {
 
   const makePayment = () => {
     if (!isEnabled && !selectedPlans) {
-      alert('Please select Plan');
+      alert({ type: 'error', text: 'Please select Plan' });
       return false;
     }
 

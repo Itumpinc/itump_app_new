@@ -31,6 +31,7 @@ const TransactionCard = ({item}: any) => {
     const {firstName, lastName} = getfirstlastname(
       item.order_detail.service_detail.service.name,
     );
+
     transactions.push(
       <View key={makeId()}>
         <TouchableOpacity
@@ -45,7 +46,9 @@ const TransactionCard = ({item}: any) => {
               last_name: lastName,
             }}
             title={`Payment for service ${item.order_detail.service_detail.service.name}`}
-            isRecurring={item.metadata.is_recurring}
+            isRecurring={
+              item.metadata.is_recurring && item.metadata.is_recurring === '1'
+            }
             date={moment.unix(item.created).format('DD MMM yyyy, hh:mm A')}
             money={formatAmount(
               item.amount_received / 100,
@@ -62,7 +65,6 @@ const TransactionCard = ({item}: any) => {
     );
   }
   if (item.metadata.type === 'invoice') {
-    console.log("🚀 ~ TransactionCard ~ item:", item)
     const myInvoice = user.id == item.metadata.from_user_id;
     const name = myInvoice
       ? item.metadata.from_customer_name
@@ -90,7 +92,14 @@ const TransactionCard = ({item}: any) => {
             title={title}
             isRecurring={item.description.indexOf('Subscription') > -1}
             date={moment.unix(item.created).format('DD MMM yyyy, hh:mm A')}
-            money={formatAmount(item.amount / 100, currency.currency_symbol)}
+            money={
+              myInvoice
+                ? formatAmount(
+                    (item.amount - item.application_fee_amount) / 100,
+                    currency.currency_symbol,
+                  )
+                : formatAmount(item.amount / 100, currency.currency_symbol)
+            }
             small
           />
         </TouchableOpacity>

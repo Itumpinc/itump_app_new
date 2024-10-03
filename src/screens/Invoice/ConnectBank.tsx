@@ -194,14 +194,17 @@ const ConnectBank = () => {
       const error: any = connectAccountData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({ type: 'error', text: data.message });
       }
     }
   };
 
   const doneConnection = () => {
     setLoader(false);
-    alert('Your account already been connected!');
+    alert({
+      type: 'error',
+      text: 'Your account already been connected!',
+    });
     navigation.reset({
       index: 0,
       routes: [{name: 'Home'}],

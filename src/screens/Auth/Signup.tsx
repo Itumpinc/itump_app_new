@@ -114,7 +114,11 @@ const SignUp = () => {
     }
 
     if (lazyRegisterData.isError) {
-      alert('There is some error in registration, Please try after sometime.');
+      const error: any = lazyRegisterData.error;
+      const data = error && error.data ? error.data : undefined;
+      if (data) {
+        alert({ type: 'error', text: data.message });
+      }
     }
   }, [lazyRegisterData]);
 

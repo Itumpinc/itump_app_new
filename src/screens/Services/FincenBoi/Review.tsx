@@ -105,6 +105,8 @@ const Review = (props: any) => {
         });
       }
 
+      console.log(applicants);
+
       let JSONData = {
         company_id: schema.data.company_id,
         filing_type: schema.data.filing_type,
@@ -166,6 +168,8 @@ const Review = (props: any) => {
         };
       }
 
+      console.log(JSONData);
+
       let serviceCreateUpdateData = await serviceUpdateQuery({
         id:
           paramsData.routeParams.serviceRequestId ||
@@ -215,13 +219,13 @@ const Review = (props: any) => {
         const error: any = serviceCreateUpdateData.error;
         const data = error && error.data ? error.data : undefined;
         if (data) {
-          alert(data.message);
+          alert({ type: 'error', text: data.message });
         }
       }
     } catch (err) {
       console.log(err);
       setLoading(false);
-      alert('Something Went wrong! Please try after some time');
+      alert({ type: 'error', text: 'Something Went wrong! Please try after some time' });
     }
   };
 
@@ -426,7 +430,9 @@ const Review = (props: any) => {
             <ReviewCard
               title="Filing Information"
               open
-              editAction={detailView ? undefined : () => editAction('FilingInformation')}
+              editAction={
+                detailView ? undefined : () => editAction('FilingInformation')
+              }
               data={[
                 {
                   heading: 'Type of filing',
@@ -446,7 +452,9 @@ const Review = (props: any) => {
             <ReviewCard
               title="Reporting Company Information"
               open
-              editAction={detailView ? undefined : () => editAction('ReportingCompany')}
+              editAction={
+                detailView ? undefined : () => editAction('ReportingCompany')
+              }
               data={[
                 {
                   heading: 'Request to receive FinCEN ID',
@@ -522,7 +530,9 @@ const Review = (props: any) => {
             <ReviewCard
               title="Company Applicant Information"
               open
-              editAction={detailView ? undefined : () => editAction('CompanyApplicant')}
+              editAction={
+                detailView ? undefined : () => editAction('CompanyApplicant')
+              }
               data={applicantReview}
             />
           </View>
@@ -536,19 +546,23 @@ const Review = (props: any) => {
             <ReviewCard
               title="Beneficial Owner Information"
               open
-              editAction={detailView ? undefined : () => editAction('BeneficialApplicant')}
+              editAction={
+                detailView ? undefined : () => editAction('BeneficialApplicant')
+              }
               data={applicanBeneficial}
             />
           </View>
         </View>
       </View>
       <Gap height={hp(3)} />
-      {!detailView && <Button
-        text="Save & Continue"
-        textColor="white"
-        onPress={submit}
-        loader={loading}
-      />}
+      {!detailView && (
+        <Button
+          text="Save & Continue"
+          textColor="white"
+          onPress={submit}
+          loader={loading}
+        />
+      )}
       <Gap height={hp(7)} />
     </View>
   );

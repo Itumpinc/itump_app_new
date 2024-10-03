@@ -42,7 +42,7 @@ const Form = (props: any) => {
     });
     setTabs(updatedSteps);
   };
-
+  
   useEffect(() => {
     // console.log(route.params);
     if (route.params && route.params.tabId) {
@@ -60,7 +60,7 @@ const Form = (props: any) => {
     }
   };
 
-  console.log(schema.data, schema.valid, schema.errors);
+  // console.log(schema.data, schema.valid, schema.errors);
 
   return (
     <View style={{width: wp(90)}}>

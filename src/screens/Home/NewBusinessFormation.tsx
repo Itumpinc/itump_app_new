@@ -22,7 +22,8 @@ import {Gap} from '@src/constants/gap';
 import Popup from '@src/components/common/popup';
 import AddBusinessPopup from '@screens/BusinessRegistration/AddBusinessPopup';
 
-export default function NewBusinessFormation() {
+export default function NewBusinessFormation(props: any) {
+  const {closeAction} = props;
   const colors = useThemeColors();
   const pictures = useThemeImages();
   const navigation: any = useNavigation();
@@ -55,6 +56,7 @@ export default function NewBusinessFormation() {
           </Text>
           <TouchableOpacity
             onPress={() => {
+              closeAction && closeAction();
               navigation.navigate('ServiceList');
             }}
             style={{
@@ -83,7 +85,11 @@ export default function NewBusinessFormation() {
         </View>
         <Gap height={hp(2)} />
         <TouchableOpacity
-          onPress={() => setModalClose(true)}
+          onPress={() =>
+            closeAction
+              ? (closeAction(), navigation.navigate('Home'))
+              : setModalClose(true)
+          }
           style={{
             backgroundColor: colors.businessIdea,
             width: '90%',

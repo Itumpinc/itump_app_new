@@ -51,49 +51,6 @@ const MainNavigator = () => {
   const storage = useAppSelector(state => state.common.storage);
   const {user} = storage;
 
-  const toastConfig = {
-    success: (props: any) => (
-      <BaseToast
-        {...props}
-        style={{
-          backgroundColor: colors.background,
-          borderLeftColor: colors.success,
-          zIndex: 15,
-        }}
-        text1Style={{
-          color: colors.success,
-          fontSize: 16,
-          fontWeight: '700',
-        }}
-        text2Style={{
-          color: colors.boxText,
-          fontSize: 14,
-          fontWeight: '400',
-        }}
-      />
-    ),
-    error: (props: any) => (
-      <ErrorToast
-        {...props}
-        style={{
-          backgroundColor: colors.background,
-          borderLeftColor: '#EB5757',
-          zIndex: 15,
-        }}
-        text1Style={{
-          color: '#EB5757',
-          fontSize: 16,
-          fontWeight: '700',
-        }}
-        text2Style={{
-          color: colors.boxText,
-          fontSize: 14,
-          fontWeight: '400',
-        }}
-      />
-    ),
-  };
-
   if (!(storage.user && storage.tokens)) {
     return null;
   }
@@ -236,7 +193,6 @@ const MainNavigator = () => {
         <Stack.Screen name="ChangePassoword" component={ChangePassoword} />
       </Stack.Navigator>
       <Navbar />
-      <Toast config={toastConfig} />
     </>
   );
 };

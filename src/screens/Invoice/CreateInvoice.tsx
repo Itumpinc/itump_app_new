@@ -583,7 +583,10 @@ const CreateInvoice = () => {
 
   const doSubmit = () => {
     if (schema.data.customer_email.toLowerCase() === user.email.toLowerCase()) {
-      alert('You can not send invoice to yourself.');
+      alert({
+        type: 'error',
+        text: 'You can not send invoice to yourself.',
+      });
     } else {
       navigation.navigate('InvoiceSummary', {
         data: schema.data,

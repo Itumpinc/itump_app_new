@@ -27,7 +27,7 @@ import Transaction from './Transaction';
 import {useThemeColors} from '@src/constants/colors';
 import Invoices from './Invoices';
 import {userApi} from '@src/store/services/user';
-import {getData, getSettings} from '@src/utils/helpers';
+import {alert, getData, getSettings} from '@src/utils/helpers';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 import {saveUser} from '@src/navigators/Utils';
 
@@ -36,12 +36,15 @@ export default function Home() {
   const dispatch = useDispatch();
   const navigation: any = useNavigation();
   const [userApisQuery, userApisData] = userApi.useLazyUserProfileQuery();
+  const storage = useAppSelector(state => state.common.storage);
+  const {user: userdetail} = storage;
+
   const [getDashboardQuery, getDashboardData] =
     userApi.useLazyGetDashboardQuery();
 
   useFocusedEffect(() => {
     (async () => {
-      await getDashboardQuery();
+      await getDashboardQuery(userdetail.id);
       const userData = await userApisQuery();
       saveUser({dispatch, setData, userData});
     })();

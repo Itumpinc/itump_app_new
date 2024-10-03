@@ -86,7 +86,10 @@ const ChangePassoword = () => {
   const doSubmit = async () => {
     const changePasswordData = await changePasswordQuery(schema.data);
     if (changePasswordData.isSuccess) {
-      alert('Password changed Successfully', true);
+      alert({
+        type: 'success',
+        text: 'Password changed Successfully',
+      });
       setSchema(
         updateSchema(schema, 'data', '', {
           new_password: '',
@@ -99,7 +102,7 @@ const ChangePassoword = () => {
       const error: any = changePasswordData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({ type: 'error', text: data.message });
       }
     }
   };

@@ -152,13 +152,13 @@ const Review = (props: any) => {
         const error: any = serviceCreateUpdateData.error;
         const data = error && error.data ? error.data : undefined;
         if (data) {
-          alert(data.message);
+          alert({ type: 'error', text: data.message });
         }
       }
     } catch (err) {
       console.log(err);
       setLoading(false);
-      alert('Something Went wrong! Please try after some time');
+      alert({ type: 'error', text: 'Something Went wrong! Please try after some time' });
     }
   };
 

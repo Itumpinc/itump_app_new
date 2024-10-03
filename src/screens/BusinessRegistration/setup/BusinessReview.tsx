@@ -70,7 +70,7 @@ export function BusinessReview(props: any) {
       const error: any = businessCreateData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({ type: 'error', text: data.message });
       }
     }
   };

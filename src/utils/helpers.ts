@@ -72,14 +72,13 @@ export const getfirstlastname = (fullName: string) => {
   return {firstName, lastName};
 };
 
-export function alert(message: string, native = false) {
-  if (native) {
+export function alert(message: string | Object | any, native = false) {
+  if (native && typeof message === 'string') {
     Alert.alert(message);
   } else {
     Toast.show({
-      type: 'error',
-      text1: 'Error',
-      text2: message,
+      type: (message.type || 'info') + 'custom',
+      text1: message.text,
       visibilityTime: 5000,
       topOffset: 100,
     });
@@ -215,6 +214,15 @@ export function getSettings(settings: any, key: any) {
 export const getDocument = (documents: any[], document_type?: string) => {
   if (!documents) return undefined;
 
+  const getOtherName = (name: string) => {
+    let n = name;
+    const split = name.split('##');
+    if (split.length > 1) {
+      n = split[0] + ' (' + split[1] + ')';
+    }
+    return n;
+  };
+
   if (!document_type) {
     const documentArr = [];
     for (let index = 0; index < documents.length; index++) {
@@ -225,7 +233,11 @@ export const getDocument = (documents: any[], document_type?: string) => {
 
       documentArr.push({
         ...document,
-        ...{document_name: dT ? dT.name : document.document_type},
+        ...{
+          document_name: dT
+            ? getOtherName(dT.name)
+            : getOtherName(document.document_type),
+        },
       });
     }
     return documentArr;
@@ -242,12 +254,12 @@ export const getDocument = (documents: any[], document_type?: string) => {
     if (dT) {
       document = {
         ...document,
-        ...{document_name: dT.name},
+        ...{document_name: getOtherName(dT.name)},
       };
     } else {
       document = {
         ...document,
-        ...{document_name: document.document_type},
+        ...{document_name: getOtherName(document.document_type)},
       };
     }
   }

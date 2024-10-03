@@ -482,13 +482,17 @@ const OrderDetails = () => {
   }, []);
 
   const openDetails = (order: any, serviceDetail: any) => {
-    navigation.navigate(serviceDetail.service.tags, {
-      action: 'done_already',
-      businessID: serviceDetail.company_id,
-      serviceRequestId: serviceDetail.id,
-      takePayment: false,
-      detailView: true,
-    });
+    if (serviceDetail.service.tags === 'register_business') {
+      navigation.navigate('Health');
+    } else {
+      navigation.navigate(serviceDetail.service.tags, {
+        action: 'done_already',
+        businessID: serviceDetail.company_id,
+        serviceRequestId: serviceDetail.id,
+        takePayment: false,
+        detailView: true,
+      });
+    }
   };
 
   if (!orderDetailData.isSuccess) return null;

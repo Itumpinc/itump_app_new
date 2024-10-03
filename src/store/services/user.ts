@@ -131,9 +131,9 @@ export const userApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
-    getDashboard: builder.query<any, void>({
-      query: () => ({
-        url: `/v1/users/dashboard`,
+    getDashboard: builder.query<any, string>({
+      query: (userID: string) => ({
+        url: `/v1/users/dashboard?user_id=${userID}`,
         method: 'GET',
       }),
     }),

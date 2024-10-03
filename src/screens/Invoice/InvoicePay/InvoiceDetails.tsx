@@ -70,7 +70,10 @@ const CancelInvoice = ({setOpenCancel, openCancel, invoiceNum}: any) => {
 
     if (cancelInvoiceData.isSuccess) {
       setLoader(false);
-      alert('Invoice Cancelled Succesfully!.');
+      alert({
+        type: 'success',
+        text: 'Invoice Cancelled Succesfully!.',
+      });
       setOpenCancel(false);
       navigation.navigate('InvoiceList');
     }
@@ -80,7 +83,7 @@ const CancelInvoice = ({setOpenCancel, openCancel, invoiceNum}: any) => {
       const error: any = cancelInvoiceData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert(data.message);
+        alert({type: 'error', text: data.message});
       }
     }
   };
@@ -487,7 +490,7 @@ const InvoiceDetails = () => {
     partial_paid: colors.darkOrange,
   };
 
-  console.log('invoice.status', invoice.status);
+  console.log('🚀 ~ InvoiceDetails ~ invoice:', invoice);
 
   return (
     <Container>
@@ -536,7 +539,10 @@ const InvoiceDetails = () => {
                   fontSize: 26,
                   lineHeight: hp(5),
                 }}>
-                {formatAmount(invoice.total_amount, country.currency_symbol)}
+                {formatAmount(
+                  myInvoice ? invoice.invoice_amount : invoice.total_amount,
+                  country.currency_symbol,
+                )}
               </Text>
               <Text
                 style={{
@@ -547,7 +553,7 @@ const InvoiceDetails = () => {
                 }}>
                 to{' '}
                 <Text style={{fontWeight: 700}}>
-                  {invoice.user.first_name} {invoice.user.last_name}
+                  {invoice.to_user.first_name} {invoice.to_user.last_name}
                 </Text>
               </Text>
 

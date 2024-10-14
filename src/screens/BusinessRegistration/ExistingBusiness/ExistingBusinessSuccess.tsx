@@ -73,7 +73,7 @@ export function ExistingBusinessSuccess(props: any) {
           is being confirmed.{'\n'}You may visit and update your information in{' '}
           <TouchableWithoutFeedback onPress={() => gotoConcrypt()}>
             <Text style={{color: colors.primary, fontWeight: 700}}>
-              Corpcrypt
+              DocuHub
             </Text>
           </TouchableWithoutFeedback>{' '}
           at anytime.

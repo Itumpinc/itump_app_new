@@ -6,6 +6,7 @@ import {
   dbaRegistationSteps,
   secureBusinessSteps,
   fincenBoiSteps,
+  registerBusinessSteps,
 } from './steps';
 import {
   businessCreditSchema,
@@ -15,12 +16,17 @@ import {
   dbaRegistationSchema,
   secureSchema,
   fincenBoiSchema,
+  registerBusinessSchema,
 } from './schema';
 
 export const getServicesteps = (tags: string, screenName: string) => {
   let steps: any = [];
   let screenInitial = '';
   switch (tags) {
+    case 'register_business':
+      screenInitial = 'RegisterBusiness';
+      steps = registerBusinessSteps(screenInitial);
+      break;
     case 'build_business_credit':
       screenInitial = 'BusinessCredit';
       steps = businessCreditSteps(screenInitial);
@@ -81,6 +87,9 @@ export const getServicesteps = (tags: string, screenName: string) => {
 export const getServiceSchema = (tags: string, defaultData = {}) => {
   let formationSchema;
   switch (tags) {
+    case 'register_business':
+      formationSchema = registerBusinessSchema(defaultData);
+      break;
     case 'build_business_credit':
       formationSchema = businessCreditSchema(defaultData);
       break;

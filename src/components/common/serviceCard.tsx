@@ -19,6 +19,7 @@ import {
 import {serviceApi} from '@src/store/services/service';
 import {useNavigation} from '@react-navigation/native';
 import useFocusedEffect from '../hooks/useFocusEffect';
+import Slider from './slider';
 
 const ServiceCard = (props: any) => {
   const {setSchema, setParamsData} = props;
@@ -46,25 +47,24 @@ const ServiceCard = (props: any) => {
     navigation.navigate(service.tags);
   };
 
-  console.log("🚀 ~ ServiceCard ~ serviceDetailData:", serviceDetailData)
-
   if (!serviceDetailData.isSuccess) return null;
 
   const services = getData(serviceDetailData);
   const currency = getCurrency(storage);
 
-  return (
-    <>
-      {services.rows.map((service: any) => {
-        if (
-          service.parent_service_id !== 0 ||
-          service.tags.indexOf('register_business') > -1
-        )
-          return null;
+  const servicesList = [];
+  for (let index = 0; index < services.rows.length; index++) {
+    if (services.rows[index].parent_service_id === 0) {
+      servicesList.push(services.rows[index]);
+    }
+  }
 
+  return (
+    <Slider visibleItems={1.2} style={{paddingHorizontal: 0}} dot={false}>
+      {servicesList.map((service: any, index: number) => {
         return (
           <TouchableOpacity
-            key={makeId()}
+            key={index}
             onPress={() => gotoService(service)}
             style={{
               height: hp(55),
@@ -74,9 +74,8 @@ const ServiceCard = (props: any) => {
               borderRadius: 10,
             }}>
             <ImageBackground
-              key={makeId()}
               style={{
-                width: hp(38),
+                width: hp(34),
                 height: hp(55),
                 borderRadius: 15,
                 overflow: 'hidden',
@@ -93,7 +92,7 @@ const ServiceCard = (props: any) => {
                 style={{
                   flex: 1,
                   padding: 10,
-                  width: wp(80),
+                  width: wp(70),
                 }}>
                 <View
                   style={{
@@ -129,9 +128,9 @@ const ServiceCard = (props: any) => {
                     position: 'absolute',
                     bottom: 10,
                     alignSelf: 'center',
-                    width: wp(70),
+                    width: wp(60),
                   }}>
-                  <View style={{width: wp(60)}}>
+                  <View style={{width: wp(55), justifyContent: 'center'}}>
                     <Text
                       style={{
                         fontFamily: 'Satoshi-Bold',
@@ -140,14 +139,14 @@ const ServiceCard = (props: any) => {
                       }}>
                       {service.name}
                     </Text>
-                    <Text
+                    {/* <Text
                       style={{
                         fontFamily: 'Satoshi-Regular',
                         color: colors.secondaryText,
                         fontSize: 12,
                       }}>
                       {service.short_description}
-                    </Text>
+                    </Text> */}
                   </View>
                   <View
                     style={{
@@ -171,9 +170,8 @@ const ServiceCard = (props: any) => {
           </TouchableOpacity>
         );
       })}
-    </>
+    </Slider>
   );
 };
-
 
 export default ServiceCard;

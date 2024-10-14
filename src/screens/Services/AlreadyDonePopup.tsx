@@ -30,7 +30,7 @@ export const AlreadyDonePopup = (props: any) => {
         }}>
         <Gap height={hp(4)} />
         <View style={{alignItems: 'flex-start', width: wp(90)}}>
-          <Text style={[styles.mainText]}>When this was done? (Optional)</Text>
+          <Text style={[styles.mainText]}>When was this done? (Optional)</Text>
         </View>
         <Gap height={hp(2)} />
 

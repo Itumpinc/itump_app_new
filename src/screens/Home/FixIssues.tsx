@@ -24,6 +24,7 @@ import {userApi} from '@src/store/services/user';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 import {getData} from '@src/utils/helpers';
 import {Line} from '@src/constants/Line';
+import ActivateAccountPopup from './ActivateAccountPopup';
 
 const IssueLayout = ({text, onPress, status}: any) => {
   const pictures = useThemeImages();
@@ -88,6 +89,7 @@ export default function FixIssues(props: any) {
   const storage = useAppSelector(state => state.common.storage);
   const {user, primaryBusiness} = storage;
 
+  const [modalClose, setModalClose] = useState(false);
   const [getHealthQuery, getHealthData] = userApi.useLazyGetHealthQuery();
 
   useFocusedEffect(() => {
@@ -128,7 +130,57 @@ export default function FixIssues(props: any) {
     return serviceItem;
   }
 
-  if (!(healthData && healthData.services)) return null;
+  const HTML = <></>;
+
+  if (!(healthData && healthData.services)) {
+    let isPro = 'done';
+    if (user.is_pro_user === 0) {
+      isPro = '';
+    } else if (user.stripe_account_status === 'pending') {
+      isPro = 'pending';
+    }
+
+    return (
+      <>
+        <View
+          style={{
+            backgroundColor: colors.activityBox,
+            paddingVertical: hp(2),
+            borderRadius: hp(2),
+            width: '90%',
+            alignSelf: 'center',
+          }}>
+          <TouchableOpacity
+            onPress={() =>
+              user.is_pro_user === 1
+                ? navigation.navigate('ConnectBank')
+                : setModalClose(true)
+            }>
+            <IssueLayout text={'Activate Account'} status={isPro} />
+          </TouchableOpacity>
+          <Line />
+          <IssueLayout text={'Setup Your Business'} status={''} />
+          <Line />
+          <TouchableOpacity onPress={() => navigation.navigate('ServiceList')}>
+            <IssueLayout text={'Check Our Services'} />
+          </TouchableOpacity>
+          <Line />
+          <TouchableOpacity
+            onPress={() => navigation.navigate('build_business_credit')}>
+            <IssueLayout text={'Build Business Credit'} />
+          </TouchableOpacity>
+          {HTML}
+        </View>
+        <Gap height={hp(2)} />
+        {modalClose && (
+          <ActivateAccountPopup
+            modalClose={modalClose}
+            setModalClose={setModalClose}
+          />
+        )}
+      </>
+    );
+  }
 
   const registerBusiness = getDetailsUsingService('register_business');
   // const serviceFincen = getDetailsUsingService('service_fincen_boi');
@@ -214,9 +266,15 @@ export default function FixIssues(props: any) {
             />
           </>
         )}
-
-        {/* <Gap height={hp(2)} /> */}
-
+        <IssueLayout
+          text={'Activate Account'}
+          status={
+            user.is_pro_user === 0 || user.stripe_account_status === 'pending'
+              ? 'pending'
+              : 'done'
+          }
+        />
+        <Line />
         <IssueLayout
           text={'Setup Your Business'}
           status={
@@ -226,23 +284,16 @@ export default function FixIssues(props: any) {
           }
         />
         <Line />
-        <IssueLayout
-          text={'Activate Account'}
-          status={
-            business.length > 0 && user.is_pro_user === 0 ? 'pending' : 'done'
-          }
-        />
-        <Line />
-        <TouchableOpacity onPress={() => navigation.navigate('ServiceList')}>
-          <IssueLayout text={'Check Our Services'} />
-        </TouchableOpacity>
-        <Line />
-        <TouchableOpacity
-          onPress={() => navigation.navigate('build_business_credit')}>
-          <IssueLayout text={'Build Business Credit'} />
-        </TouchableOpacity>
+        {HTML}
+        {/* <Gap height={hp(2)} /> */}
       </View>
       <Gap height={hp(2)} />
+      {modalClose && (
+        <ActivateAccountPopup
+          modalClose={modalClose}
+          setModalClose={setModalClose}
+        />
+      )}
     </>
   );
 }

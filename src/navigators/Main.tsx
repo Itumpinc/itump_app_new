@@ -35,6 +35,12 @@ import {
   Profile,
   Security,
   ChangePassoword,
+  WithdrawlSuccess,
+  TransactionDetails,
+  AddDocuments,
+  InvoicePreview,
+  ContactUs,
+  Appearance,
 } from '@src/screens';
 import * as AddaBusinessScreens from '@src/screens/BusinessRegistration/setup/index';
 import * as ExistingBusinessScreens from '@src/screens/BusinessRegistration/ExistingBusiness/index';
@@ -191,6 +197,15 @@ const MainNavigator = () => {
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="Security" component={Security} />
         <Stack.Screen name="ChangePassoword" component={ChangePassoword} />
+        <Stack.Screen name="WithdrawlSuccess" component={WithdrawlSuccess} />
+        <Stack.Screen
+          name="TransactionDetails"
+          component={TransactionDetails}
+        />
+        <Stack.Screen name="AddDocuments" component={AddDocuments} />
+        <Stack.Screen name="InvoicePreview" component={InvoicePreview} />
+        <Stack.Screen name="ContactUs" component={ContactUs} />
+        <Stack.Screen name="Appearance" component={Appearance} />
       </Stack.Navigator>
       <Navbar />
     </>

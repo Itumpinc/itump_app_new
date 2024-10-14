@@ -12,7 +12,7 @@ import Header from '@src/constants/header';
 import {useThemeImages} from '@src/constants/images';
 import ServiceCard from '@src/components/common/serviceCard';
 
-const ServiceList = (props:any) => {
+const ServiceList = (props: any) => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
 
@@ -26,16 +26,7 @@ const ServiceList = (props:any) => {
         <Header title="Services" source={pictures.arrowLeft} />
 
         <View style={{width: wp(90)}}>
-          <ScrollView
-            horizontal={true}
-            style={{
-              marginHorizontal: -15,
-              flexGrow: 0,
-              alignSelf: 'flex-start',
-            }}
-            showsHorizontalScrollIndicator={true}>
-            <ServiceCard {...props}/>
-          </ScrollView>
+          <ServiceCard {...props} />
           <Gap height={hp(2)} />
           <View
             style={{

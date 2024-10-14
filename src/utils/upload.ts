@@ -70,7 +70,7 @@ export const fileUpload = async (props: any) => {
     formData.append('media', file, file.name.toLowerCase().replace(/[^a-zA-Z0-9-_ .]/g, ''));
 
     const endpointUrl = getApiEndpoint(
-      process.env.API_URL + '/v1/media/upload',
+      'https://api.itump.com' + '/v1/media/upload',
     );
 
     var xhr = new XMLHttpRequest();

@@ -105,14 +105,14 @@ export function Secureitems(props: any) {
             placeHolder="Marks in Claim"
             options={ipInfoMarks}
           />
-          <Text style={styles.secondaryText}>Name to Secure (Optional)</Text>
+          <Text style={styles.secondaryText}>Name to Secure</Text>
           <Gap height={hp(2)} />
           <RenderInput
             name="secure_name"
             value={schema.data.secure_name}
             placeHolder="Enter Name"
           />
-          <Text style={styles.secondaryText}>Upload Item to Secure (Optional)</Text>
+          <Text style={styles.secondaryText}>Upload Item to Secure</Text>
           <Gap height={hp(2)} />
           <RenderUpload
             name="docforSecure"

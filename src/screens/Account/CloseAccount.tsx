@@ -83,7 +83,6 @@ const CloseAccount = () => {
   };
 
   const doSubmit = () => {
-    console.log('i am here ');
     setClosePopup(true);
   };
 

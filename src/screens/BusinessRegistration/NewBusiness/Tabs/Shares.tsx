@@ -67,7 +67,7 @@ export function Shares(props: any) {
           <Button
             text="Next"
             textColor="white"
-            onPress={() => toggleTab('Incorporator')}
+            onPress={() => toggleTab('Shareholder')}
           />
           <Gap height={hp(4)} />
         </View>

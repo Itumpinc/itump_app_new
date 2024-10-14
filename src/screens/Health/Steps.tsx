@@ -116,8 +116,7 @@ export const ServiceCalculation = ({
       statusText = 'Processing';
       statusColor = colors.darkOrange;
       options = false;
-      subTextHelp =
-        'We are processing your service, As soon it will be done this will be mark completed.';
+      subTextHelp = '';
       subColorHelp = colors.darkOrange;
       break;
     }
@@ -315,7 +314,11 @@ export const Steps = (props: any) => {
         />
         <Card
           title="Business Formation & Registration"
-          statusText="Required"
+          statusText={
+            registerBusiness.total_score === registerBusiness.score
+              ? ''
+              : 'Required'
+          }
           statusColor={colors.darkOrange}
           subText={
             'Get your business registered legally in any country of your choice, from anywhere'

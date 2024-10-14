@@ -35,7 +35,7 @@ const useStyles = () => {
       width: width,
       height: height,
       backgroundColor: colors.background,
-      paddingVertical: Platform.OS === 'android' ? 0 : 0,
+      paddingVertical: 0,
     },
     mainContent: {
       zIndex: 3,
@@ -81,14 +81,14 @@ const Container = (props: any) => {
           {background && (
             <Image source={source} style={styles.backgroundImage} />
           )}
-          <Switch
+          {/* <Switch
             style={{position: 'absolute', right: 10, bottom: 20, zIndex: 10}}
             trackColor={{false: '#1E1E1E', true: '#ffffff'}}
             thumbColor={theme === 'light' ? '#7256FF' : '#7256FF'}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleSwitch}
             value={theme === 'light' ? false : true}
-          />
+          /> */}
           <View
             style={{
               ...styles.mainContent,

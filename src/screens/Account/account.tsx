@@ -40,6 +40,7 @@ const Account = () => {
 
   return (
     <Container backgroundColor="#7256FF">
+      <Gap height={Platform.OS === 'android' ? hp(10) : hp(0)} />
       <View
         style={{
           flex: 1,
@@ -51,7 +52,7 @@ const Account = () => {
           paddingTop: 10,
           paddingBottom: 30,
         }}>
-        <AvatarCard />
+        {/* <AvatarCard user={user}/> */}
         <View style={{paddingLeft: 10}}>
           <Text style={[styles.mainText, {color: '#fff'}]}>
             {user.first_name} {user.last_name}
@@ -106,7 +107,7 @@ const Account = () => {
           <Image source={pictures.arrowRight} style={{height: 20, width: 20}} />
         </TouchableOpacity>
 
-        <View
+        <TouchableOpacity
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -114,7 +115,37 @@ const Account = () => {
             borderBottomWidth: 1,
             alignItems: 'center',
             paddingVertical: 20,
-          }}>
+          }}
+          onPress={() => navigation.navigate('Downloads')}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Image
+              source={require('@images/doc-green.png')}
+              style={{height: 20, width: 20}}
+            />
+            <View style={{paddingLeft: 10}}>
+              <Text style={[styles.mainText]}>Downloads</Text>
+              <Text style={[styles.subText]}>Business Documents</Text>
+            </View>
+          </View>
+
+          <Image source={pictures.arrowRight} style={{height: 20, width: 20}} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            borderBottomColor: colors.verticalLine,
+            borderBottomWidth: 1,
+            alignItems: 'center',
+            paddingVertical: 20,
+          }}
+          onPress={() => navigation.navigate('Appearance')}>
           <View
             style={{
               flex: 1,
@@ -127,19 +158,17 @@ const Account = () => {
             />
             <View style={{paddingLeft: 10}}>
               <Text style={[styles.mainText]}>Preferences</Text>
-              <Text style={[styles.subText]}>
-                Notifications, Language, Appearance, Currency
-              </Text>
+              <Text style={[styles.subText]}>Appearance</Text>
             </View>
           </View>
 
           <Image source={pictures.arrowRight} style={{height: 20, width: 20}} />
-        </View>
+        </TouchableOpacity>
 
         <View style={{paddingTop: 30, paddingBottom: 10}}>
           <Text style={[styles.mainText, {fontSize: wp(5)}]}>Resources</Text>
         </View>
-        <View
+        <TouchableOpacity
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -147,7 +176,8 @@ const Account = () => {
             borderBottomWidth: 1,
             alignItems: 'center',
             paddingVertical: 20,
-          }}>
+          }}
+          onPress={() => navigation.navigate('ContactUs')}>
           <View
             style={{
               flex: 1,
@@ -161,13 +191,13 @@ const Account = () => {
             <View style={{paddingLeft: 10}}>
               <Text style={[styles.mainText]}>Help & Support</Text>
               <Text style={[styles.subText]}>
-                Disputes, Live Chat, Contacts, FAQ
+                Disputes, Contacts, Suggstion
               </Text>
             </View>
           </View>
 
           <Image source={pictures.arrowRight} style={{height: 20, width: 20}} />
-        </View>
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={{

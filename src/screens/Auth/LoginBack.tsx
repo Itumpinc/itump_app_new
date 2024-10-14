@@ -30,6 +30,7 @@ import {
   resetBioMetricCredentials,
   setBioMetricCredentials,
 } from '@src/navigators/Utils';
+import OTPTimer from '@src/components/common/otp-timer';
 
 const LoginBack = () => {
   const pictures = useThemeImages();
@@ -40,7 +41,7 @@ const LoginBack = () => {
   const [hasBiometricCre, setBiometricCre] = useState(false);
   const [afterLogin, setAfterLogin] = useState(false);
 
-  const [resendAuthCodeQuery] = userApi.useLazyResendSignupCodeQuery();
+  const [resendAuthCodeQuery] = userApi.useLazyResendAuthCodeQuery();
 
   const storage = useAppSelector(state => state.common.storage);
   const {faceid_enabled} = storage;
@@ -136,7 +137,7 @@ const LoginBack = () => {
   }, [storage.user, storage.tokens, afterLogin]);
 
   useEffect(() => {
-    if (loginwithPasswordData.isSuccess) {
+    if (loginwithPasswordData.isSuccess) {      
       const {user, tokens} = getData(loginwithPasswordData);
       setAfterLogin(true);
       afterLoginAction({
@@ -150,10 +151,11 @@ const LoginBack = () => {
     if (loginwithPasswordData.isError) {
       setBiometricCre(false);
       resetBioMetricCredentials();
-      alert({
-        type: 'error',
-        text: 'There is some issue with auth, Please login with password.',
-      });
+      const error: any = loginwithPasswordData.error;
+      const data = error && error.data ? error.data : undefined;
+      if (data) {
+        alert({ type: 'error', text: data.message });
+      }
       setSchema(updateSchema(schema, 'errors', 'password', ''));
     }
   }, [loginwithPasswordData]);
@@ -285,8 +287,8 @@ const LoginBack = () => {
                       marginBottom: 10,
                     },
                   ]}>
-                  You have been received an email from us that having an
-                  authcode
+                  We sent you an email containing you Authcode when you first
+                  signed up
                 </Text>
               </>
             ) : (
@@ -305,13 +307,13 @@ const LoginBack = () => {
               <View
                 style={{
                   flexDirection: 'row',
-                  alignSelf: 'flex-start',
+                  alignSelf: 'flex-end',
                 }}>
-                {/* <OTPTimer
+                <OTPTimer
                   onResend={() => resendAuthCode()}
                   timeinsec={30}
-                  text="Resend AuthCode?"
-                /> */}
+                  text="Regenerate AuthCode?"
+                />
               </View>
             ) : (
               <TouchableOpacity
@@ -321,7 +323,7 @@ const LoginBack = () => {
                     email: user.email,
                   })
                 }
-                style={{alignSelf: 'flex-start'}}>
+                style={{alignSelf: 'flex-end'}}>
                 <Text
                   style={{
                     color: colors.primary,

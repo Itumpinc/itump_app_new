@@ -1,3 +1,14 @@
+export const registerBusinessSteps = (name: string) => {
+  return [
+    {
+      status: false,
+      id: 'details',
+      heading: '',
+      component: `${name}Details`,
+    },
+  ];
+};
+
 export const businessCreditSteps = (name: string) => {
   return [
     {

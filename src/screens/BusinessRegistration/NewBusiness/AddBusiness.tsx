@@ -39,11 +39,11 @@ export function AddBusiness(props: any) {
       title: 'Total Authorized Shares',
       status: 'inactive',
     },
-    {
-      component: 'Incorporator',
-      title: 'Incorporator',
-      status: 'inactive',
-    },
+    // {
+    //   component: 'Incorporator',
+    //   title: 'Incorporator',
+    //   status: 'inactive',
+    // },
     {
       component: 'Shareholder',
       title: 'Shareholder(s)',

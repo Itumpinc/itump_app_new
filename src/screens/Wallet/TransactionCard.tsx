@@ -36,8 +36,8 @@ const TransactionCard = ({item}: any) => {
       <View key={makeId()}>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('OrderDetails', {
-              order_num: item.order_detail.order.order_num,
+            navigation.navigate('TransactionDetails', {
+              transaction: item,
             })
           }>
           <OrderCard
@@ -114,8 +114,8 @@ const TransactionCard = ({item}: any) => {
       <View key={makeId()}>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('InvoiceDetails', {
-              invoice_num: item.metadata.invoice_num,
+            navigation.navigate('TransactionDetails', {
+              transaction: item,
             })
           }>
           <OrderCard

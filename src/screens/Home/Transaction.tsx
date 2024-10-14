@@ -43,7 +43,7 @@ export default function Transaction() {
     userApi.useLazyGetTransactionsQuery();
 
   useFocusedEffect(() => {
-    getTransactionsQuery('?type=order&limit=3');
+    getTransactionsQuery('?type=order&limit=2');
   }, []);
 
   if (!getTransactionsData.isSuccess) return null;

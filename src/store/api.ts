@@ -55,7 +55,8 @@ const axiosBaseQuery: BaseQueryFn<
 ) => {
   const {i18n, common} = api.getState();
   const token = getToken(common.storage);
-  const endpointUrl = getApiEndpoint(process.env.API_URL + url, i18n.id);
+  // console.log(process.env.API_URL, process.env.NODE_ENV: "development");
+  const endpointUrl = getApiEndpoint('https://api.itump.com' + url, i18n.id);
   const dispatch = api.dispatch; // Extract dispatch from api
 
   const headers = {
@@ -81,7 +82,7 @@ const axiosBaseQuery: BaseQueryFn<
       try {
         const result = await axios({
           url: getApiEndpoint(
-            process.env.API_URL + '/v1/auth/refresh-tokens',
+            'https://api.itump.com' + '/v1/auth/refresh-tokens',
             i18n.id,
           ),
           method: 'POST',

@@ -103,7 +103,7 @@ const SelectedModules = () => {
       image: pictures.credit,
     },
     {
-      title: 'Itump Corpcrypt',
+      title: 'Itump DocuHub',
       subtext: 'Secure vital business information & documents',
       image: pictures.corpcrypt,
     },

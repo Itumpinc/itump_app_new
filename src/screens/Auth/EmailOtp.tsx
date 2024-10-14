@@ -80,7 +80,7 @@ const EmailOtp = () => {
 
   useEffect(() => {
     (async () => {
-      if (storage.user && storage.tokens) {
+      if (verifySignUpData.isSuccess && storage.user && storage.tokens) {
         await setBioMetricCredentials({
           email,
           password,
@@ -88,14 +88,19 @@ const EmailOtp = () => {
         navigation.dispatch(StackActions.replace('Main'));
       }
     })();
-  }, [storage.user, storage.tokens]);
+  }, [verifySignUpData, storage.user, storage.tokens]);
 
   useEffect(() => {
     (async () => {
       if (verifySignUpData.isSuccess) {
         setLoader(false);
         const {user, tokens} = getData(verifySignUpData);
-        afterLoginAction({dispatch, userApisQuery, setData, data: {user, tokens}});
+        afterLoginAction({
+          dispatch,
+          userApisQuery,
+          setData,
+          data: {user, tokens},
+        });
       }
       if (verifySignUpData.isError) {
         setLoader(false);

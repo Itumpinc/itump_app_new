@@ -24,7 +24,7 @@ import useStyles from '../styles';
 import Button from '@src/constants/button';
 
 export function ExistingBusinessAddFormation(props: any) {
-  const {schema, stepAction} = props;
+  const {schema, stepAction, businessDetails} = props;
   const styles = useStyles();
 
   const submit = () => {
@@ -38,7 +38,7 @@ export function ExistingBusinessAddFormation(props: any) {
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-        <Text style={styles.mainText}>When did you form your company?</Text>
+        <Text style={styles.mainText}>When did you form {businessDetails.business_title}?</Text>
       </View>
       <Gap height={hp(1)} />
       <RenderRadio

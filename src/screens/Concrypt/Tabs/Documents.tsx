@@ -34,7 +34,6 @@ export function Documents(props: any) {
   };
 
   const documents = getDocument(details.documents);
-  console.log('🚀 ~ Documents ~ documents:', documents);
 
   return (
     <View>
@@ -88,7 +87,18 @@ export function Documents(props: any) {
 
           <Gap height={hp(2)} />
           <Button
-            text="See Downloads"
+            text="Add More Document +"
+            onPress={() =>
+              navigation.navigate('AddDocuments', {business_id: details.id})
+            }
+            textColor={colors.primary}
+            backgroundColor={colors.background}
+            borderColor={colors.primary}
+            check={true}
+          />
+          <Gap height={hp(2)} />
+          <Button
+            text="Go to Downloads"
             textColor="white"
             onPress={() => navigation.navigate('Downloads')}
           />

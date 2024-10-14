@@ -33,11 +33,11 @@ const Details = (props: any) => {
       title: 'Business Information',
       status: 'inactive',
     },
-    {
-      component: 'Incorporator',
-      title: 'Incorporator (Contact Person)',
-      status: 'inactive',
-    },
+    // {
+    //   component: 'Incorporator',
+    //   title: 'Incorporator (Contact Person)',
+    //   status: 'inactive',
+    // },
     {
       component: 'Structure',
       title: 'Structure',

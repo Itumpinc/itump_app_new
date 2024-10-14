@@ -191,7 +191,7 @@ export default function WalletChart({dashboardData}: any) {
 
   return (
     <View>
-      <Gap height={Platform.OS === 'android' ? hp(8) : 1} />
+      <Gap height={hp(1)} />
       <View style={styles.walletC}>
         <ImageBackground
           source={pictures.walletBG}

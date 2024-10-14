@@ -2,8 +2,8 @@ import React, {useEffect} from 'react';
 
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
-// import {useColorScheme, StatusBar} from 'react-native';
-// import {setTheme} from '@store/services/storage';
+import {useColorScheme, StatusBar, Appearance} from 'react-native';
+import {setTheme} from '@store/services/storage';
 
 import {
   widthPercentageToDP as wp,
@@ -13,7 +13,7 @@ import {
 import Auth from '@src/navigators/Auth';
 import MainNavigator from '@src/navigators/Main';
 import {getAuthDetails} from '@src/navigators/Utils';
-import {useAppSelector} from '@src/store/store';
+import {useAppDispatch, useAppSelector} from '@src/store/store';
 import {Error, Startup} from '@src/screens';
 import Toast from 'react-native-toast-message';
 import {useThemeColors} from '@src/constants/colors';
@@ -86,9 +86,13 @@ export const toastConfig = () => {
 };
 
 const ApplicationNavigator = () => {
-  // const initConf = initApi.use
-  // const scheme = useColorScheme();
-  // dispatch(setTheme(scheme));
+  const dispatch = useAppDispatch();
+  const selectedtheme = useAppSelector((state: any) => state.common.theme);
+  if (!selectedtheme) {
+    const scheme = Appearance.getColorScheme();
+    dispatch(setTheme(scheme));
+  }
+
   return (
     <>
       <Stack.Navigator

@@ -475,25 +475,25 @@ const getNewBusinessSchema = (user: any, defaultData = {}) => {
       total_shares: Joi.number().allow(0, null),
       value_per_share: Joi.number().allow(0, null),
 
-      incorporator_id: Joi.number().required(),
-      incorporator_user_id: Joi.number().required(),
-      incorporator_business_id: Joi.number().required(),
-      incorporator_first_name: Joi.string().trim().required(),
+      incorporator_id: Joi.number().allow('', null),
+      incorporator_user_id: Joi.number().allow('', null),
+      incorporator_business_id: Joi.number().allow('', null),
+      incorporator_first_name: Joi.string().trim().allow('', null),
       incorporator_last_name: Joi.string().allow('', null),
       incorporator_email: Joi.string()
         .email({tlds: {allow: false}})
-        .required(),
+        .allow('', null),
       incorporator_phone: Joi.string().allow('', null),
-      incorporator_address: Joi.string().trim().required(),
+      incorporator_address: Joi.string().allow('', null),
       incorporator_address2: Joi.string().trim().allow('', null),
-      incorporator_zipcode: Joi.string().trim().required(),
-      incorporator_city: Joi.string().trim().required(),
-      incorporator_state_id: Joi.number().required(),
-      incorporator_country_id: Joi.number().required(),
+      incorporator_zipcode: Joi.string().allow('', null),
+      incorporator_city: Joi.string().allow('', null),
+      incorporator_state_id: Joi.number().allow('', null),
+      incorporator_country_id: Joi.number().allow('', null),
       incorporator_assigned_shares: Joi.number().allow(0, null),
       incorporator_business_user_type: Joi.string()
         .valid('incorporator', 'shareholder', 'treasurer', 'director', 'others')
-        .required(),
+        .allow('', null),
       incorporator_other_user: Joi.string().trim().allow('', null),
 
       shareholder_1_id: Joi.number().allow('', null).required(),

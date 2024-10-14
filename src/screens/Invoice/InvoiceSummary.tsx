@@ -310,6 +310,8 @@ const InvoiceSummary = () => {
     .map(item => `${item} Months`)
     .join(', ');
 
+  const calculateData = getData(invoiceCalculateData);
+
   const handlePlans = () => {
     if (takeAction) {
       if (isEnabled && !openPlans) {
@@ -347,6 +349,12 @@ const InvoiceSummary = () => {
     //   ],
     // });
 
+    const {main_business: mainBusiness, other_business: otherBusiness} = business;
+    const businesses = [...mainBusiness, ...otherBusiness];
+    const selectedBusiness = businesses.find(
+      (b: any) => b.id === params.user_business_id,
+    );
+
     const billingAddress = formataddress({
       address: params.billing_street,
       address2: '',
@@ -370,7 +378,7 @@ const InvoiceSummary = () => {
       is_sc_inclusive: scInclusive ? 0 : 1,
       allow_recurring_pay: selectedPlans.length > 0 ? 1 : 0,
       due_date: moment(params.due_date, 'MM-DD-YYYY').format('YYYY-MM-DD'),
-      user_memo: '##'+billingAddress,
+      user_memo: '##' + billingAddress,
       items: [
         {
           item_name: params.invoice_title,
@@ -381,21 +389,9 @@ const InvoiceSummary = () => {
       ],
     };
 
-    const createInvoiceData = await createInvoiceQuery(data);
-    if (createInvoiceData.isSuccess) {
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'InvoiceSuccess', params: {data: params}}],
-      });
-    }
-
-    if (createInvoiceData.isError) {
-      const error: any = createInvoiceData.error;
-      const data = error && error.data ? error.data : undefined;
-      if (data) {
-        alert({ type: 'error', text: data.message });
-      }
-    }
+    navigation.navigate('InvoicePreview', {
+      data: {data, billingAddress, paramsData:params, calculateData, selectedPlans, selectedBusiness, country},
+    });
   };
 
   useEffect(() => {
@@ -435,7 +431,6 @@ const InvoiceSummary = () => {
 
   // console.log('🚀 ~ InvoiceSummary ~ params:', params);
 
-  const calculateData = getData(invoiceCalculateData);
   const {main_business: mainBusiness, other_business: otherBusiness} = business;
   const businesses = [...mainBusiness, ...otherBusiness];
   const selectedBusiness = businesses.find(

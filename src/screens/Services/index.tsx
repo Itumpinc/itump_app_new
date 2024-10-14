@@ -1,5 +1,7 @@
 export {default as ServiceList} from '@src/screens/Services/ServiceList';
 
+export {MainService as register_business} from '@src/screens/Services/MainService';
+
 export {MainService as build_business_credit} from '@src/screens/Services/MainService';
 export {MainService as BusinessCreditForm} from '@src/screens/Services/MainService';
 export {MainService as BusinessCreditReview} from '@src/screens/Services/MainService';

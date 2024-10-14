@@ -1,6 +1,17 @@
 import {api} from '@store/api';
 import {__} from '@utils/helpers';
 
+const documentFormData = (data: any) => {
+  const formData = new FormData();
+  formData.append(
+    'media',
+    data.media,
+    // @ts-ignore
+    data.media.name.toLowerCase().replace(/[^a-zA-Z0-9-_ .]/g, ''),
+  );
+  return formData;
+};
+
 export const userApi = api.injectEndpoints({
   endpoints: builder => ({
     refreshToken: builder.query<any, string>({
@@ -22,6 +33,13 @@ export const userApi = api.injectEndpoints({
     register: builder.query<any, any>({
       query: (data: any) => ({
         url: `/v1/auth/register`,
+        method: 'POST',
+        data,
+      }),
+    }),
+    resendAuthCode: builder.query<any, any>({
+      query: (data: any) => ({
+        url: `/v1/auth/resend-auth-code`,
         method: 'POST',
         data,
       }),
@@ -161,6 +179,24 @@ export const userApi = api.injectEndpoints({
       query: (userId: number) => ({
         url: `/v1/users/delete/${userId}`,
         method: 'DELETE',
+      }),
+    }),
+    uploadMedia: builder.mutation<any, any>({
+      query: (data: any) => {
+        const formData = documentFormData(data);
+        return {
+          url: `/v1/media/upload`,
+          method: 'POST',
+          data: formData,
+          formData: true,
+        };
+      },
+    }),
+    contactUs: builder.query<any, any>({
+      query: (data: any) => ({
+        url: `/v1/master/contact-us`,
+        method: 'POST',
+        data,
       }),
     }),
   }),

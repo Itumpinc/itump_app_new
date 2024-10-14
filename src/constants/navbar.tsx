@@ -39,7 +39,7 @@ const Navbar = () => {
     setFocus('Home');
   };
   const handleSearch = () => {
-    if (!(allBusiness.length > 0 && user.is_pro_user === 1)) {
+    if (user.is_pro_user !== 1) {
       setModalClose(true);
     } else {
       navigation.navigate('InvoiceList');

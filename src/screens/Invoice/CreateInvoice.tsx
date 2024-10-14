@@ -272,7 +272,7 @@ const AddBillingAddress = (props: any) => {
                 fontSize: 14,
               }}>
               {formataddress({
-                address: '',
+                address: schema.data.billing_street,
                 address2: '',
                 city: schema.data.billing_city,
                 zipcode: schema.data.billing_zipcode,
@@ -671,7 +671,7 @@ const CreateInvoice = () => {
                     paddingLeft: wp(3),
                     alignSelf: 'center',
                     width: '92%',
-                    height: hp(6),
+                    height: 70,
                   }}
                 />
                 <Gap height={hp(4)} />

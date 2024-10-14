@@ -18,7 +18,7 @@ export const Checkbox = (props: any) => {
 
   const colors = useThemeColors();
   const [isChecked, setIsChecked] = useState(false);
-  const error = name ? errors[name] : "";
+  const error = name ? errors[name] : '';
 
   useEffect(() => {
     setIsChecked(value);

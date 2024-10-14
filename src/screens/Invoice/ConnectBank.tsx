@@ -128,7 +128,7 @@ const WebViewConnect = (props: any) => {
         <WebView
           ref={webViewRef}
           onLoad={() => hideLoader()}
-          style={[{width: wp(100), height: hp(100), marginTop: 0}]}
+          style={[{width: wp(100), height: hp(90), marginTop: 0}]}
           originWhitelist={['*']}
           javaScriptEnabled={true}
           injectedJavaScript={injectedToHtml()}

@@ -1,6 +1,17 @@
 import {withSchemaData} from '@src/components/hocs/forms/form';
 import Joi from 'joi';
 
+export const registerBusinessSchema = (defaultData: any) => {
+  const formationSchema = withSchemaData(
+    Joi.object({
+      service_id: Joi.number().allow(''),
+      company_id: Joi.number().allow(''),
+    }),
+    defaultData,
+  );
+  return formationSchema;
+};
+
 export const businessCreditSchema = (defaultData: any) => {
   const formationSchema = withSchemaData(
     Joi.object({
@@ -184,8 +195,8 @@ export const secureSchema = (defaultData: any) => {
       protection_type: Joi.string().required(),
       ip_description: Joi.string().required(),
       marks_in_claim: Joi.string().required(),
-      secure_name: Joi.string().allow(''),
-      docforSecure: Joi.object().allow('', null),
+      secure_name: Joi.string().required(),
+      docforSecure: Joi.object().required(),
       docforSecureName: Joi.string().allow(''),
 
       created_at: Joi.string().allow('', null),

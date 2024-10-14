@@ -112,7 +112,10 @@ const ConnectedAccount = ({externalAccount}: any) => {
         )}
         <View>
           <View style={[{flexDirection: 'row'}]}>
-            <Text style={[{fontFamily: 'Satoshi-Bold', color:colors.secondaryText}]}>
+            <Text
+              style={[
+                {fontFamily: 'Satoshi-Bold', color: colors.secondaryText},
+              ]}>
               {externalAccount.bank_name ||
                 externalAccount.brand.toUpperCase() +
                   ' ' +
@@ -147,8 +150,9 @@ const ConnectedAccount = ({externalAccount}: any) => {
             </View>
           </View>
 
-          <Text style={[{fontFamily: 'Satoshi-Bold', color:colors.secondaryText}]}>
-            •••• •••• •••• {externalAccount.last4}
+          <Text
+            style={[{fontFamily: 'Satoshi-Bold', color: colors.secondaryText}]}>
+            *****{externalAccount.last4}
           </Text>
         </View>
       </View>
@@ -201,18 +205,21 @@ const WalletBalance = (props: any) => {
     setLoader(false);
     if (payoutAccountData.isSuccess) {
       // const payout = getData(payoutAccountData);
-      alert(
-        'Congrats! Your withdraw is successfull. Money will be deposit into your bank subject to your bank availablity.', true
-      );
       setShowPayout(false);
       refreshData();
+      navigation.navigate('WithdrawlSuccess');
     }
   };
 
   return (
     <View style={{width: wp(90), alignSelf: 'center', paddingTop: hp(4)}}>
       <View>
-        <Text style={{color: colors.secondaryText, fontSize: hp(1.6)}}>
+        <Text
+          style={{
+            color: colors.secondaryText,
+            fontSize: hp(1.6),
+            opacity: 0.6,
+          }}>
           Total balance
         </Text>
         <Gap height={hp(0.5)} />
@@ -232,13 +239,18 @@ const WalletBalance = (props: any) => {
       <Line />
       <Gap height={hp(1)} />
       <View>
-        <Text style={{color: colors.secondaryText, fontSize: hp(1.6)}}>
+        <Text
+          style={{
+            color: colors.secondaryText,
+            fontSize: hp(1.6),
+            opacity: 0.6,
+          }}>
           Available to pay out
         </Text>
         <Gap height={hp(0.5)} />
         <Text
           style={{
-            color: colors.success,
+            color: colors.secondaryText,
             fontFamily: 'Satoshi-Bold',
             fontSize: hp(2.5),
           }}>
@@ -252,7 +264,12 @@ const WalletBalance = (props: any) => {
       <Line />
       <Gap height={hp(1)} />
       <View>
-        <Text style={{color: colors.secondaryText, fontSize: hp(1.6)}}>
+        <Text
+          style={{
+            color: colors.secondaryText,
+            fontSize: hp(1.6),
+            opacity: 0.6,
+          }}>
           Available soon
         </Text>
         <Gap height={hp(0.5)} />
@@ -260,7 +277,7 @@ const WalletBalance = (props: any) => {
           style={{
             fontFamily: 'Satoshi-Bold',
             fontSize: hp(2.5),
-            color: colors.errorText,
+            color: colors.secondaryText,
           }}>
           {formatAmount(
             accountBalance.available_soon,
@@ -346,21 +363,58 @@ const WalletBalance = (props: any) => {
                     }}>
                     Payout
                   </Text>
-                  <Gap height={hp(1)} />
-                  <RenderInput
-                    name="amount"
-                    mode="number"
-                    value={schema.data.amount}
-                    placeHolder="Enter Amount"
-                  />
-                  <Gap height={hp(1)} />
-                  <RenderInput
-                    name="comment"
-                    value={schema.data.comment}
-                    placeHolder="Enter Comment (Optional)"
-                    multiline
-                    maxLength={50}
-                  />
+                  <Gap height={hp(3)} />
+                  <View style={{alignItems: 'flex-start'}}>
+                    <Text style={{color: colors.secondaryText, opacity: 0.7}}>
+                      Enter the amount you want to payout
+                    </Text>
+                    <Gap height={hp(2)} />
+                    <Text
+                      style={{
+                        color: colors.secondaryText,
+                        fontFamily: 'Satoshi-Medium',
+                      }}>
+                      Amount
+                    </Text>
+                    <Gap height={hp(1)} />
+                    <RenderInput
+                      name="amount"
+                      mode="number"
+                      value={schema.data.amount}
+                      placeHolder="Enter Amount"
+                    />
+                    <Text style={{color: colors.secondaryText}}>
+                      <Text style={{opacity: 0.7}}>
+                        Your Account Balance is
+                      </Text>{' '}
+                      <Text
+                        style={{
+                          color: colors.secondaryText,
+                          fontFamily: 'Satoshi-Bold',
+                        }}>
+                        {formatAmount(
+                          accountBalance.balance - schema.data.amount,
+                          currency.currency_symbol,
+                        )}
+                      </Text>
+                    </Text>
+                    <Gap height={hp(2)} />
+                    <Text
+                      style={{
+                        color: colors.secondaryText,
+                        fontFamily: 'Satoshi-Medium',
+                      }}>
+                      Description
+                    </Text>
+                    <Gap height={hp(1)} />
+                    <RenderInput
+                      name="comment"
+                      value={schema.data.comment}
+                      placeHolder="E.g. Salary"
+                      multiline
+                      maxLength={50}
+                    />
+                  </View>
                 </View>
                 <View
                   style={{
@@ -375,6 +429,7 @@ const WalletBalance = (props: any) => {
                     type="submit"
                     text="Submit"
                     textColor="#fff"
+                    disabled={accountBalance.balance - schema.data.amount <= 0}
                     loader={loader}
                   />
                 </View>

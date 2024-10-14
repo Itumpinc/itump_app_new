@@ -117,7 +117,7 @@ export function BusinessReview(props: any) {
       </View>
       <Gap height={hp(20)} />
       <Button
-        text="Create Business"
+        text="Add Business"
         textColor="white"
         onPress={submit}
         loader={loading}

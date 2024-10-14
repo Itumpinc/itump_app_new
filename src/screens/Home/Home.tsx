@@ -76,29 +76,29 @@ export default function Home() {
   const allBusiness = [...mainBusiness, ...otherBusiness];
 
   const dashboardData = getData(getDashboardData);
-  
+
   return (
     <Container>
       <Gap height={Platform.OS === 'android' ? hp(8) : 1} />
       <TopHeader />
       <Gap height={hp(2)} />
+
       <WalletChart dashboardData={dashboardData} />
       <Gap height={hp(2)} />
 
-      {allBusiness.length > 0 &&
-        (user.is_pro_user === 0 ||
-          user.stripe_account_status === 'pending') && <ActivateAccount />}
+      {(user.is_pro_user === 0 || user.stripe_account_status === 'pending') && (
+        <ActivateAccount />
+      )}
+      <DuePayment />
       {allBusiness.length === 0 && <NewBusinessFormation />}
       {allBusiness.length > 0 && <Ongoing allBusiness={userProfile.business} />}
 
       {/* Dashboard 2 Component */}
       {/* <ItumpDebitCard /> */}
 
-      {allBusiness.length > 0 && <FixIssues business={allBusiness} />}
+      <FixIssues business={allBusiness} />
       {allBusiness.length > 0 && <LineOfCreditbanner />}
-      {allBusiness.length !== 0 && <NewBusinessFormation />}
 
-      <DuePayment />
       <RecentOrders />
 
       <Transaction />

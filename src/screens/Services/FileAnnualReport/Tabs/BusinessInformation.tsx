@@ -71,7 +71,7 @@ export function BusinessInformation(props: any) {
       const businessData = getData(businessDetailData);
       setSchema(
         updateSchema(schema, 'data', '', {
-          company_type: businessData.detail.industry_type,
+          company_industry: businessData.detail.industry_type,
           company_establishment_date: moment(
             businessData.detail.formation_date,
             'YYYY-MM-DD',

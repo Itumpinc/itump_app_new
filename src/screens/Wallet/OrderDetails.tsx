@@ -646,11 +646,11 @@ const OrderDetails = () => {
           <TimeLine order={order} user={user} country={country} /> */}
           <Gap height={hp(6)} />
 
-          <Button
+          {serviceDetail.service.tags !== 'register_business' && <Button
             text={`View Details`}
             textColor={'#fff'}
             onPress={() => openDetails(order, serviceDetail)}
-          />
+          />}
 
           <Gap height={hp(6)} />
         </View>

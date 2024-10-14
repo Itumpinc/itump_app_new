@@ -398,10 +398,6 @@ export const documentType = [
     value: 'ein',
   },
   {
-    name: 'Other Document',
-    value: 'others',
-  },
-  {
     name: 'Fincen BOI Document',
     value: 'fincenboi',
   },
@@ -416,5 +412,9 @@ export const documentType = [
   {
     name: 'Registration Document',
     value: 'register_business',
+  },
+  {
+    name: 'Other Document',
+    value: 'others',
   },
 ];

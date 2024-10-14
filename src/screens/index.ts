@@ -32,14 +32,18 @@ export {default as InvoiceSuccess} from './Invoice/InvoiceSuccess';
 export {default as InvoicePayment} from './Invoice/InvoicePay/InvoicePayment';
 export {default as InvoicePaySuccess} from './Invoice/InvoicePay/InvoicePaySuccess';
 export {default as InvoiceDetails} from './Invoice/InvoicePay/InvoiceDetails';
+export {default as InvoicePreview} from './Invoice/InvoicePreview';
 
 export {default as Downloads} from './Downloads/Downloads';
+export {default as AddDocuments} from './Downloads/AddDocuments';
 export {default as Concrypt} from './Concrypt/Concrypt';
 export {default as InvoiceList} from './Wallet/InvoiceList';
 export {default as Wallet} from './Wallet/Wallet';
 export {default as OrderList} from './Wallet/OrderList';
 export {default as OrderDetails} from './Wallet/OrderDetails';
 export {default as TransactionList} from './Wallet/TransactionList';
+export {default as WithdrawlSuccess} from './Wallet/WithdrawlSuccess';
+export {default as TransactionDetails} from './Wallet/TransactionDetails';
 
 export {default as Account} from './Account/account';
 export {default as AccountOption} from './Account/AccountOption';
@@ -47,3 +51,7 @@ export {default as CloseAccount} from './Account/CloseAccount';
 export {default as Profile} from './Account/Profile';
 export {default as Security} from './Account/Security';
 export {default as ChangePassoword} from './Account/ChangePassoword';
+export {default as ContactUs} from './Account/ContactUs';
+export {default as Appearance} from './Account/Appearance';
+
+

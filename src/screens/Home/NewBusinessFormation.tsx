@@ -23,7 +23,7 @@ import Popup from '@src/components/common/popup';
 import AddBusinessPopup from '@screens/BusinessRegistration/AddBusinessPopup';
 
 export default function NewBusinessFormation(props: any) {
-  const {closeAction} = props;
+  const {closeAction, from} = props;
   const colors = useThemeColors();
   const pictures = useThemeImages();
   const navigation: any = useNavigation();
@@ -54,34 +54,36 @@ export default function NewBusinessFormation(props: any) {
             ]}>
             Start New Formation
           </Text>
-          <TouchableOpacity
-            onPress={() => {
-              closeAction && closeAction();
-              navigation.navigate('ServiceList');
-            }}
-            style={{
-              alignSelf: 'flex-start',
-              paddingLeft: wp(4),
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Text
-              style={[
-                styles.text,
-                {
-                  color: colors.primary,
-                  fontFamily: 'Satoshi-Medium',
-                  marginRight: wp(1),
-                  alignSelf: 'center',
-                },
-              ]}>
-              Our Services
-            </Text>
-            <Image
-              source={pictures.arrowRightPrimary}
-              style={{height: hp(2), width: hp(2), marginTop: 3}}
-            />
-          </TouchableOpacity>
+          {!from && (
+            <TouchableOpacity
+              onPress={() => {
+                closeAction && closeAction();
+                navigation.navigate('ServiceList');
+              }}
+              style={{
+                alignSelf: 'flex-start',
+                paddingLeft: wp(4),
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    color: colors.primary,
+                    fontFamily: 'Satoshi-Medium',
+                    marginRight: wp(1),
+                    alignSelf: 'center',
+                  },
+                ]}>
+                Our Services
+              </Text>
+              <Image
+                source={pictures.arrowRightPrimary}
+                style={{height: hp(2), width: hp(2), marginTop: 3}}
+              />
+            </TouchableOpacity>
+          )}
         </View>
         <Gap height={hp(2)} />
         <TouchableOpacity
@@ -117,9 +119,10 @@ export default function NewBusinessFormation(props: any) {
             style={{
               paddingLeft: hp(2),
               marginBottom: hp(1),
-              alignSelf: 'flex-start',
               flexDirection: 'row',
               alignItems: 'center',
+              justifyContent:'space-between',
+              paddingRight: 20
             }}>
             <Text
               style={[
@@ -128,10 +131,13 @@ export default function NewBusinessFormation(props: any) {
                   color: colors.secondaryText,
                   fontFamily: 'Satoshi-Regular',
                   marginRight: wp(1),
+                  maxWidth: wp(61),
                   alignSelf: 'center',
                 },
               ]}>
-              Get your business up and running with itump
+              {from && from === 'invoice'
+                ? 'You need to register a business first to create an invoice'
+                : 'Get your business up and running with itump'}
             </Text>
             <Image
               source={pictures.arrowRight}

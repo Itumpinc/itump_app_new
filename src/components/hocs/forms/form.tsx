@@ -49,7 +49,7 @@ const isSchemaValid = (schema: any, formState: any, data: any) => {
     const {errors} = deepCopy(formState);
 
     if (error) {
-      console.log(error.details);
+      console.log('error.details===>', error.details);
       for (let index = 0; index < error.details.length; index++) {
         const er = error.details[index];
         errors[er.path[0]] = er.message;

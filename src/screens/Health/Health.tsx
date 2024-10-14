@@ -172,7 +172,7 @@ const Health = () => {
                 alignSelf: 'center',
               },
             ]}>
-            View company details in Corpcrypt
+            View company details in DocuHub
           </Text>
           <Image
             source={pictures.goToPrimary}

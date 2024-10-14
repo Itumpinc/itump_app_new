@@ -64,6 +64,7 @@ export function ExistingBusinessAddDetails(props: any) {
         city: schema.data.businessCity,
         zipcode: schema.data.businesszipcode,
         phone_num: schema.data.businessPhone,
+        business_registration_no: schema.data.businessRegistrationNo,
         ein: schema.data.ein,
         tax_id: schema.data.taxId,
         form_owner: businessDetails.detail
@@ -198,6 +199,15 @@ export function ExistingBusinessAddDetails(props: any) {
         name="businessPhone"
         value={schema.data.businessPhone}
         placeHolder="Phone Number"
+      />
+
+      <Gap height={hp(2)} />
+      <Text style={styles.mainText}>Business Registration No</Text>
+      <Gap height={hp(1)} />
+      <RenderInput
+        name="businessRegistrationNo"
+        value={schema.data.businessRegistrationNo}
+        placeHolder="e.g 123456789"
       />
 
       <Gap height={hp(2)} />

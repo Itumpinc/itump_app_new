@@ -33,6 +33,7 @@ import {formatAmount, getData, getfirstlastname} from '@src/utils/helpers';
 import {OrderCard} from '@src/components/common/ordercard';
 import {useAppSelector} from '@src/store/store';
 import moment from 'moment';
+import NewBusinessFormation from '../Home/NewBusinessFormation';
 
 const LIMIT = 20;
 let isEndReachedCalledDuringMomentum = false;
@@ -106,7 +107,6 @@ const InvoiceList = () => {
   }, []);
 
   const renderItem = ({item: list}: any) => {
-    console.log('🚀 ~ renderItem ~ list:', list);
     let avatar = list.invoice.user;
     if (
       list.invoice.user_business &&
@@ -279,26 +279,40 @@ const InvoiceList = () => {
               height: hp(60),
               justifyContent: 'center',
             }}>
-            <View
-              style={{
-                width: wp(90),
-                borderWidth: 1,
-                borderColor: colors.boxBorderColor,
-                justifyContent: 'center',
-                borderRadius: 14,
-              }}>
-              <View style={{marginLeft: wp(2), paddingVertical: 20}}>
-                <Text
+            {allBusiness.length > 0 ? (
+              <TouchableOpacity
+                style={{
+                  width: wp(90),
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 14,
+                }}
+                onPress={() => rightPress()}>
+                <View
                   style={{
-                    color: colors.boldText,
-                    fontFamily: 'Satoshi-Medium',
-                    fontSize: 15,
-                    textAlign: 'center',
+                    marginLeft: wp(2),
+                    paddingVertical: 20,
+                    alignItems: 'center',
                   }}>
-                  Oops! There is no Invoice
-                </Text>
-              </View>
-            </View>
+                  <Image
+                    source={pictures.plusIconBr}
+                    style={{width: 60, height: 50}}
+                  />
+                  <Gap height={hp(2)} />
+                  <Text
+                    style={{
+                      color: colors.primaryText,
+                      fontFamily: 'Satoshi-Medium',
+                      fontSize: 15,
+                      textAlign: 'center',
+                    }}>
+                    Create New Invoice
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ) : (
+              <NewBusinessFormation from={'invoice'} />
+            )}
           </View>
         )}
       </View>

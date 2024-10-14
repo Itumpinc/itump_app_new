@@ -30,7 +30,12 @@ import Header from '@src/constants/header';
 import Form, {withSchemaData} from '@src/components/hocs/forms/form';
 import Joi from 'joi';
 import {Button, RenderDropdown, RenderInput} from '@src/components/hocs/forms';
-import {formatAmount, getCurrency, getData, getSettings} from '@src/utils/helpers';
+import {
+  formatAmount,
+  getCurrency,
+  getData,
+  getSettings,
+} from '@src/utils/helpers';
 import MakePayment from '../payment/MakePayment';
 import {serviceApi} from '@src/store/services/service';
 
@@ -69,8 +74,11 @@ const ActivateAccount = () => {
         monthly_revenue: Joi.number().required(),
         monthly_expenditure: Joi.number().required(),
         payment_features: Joi.string().trim().required(),
-        daily_transact_limit: Joi.string().required(),
+        daily_transact_limit: Joi.string().allow('', null),
       }),
+      {
+        daily_transact_limit: '1000'
+      }
     ),
   );
 
@@ -194,7 +202,7 @@ const ActivateAccount = () => {
             />
             <Gap height={hp(2)} />
             <Text style={styles.mainText}>
-              What is your most-out monthly expenditure?
+              What is your estimated monthly expenditure?
             </Text>
             <Gap height={hp(2)} />
             <RenderInput
@@ -214,40 +222,16 @@ const ActivateAccount = () => {
               placeHolder="Select Features"
               options={[
                 {
-                  name: 'Mobile Payments & Digital Wallets',
-                  value: 'Mobile Payments & Digital Wallets',
+                  name: 'Itump Lo-Fi Invoicing',
+                  value: 'Itump Lo-Fi Invoicing',
                 },
                 {
-                  name: 'Recurring Payments & Subscriptions',
-                  value: 'Recurring Payments & Subscriptions',
-                },
-                {
-                  name: 'Peer-to-Peer (P2P) Transfers',
-                  value: 'Peer-to-Peer (P2P) Transfers',
-                },
-                {
-                  name: 'Buy Now, Pay Later (BNPL)',
-                  value: 'Buy Now, Pay Later (BNPL)',
+                  name: 'Tap and Link to Pay',
+                  value: 'Tap and Link to Pay',
                 },
                 {
                   name: 'Debit/Credit Card Payments',
                   value: 'Debit/Credit Card Payments',
-                },
-                {
-                  name: 'In-App Payments',
-                  value: 'In-App Payments',
-                },
-                {
-                  name: 'Transaction History & Receipts',
-                  value: 'Transaction History & Receipts',
-                },
-                {
-                  name: 'Loyalty & Rewards Integration',
-                  value: 'Loyalty & Rewards Integration',
-                },
-                {
-                  name: 'Currency Conversion',
-                  value: 'Currency Conversion',
                 },
               ]}
             />
@@ -272,38 +256,38 @@ const ActivateAccount = () => {
                 </TouchableOpacity>
               );
             })}
-            <Gap height={hp(2)} />
+            {/* <Gap height={hp(2)} />
             <Text style={styles.mainText}>
-              Select a Daily Transaction Limit
+              Please give us a Daily Transaction Limit
             </Text>
             <Gap height={hp(2)} />
-            <RenderDropdown
+            <RenderInput
               name="daily_transact_limit"
               value={schema.data.payment_features}
               placeHolder={`${currency_symbol}0`}
-              options={[
-                {
-                  name: `${formatAmount(1000, currency_symbol)}`,
-                  value: '1000',
-                },
-                {
-                  name: `${formatAmount(5000, currency_symbol)}`,
-                  value: '5000',
-                },
-                {
-                  name: `${formatAmount(10000, currency_symbol)}`,
-                  value: '10000',
-                },
-                {
-                  name: `${formatAmount(50000, currency_symbol)}`,
-                  value: '50000',
-                },
-                {
-                  name: `${formatAmount(100000, currency_symbol)}`,
-                  value: '100000',
-                },
-              ]}
-            />
+              // options={[
+              //   {
+              //     name: `${formatAmount(1000, currency_symbol)}`,
+              //     value: '1000',
+              //   },
+              //   {
+              //     name: `${formatAmount(5000, currency_symbol)}`,
+              //     value: '5000',
+              //   },
+              //   {
+              //     name: `${formatAmount(10000, currency_symbol)}`,
+              //     value: '10000',
+              //   },
+              //   {
+              //     name: `${formatAmount(50000, currency_symbol)}`,
+              //     value: '50000',
+              //   },
+              //   {
+              //     name: `${formatAmount(100000, currency_symbol)}`,
+              //     value: '100000',
+              //   },
+              // ]}
+            /> */}
             <Gap height={hp(2)} />
             <Text style={{color: colors.secondaryText, opacity: 0.5}}>
               *You can edit this later within your settings

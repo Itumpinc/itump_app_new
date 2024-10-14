@@ -490,8 +490,6 @@ const InvoiceDetails = () => {
     partial_paid: colors.darkOrange,
   };
 
-  console.log('🚀 ~ InvoiceDetails ~ invoice:', invoice);
-
   return (
     <Container>
       <View
@@ -500,7 +498,7 @@ const InvoiceDetails = () => {
           width: wp(90),
         }}>
         <Header
-          title="Transaction Details"
+          title="Invoice Details"
           source={pictures.arrowLeft}
           onPress={() => navigation.navigate('InvoiceList')}
         />

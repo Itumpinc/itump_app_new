@@ -123,7 +123,7 @@ const ItumpMessage = () => {
           }}>
           Itump and Your Data
         </Text>
-        <Text style={{color: '#27AE60'}}>
+        <Text style={{color: colors.secondaryText}}>
           Itump respects your privacy. Keeping your information secure is an
           important part of the financial experiance we provide. We won't send
           you any marketing emails without your permission. You can opt-out from
@@ -145,6 +145,8 @@ const MakePayment = (props: any) => {
     title,
     disabled,
     redirectParams,
+    notext,
+    afterpayment,
   } = props;
   const route: any = useRoute();
   const dispatch = useAppDispatch();
@@ -230,7 +232,7 @@ const MakePayment = (props: any) => {
       const error: any = createServiceOrderBindData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert({ type: 'error', text: data.message });
+        alert({type: 'error', text: data.message});
       }
     }
   };
@@ -241,11 +243,17 @@ const MakePayment = (props: any) => {
     );
     if (createActivationBindData.isSuccess) {
       const activationData = getData(createActivationBindData);
-      await initializePaymentSheet({
-        paymentIntent: activationData.payment_intent.pi_client_secret,
-        ephemeralKey: activationData.payment_intent.ephemeral_key,
-        customer: activationData.payment_intent.customer,
-      });
+      if (activationData.payment_intent) {
+        await initializePaymentSheet({
+          paymentIntent: activationData.payment_intent.pi_client_secret,
+          ephemeralKey: activationData.payment_intent.ephemeral_key,
+          customer: activationData.payment_intent.customer,
+        });
+      } else {
+        const userData = await userApisQuery();
+        saveUser({dispatch, setData, userData});
+        navigation.navigate('ConnectBank');
+      }
     }
 
     if (createActivationBindData.isError) {
@@ -253,7 +261,7 @@ const MakePayment = (props: any) => {
       const error: any = createActivationBindData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert({ type: 'error', text: data.message });
+        alert({type: 'error', text: data.message});
       }
     }
   };
@@ -278,14 +286,14 @@ const MakePayment = (props: any) => {
       const error: any = createInvoiceData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert({ type: 'error', text: data.message });
+        alert({type: 'error', text: data.message});
       }
     }
   };
 
   const processPayment = () => {
-    if (!acceptTerms) {
-      alert({ type: 'error', text: 'please accept terms' });
+    if (!notext && !acceptTerms) {
+      alert({type: 'error', text: 'please accept terms'});
       return false;
     }
     setLoading(true);
@@ -305,7 +313,10 @@ const MakePayment = (props: any) => {
         const {error} = await presentPaymentSheet();
         if (error) {
           if (error.code !== 'Canceled') {
-            alert({ type: 'error', text: `Error code: ${error.code} ${error.message}` });
+            alert({
+              type: 'error',
+              text: `Error code: ${error.code} ${error.message}`,
+            });
           }
           resetPaymentSheetCustomer();
           setResetButton(true);
@@ -324,7 +335,7 @@ const MakePayment = (props: any) => {
                   payload: '',
                 },
               });
-
+            if (afterpayment) afterpayment();
             setLoading(false);
             if (createServiceOrderVerifyData.isSuccess) {
               const data = getData(createServiceOrderVerifyData);
@@ -346,10 +357,12 @@ const MakePayment = (props: any) => {
             if (verifyActivationData.isSuccess) {
               const userData = await userApisQuery();
               saveUser({dispatch, setData, userData});
+              if (afterpayment) afterpayment();
               navigation.navigate('ConnectBank');
             }
           } else if (paymentParams.paymentType === 'invoice') {
             setLoading(false);
+            if (afterpayment) afterpayment();
             navigation.navigate('InvoicePaySuccess', {
               data: invoiceData,
               payInvoiceData: getData(payInvoiceData),
@@ -372,8 +385,18 @@ const MakePayment = (props: any) => {
 
   return (
     <StripeProvider publishableKey={stripePubKey} urlScheme="itump">
-      <AgreeTerms acceptTerms={acceptTerms} setAcceptTerms={setAcceptTerms} />
-      <Gap height={hp(2)} />
+      {!notext ? (
+        <>
+          <AgreeTerms
+            acceptTerms={acceptTerms}
+            setAcceptTerms={setAcceptTerms}
+          />
+          <Gap height={hp(2)} />
+        </>
+      ) : (
+        <></>
+      )}
+
       <Button
         text={title || 'Make Payment'}
         textColor="white"
@@ -381,9 +404,15 @@ const MakePayment = (props: any) => {
         loader={loading}
         disabled={disabled}
       />
-      <Gap height={hp(2)} />
-      <ItumpMessage />
-      <Gap height={hp(6)} />
+      {!notext ? (
+        <>
+          <Gap height={hp(2)} />
+          <ItumpMessage />
+          <Gap height={hp(6)} />
+        </>
+      ) : (
+        <></>
+      )}
     </StripeProvider>
   );
 };

@@ -1,3 +1,5 @@
+export {default as RegisterBusinessDetails} from '@src/screens/Services/RegisterBusiness/Detail';
+
 export {default as BusinessCreditDetails} from '@src/screens/Services/BuildBusinessCredit/Detail';
 export {default as BusinessCreditForm} from '@src/screens/Services/BuildBusinessCredit/Form';
 export {default as BusinessCreditReview} from '@src/screens/Services/BuildBusinessCredit/Review';

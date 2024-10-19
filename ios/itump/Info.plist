@@ -22,6 +22,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -31,12 +33,27 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to the camera to take picture of your document.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>We need to access Face ID for secure login.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string></string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This app requires access to the photo library to save files.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Satoshi-Black.otf</string>
+		<string>Satoshi-BlackItalic.otf</string>
+		<string>Satoshi-Bold.otf</string>
+		<string>Satoshi-BoldItalic.otf</string>
+		<string>Satoshi-Italic.otf</string>
+		<string>Satoshi-Light.otf</string>
+		<string>Satoshi-LightItalic.otf</string>
+		<string>Satoshi-Medium.otf</string>
+		<string>Satoshi-MediumItalic.otf</string>
+		<string>Satoshi-Regular.otf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -51,18 +68,13 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>UIAppFonts</key>
+	<key>UIBackgroundModes</key>
 	<array>
-		<string>Satoshi-Black.otf</string>
-		<string>Satoshi-BlackItalic.otf</string>
-		<string>Satoshi-Bold.otf</string>
-		<string>Satoshi-BoldItalic.otf</string>
-		<string>Satoshi-Italic.otf</string>
-		<string>Satoshi-Light.otf</string>
-		<string>Satoshi-LightItalic.otf</string>
-		<string>Satoshi-Medium.otf</string>
-		<string>Satoshi-MediumItalic.otf</string>
-		<string>Satoshi-Regular.otf</string>
+		<string>bluetooth-central</string>
 	</array>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app uses Bluetooth to connect to supported card readers.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Connecting to supported card readers requires Bluetooth access.</string>
 </dict>
 </plist>

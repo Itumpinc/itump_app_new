@@ -8,7 +8,8 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "android:production": "react-native run-android --variant=release",
+    "android:aab:production": "npx react-native build-android --mode=release",
+    "android:production": "npm run android -- --mode=\"release\"",
     "ios:production": "react-native run-ios --configuration Release"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "@react-navigation/stack": "^6.3.29",
     "@reduxjs/toolkit": "^2.2.5",
     "@stripe/stripe-react-native": "^0.38.6",
+    "@stripe/stripe-terminal-react-native": "^0.0.1-beta.22",
     "axios": "^1.7.2",
     "babel-plugin-module-resolver": "^5.0.2",
     "joi": "^17.13.1",

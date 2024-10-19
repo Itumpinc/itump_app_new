@@ -167,14 +167,6 @@ const DiscoverReader = (props: any) => {
 
   const handleConnectReader = async () => {
     // connectLocalMobileReader
-
-    console.log(
-      'handleConnectReader========>',
-      discoveredReaders[0],
-      locationId,
-      paramsData.business.business_title,
-    );
-
     if (!(discoveredReaders && discoveredReaders.length > 0)) {
       return;
     }

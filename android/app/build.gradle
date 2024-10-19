@@ -89,6 +89,26 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(MYAPP_UPLOAD_STORE_FILE)
+                storePassword MYAPP_UPLOAD_STORE_PASSWORD
+                keyAlias MYAPP_UPLOAD_KEY_ALIAS
+                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            }
+        }
+    }
+    // packagingOptions {
+    //     exclude 'org/bouncycastle/x509/CertPathReviewerMessages_de.properties'
+    //     pickFirst 'org/bouncycastle/x509/CertPathReviewerMessages_de.properties'
+    // }
+    packagingOptions {
+        // Exclude the specific property file that is causing the conflict
+        exclude 'org/bouncycastle/x509/CertPathReviewerMessages_de.properties'
+        exclude 'org/bouncycastle/x509/CertPathReviewerMessages.properties'
+
+        // Optionally, you can also pick the first one if needed
+        // pickFirst 'org/bouncycastle/x509/CertPathReviewerMessages.properties'
     }
     buildTypes {
         debug {
@@ -97,7 +117,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

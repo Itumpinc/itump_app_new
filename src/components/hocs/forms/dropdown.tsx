@@ -50,7 +50,7 @@ const Dropdown = (props: {
     options,
     half,
   } = props;
-  
+
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const [searchValue, setSearchValue] = useState('');
@@ -114,6 +114,7 @@ const Dropdown = (props: {
         <TouchableOpacity
           onPress={disable ? () => {} : handleDropdownPress}
           activeOpacity={disable ? 1 : 0.2}
+          disabled={disable}
           style={{
             flex: 1,
             flexDirection: 'row',

@@ -21,7 +21,7 @@ import {getData} from '@src/utils/helpers';
 import {commonApi} from '@src/store/services/common';
 import {getCountryOptions, getStateOptions} from '../../Utils';
 import Button from '@src/constants/button';
-import { useAppSelector } from '@src/store/store';
+import {useAppSelector} from '@src/store/store';
 
 const Treasurer1 = (props: any) => {
   const colors = useThemeColors();
@@ -102,6 +102,7 @@ const Treasurer1 = (props: any) => {
           name="treasurer_1_state_id"
           value={schema.data.treasurer_1_state_id}
           placeHolder="State"
+          disable={!schema.data.treasurer_1_country_id}
           options={stateOptions}
           half
         />
@@ -200,6 +201,7 @@ const Treasurer2 = (props: any) => {
           name="treasurer_2_state_id"
           value={schema.data.treasurer_2_state_id}
           placeHolder="State"
+          disable={!schema.data.treasurer_2_country_id}
           options={stateOptions}
           half
         />
@@ -298,6 +300,7 @@ const Treasurer3 = (props: any) => {
           name="treasurer_3_state_id"
           value={schema.data.treasurer_3_state_id}
           placeHolder="State"
+          disable={!schema.data.treasurer_3_country_id}
           options={stateOptions}
           half
         />
@@ -396,6 +399,7 @@ const Treasurer4 = (props: any) => {
           name="treasurer_4_state_id"
           value={schema.data.treasurer_4_state_id}
           placeHolder="State"
+          disable={!schema.data.treasurer_4_country_id}
           options={stateOptions}
           half
         />
@@ -422,13 +426,13 @@ export function Treasurer(props: any) {
   const {status, toggleTab, schema} = props;
 
   let count = 0;
-  if(schema.data.treasurer_2_email){
+  if (schema.data.treasurer_2_email) {
     count += 1;
   }
-  if(schema.data.treasurer_3_email){
+  if (schema.data.treasurer_3_email) {
     count += 1;
   }
-  if(schema.data.treasurer_3_email){
+  if (schema.data.treasurer_3_email) {
     count += 1;
   }
 
@@ -440,9 +444,7 @@ export function Treasurer(props: any) {
 
       {status === 'active' && (
         <View>
-          <Text style={styles.subText}>
-            Please provide treasurer’s details
-          </Text>
+          <Text style={styles.subText}>Please provide treasurer’s details</Text>
           <Gap height={hp(2)} />
           <View
             style={{
@@ -473,7 +475,11 @@ export function Treasurer(props: any) {
             />
           )}
           <Gap height={hp(2)} />
-          <Button text="Next" textColor='white' onPress={()=>toggleTab('Director')}/>
+          <Button
+            text="Next"
+            textColor="white"
+            onPress={() => toggleTab('Director')}
+          />
           <Gap height={hp(4)} />
         </View>
       )}

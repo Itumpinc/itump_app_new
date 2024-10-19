@@ -290,14 +290,19 @@ const InvoiceList = () => {
                 onPress={() => rightPress()}>
                 <View
                   style={{
-                    marginLeft: wp(2),
-                    paddingVertical: 20,
                     alignItems: 'center',
                   }}>
-                  <Image
-                    source={pictures.plusIconBr}
-                    style={{width: 60, height: 50}}
-                  />
+                  <View
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 25,
+                      backgroundColor: colors.primary,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Text style={{color: '#fff', fontSize: 35}}>+</Text>
+                  </View>
                   <Gap height={hp(2)} />
                   <Text
                     style={{

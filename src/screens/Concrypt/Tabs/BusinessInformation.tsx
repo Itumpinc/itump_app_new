@@ -91,8 +91,8 @@ export function BusinessInformation(props: any) {
             name="state_id"
             value={schema.data.state_id}
             placeHolder="State"
+            disable={!schema.data.country_id}
             options={stateOptions}
-            disable
           />
           <Text style={styles.secondaryText}>Entity Type</Text>
           <Gap height={hp(1)} />

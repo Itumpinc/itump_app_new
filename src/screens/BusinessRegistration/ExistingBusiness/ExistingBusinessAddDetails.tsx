@@ -157,6 +157,7 @@ export function ExistingBusinessAddDetails(props: any) {
           name="businessStateId"
           value={schema.data.businessStateId}
           placeHolder="State"
+          disable={!schema.data.businessCountryId}
           options={stateOptions}
           half
         />

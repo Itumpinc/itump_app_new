@@ -30,6 +30,7 @@ import {userApi} from '@src/store/services/user';
 import {alert, getData, getSettings} from '@src/utils/helpers';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 import {saveUser} from '@src/navigators/Utils';
+import {TapToPay} from './TapToPay';
 
 export default function Home() {
   const colors = useThemeColors();
@@ -86,21 +87,26 @@ export default function Home() {
       <WalletChart dashboardData={dashboardData} />
       <Gap height={hp(2)} />
 
+      {user.is_pro_user === 1 && user.stripe_account_status === 'active' && (
+        <TapToPay />
+      )}
+
       {(user.is_pro_user === 0 || user.stripe_account_status === 'pending') && (
         <ActivateAccount />
       )}
       <DuePayment />
-      {allBusiness.length === 0 && <NewBusinessFormation />}
+      {allBusiness.length > 0 ? (
+        <LineOfCreditbanner />
+      ) : (
+        <NewBusinessFormation />
+      )}
       {allBusiness.length > 0 && <Ongoing allBusiness={userProfile.business} />}
 
       {/* Dashboard 2 Component */}
       {/* <ItumpDebitCard /> */}
 
       <FixIssues business={allBusiness} />
-      {allBusiness.length > 0 && <LineOfCreditbanner />}
-
       <RecentOrders />
-
       <Transaction />
       <Invoices />
 

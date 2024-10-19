@@ -33,7 +33,7 @@ import {formatAmount, getCurrency, titleCase} from '@src/utils/helpers';
 const DotRow = () => {
   return (
     <View style={styles.dotRow}>
-      {Array.from({length: 16}).map((_, index) => (
+      {Array.from({length: 20}).map((_, index) => (
         <View key={index} style={styles.dot} />
       ))}
     </View>
@@ -51,7 +51,7 @@ const GraphBackground = ({yLabels}: {yLabels: string[]}) => {
           </Text>
         ))}
       </View>
-      <View style={[styles.dotMatrix, {width: wp(90)}]}>
+      <View style={[styles.dotMatrix, {width: wp(72)}]}>
         {yLabels.map((_, index) => (
           <DotRow key={index} />
         ))}
@@ -62,62 +62,48 @@ const GraphBackground = ({yLabels}: {yLabels: string[]}) => {
 
 const Chart = ({monthsData, totalRange}: any) => {
   const viewHeight = 105; // in px
-  const minHeight = 0.05 * viewHeight;
+  const minHeight = 1;
 
   function calculatePillarHeights(item: any) {
-    const col1Height = Math.max(
-      (item.col1 / totalRange) * viewHeight,
-      minHeight,
-    );
-    const col2Height = Math.max(
-      (item.col2 / totalRange) * viewHeight,
-      minHeight,
-    );
-    const col3Height = Math.max(
-      (item.col3 / totalRange) * viewHeight,
-      minHeight,
-    );
+    const sum = item.col2 + item.col3;
+    // const col1Height = Math.max(
+    //   (item.col1 / totalRange) * viewHeight,
+    //   minHeight,
+    // );
+    // const col2Height = Math.max(
+    //   (item.col2 / totalRange) * viewHeight,
+    //   minHeight,
+    // );
+    const colHeight = Math.max((sum / totalRange) * viewHeight, minHeight);
 
     return {
-      col1Height: col1Height,
-      col2Height: col2Height,
-      col3Height: col3Height,
+      colHeight,
     };
+
+    // return {
+    //   col1Height: col1Height,
+    //   col2Height: col2Height,
+    //   col3Height: col3Height,
+    // };
   }
+
+  // console.log("🚀 ~ WalletChart ~ months:", monthsData, totalRange);
 
   return (
     <View>
       {monthsData.map((item: any, index: number) => {
         const pillarHeights = calculatePillarHeights(item);
         return (
-          <View key={index} style={{marginLeft: wp(index*30)}}>
-          <View
-            style={[
-              styles.chartLine,
-              {
-                height: pillarHeights.col1Height,
-                left: wp(index+1*10),
-              },
-            ]}
-            ></View>
+          <View key={index} style={{marginLeft: wp(index * 25)}}>
             <View
-            style={[
-              styles.chartLine,
-              {
-                height: pillarHeights.col2Height,
-                left: wp(index+1*13),
-              },
-            ]}
-            ></View>
-            <View
-            style={[
-              styles.chartLine,
-              {
-                height: pillarHeights.col3Height,
-                left: wp(index+1*16),
-              },
-            ]}
-            ></View>
+              style={[
+                styles.chartLine,
+                {
+                  height: pillarHeights.colHeight,
+                  left: wp(index + 1 * 10),
+                  width: 80,
+                },
+              ]}></View>
           </View>
         );
       })}
@@ -135,7 +121,7 @@ export default function WalletChart({dashboardData}: any) {
     account_balance: accountBalance,
     summary,
   } = dashboardData;
-  
+
   const months = [
     'jan',
     'feb',
@@ -167,10 +153,11 @@ export default function WalletChart({dashboardData}: any) {
     return result;
   }
 
-  const totalRange =
+  let totalRange =
     userPersonalisation && userPersonalisation.monthly_transact_range
       ? userPersonalisation.monthly_transact_range
-      : 25000;
+      : 4000;
+
   const rangeArr = divideRange(totalRange);
 
   const monthsData = [];
@@ -186,6 +173,10 @@ export default function WalletChart({dashboardData}: any) {
         col2: summary[month].receive,
         col3: summary[month].spend,
       });
+
+      if (totalRange < summary[month].receive + summary[month].spend) {
+        totalRange = summary[month].receive + summary[month].spend;
+      }
     }
   }
 
@@ -263,7 +254,8 @@ const styles = StyleSheet.create({
   },
   dotMatrix: {
     justifyContent: 'space-between',
-    height: 110, // Adjust according to your needs
+    height: 102, // Adjust according to your needs
+    marginTop: 10,
   },
   dotRow: {
     flexDirection: 'row',
@@ -274,10 +266,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: '#fff',
     bottom: 5,
-    width: 5,
+    width: 50,
     zIndex: 1,
-    borderTopLeftRadius:2,
-    borderTopRightRadius:2,
+    borderTopLeftRadius: 2,
+    borderTopRightRadius: 2,
   },
   dot: {
     marginHorizontal: 4,

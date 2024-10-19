@@ -199,6 +199,27 @@ export const userApi = api.injectEndpoints({
         data,
       }),
     }),
+    tapToPayToken: builder.query<any, void>({
+      query: () => ({
+        url: `/v1/business/tap-to-pay/connection-token`,
+        method: 'POST',
+        data: {},
+      }),
+    }),
+    tapToPayIntent: builder.query<any, any>({
+      query: (data: any) => ({
+        url: `/v1/business/tap-to-pay/create-payment-intent`,
+        method: 'POST',
+        data,
+      }),
+    }),
+    tapToPayIntentCapture: builder.query<any, any>({
+      query: (data: any) => ({
+        url: `/v1/business/tap-to-pay/capture-payment-intent`,
+        method: 'POST',
+        data,
+      }),
+    }),
   }),
   overrideExisting: false,
 });

@@ -73,12 +73,14 @@ export const getfirstlastname = (fullName: string) => {
 };
 
 export function alert(message: string | Object | any, native = false) {
+  console.log(message);
+
   if (native && typeof message === 'string') {
     Alert.alert(message);
   } else {
     Toast.show({
       type: (message.type || 'info') + 'custom',
-      text1: message.text,
+      text1: message.text || message.text1,
       visibilityTime: 5000,
       topOffset: 100,
     });

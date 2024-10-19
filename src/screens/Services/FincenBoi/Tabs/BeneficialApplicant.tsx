@@ -104,6 +104,7 @@ const CompanyBeneficialFields = (props: any) => {
               name="beneficiary_state_id"
               value={schema.data.beneficiary_state_id}
               placeHolder="State"
+              disable={!schema.data.beneficiary_country_id}
               options={stateOptions}
               half
             />
@@ -149,6 +150,7 @@ const CompanyBeneficialFields = (props: any) => {
               name="beneficiary_id_jurisdiction_state_id"
               value={schema.data.beneficiary_id_jurisdiction_state_id}
               placeHolder="State"
+              disable={!schema.data.beneficiary_id_jurisdiction_country_id}
               options={stateOptions}
               half
             />

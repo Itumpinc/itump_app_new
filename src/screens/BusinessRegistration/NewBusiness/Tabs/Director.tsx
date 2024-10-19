@@ -103,6 +103,7 @@ const Director1 = (props: any) => {
           name="director_1_state_id"
           value={schema.data.director_1_state_id}
           placeHolder="State"
+          disable={!schema.data.director_1_country_id}
           options={stateOptions}
           half
         />
@@ -203,6 +204,7 @@ const Director2 = (props: any) => {
           name="director_2_state_id"
           value={schema.data.director_2_state_id}
           placeHolder="State"
+          disable={!schema.data.director_2_country_id}
           options={stateOptions}
           half
         />
@@ -301,6 +303,7 @@ const Director3 = (props: any) => {
           name="director_3_state_id"
           value={schema.data.director_3_state_id}
           placeHolder="State"
+          disable={!schema.data.director_3_country_id}
           options={stateOptions}
           half
         />
@@ -399,6 +402,7 @@ const Director4 = (props: any) => {
           name="director_4_state_id"
           value={schema.data.director_4_state_id}
           placeHolder="State"
+          disable={!schema.data.director_4_country_id}
           options={stateOptions}
           half
         />

@@ -36,7 +36,7 @@ import {
   getfirstlastname,
 } from '@src/utils/helpers';
 import {OrderCard} from '@src/components/common/ordercard';
-import {useAppSelector} from '@src/store/store';
+import {useAppDispatch, useAppSelector} from '@src/store/store';
 import moment from 'moment';
 import Transaction from '../Home/Transaction';
 import WalletBalance from './WalletBalance';
@@ -44,31 +44,215 @@ import ActivateAccount from '../Home/ActivateAccount';
 import NewBusinessFormation from '../Home/NewBusinessFormation';
 import {serviceApi} from '@src/store/services/service';
 import Invoices from '../Home/Invoices';
+import {WebViewConnect} from '../Invoice/ConnectBank';
+import {saveUser} from '@src/navigators/Utils';
+import {setData} from '@src/store/services/storage';
+
+function addPendingRequirementsErrors(connectAccount: any) {
+  // If errors array is not empty, no need to add new ones
+  if (connectAccount.account.requirements.errors.length > 0)
+    return connectAccount.account.requirements.errors;
+
+  const errors: any = [];
+
+  // "business_profile.mcc": "Your business profile is missing the MCC.",
+  // "business_profile.url": "Your business profile is missing the URL.",
+  // "external_account": "Please add an external account to your Stripe setup.",
+  // "individual.address.city": "Your address is missing the city.",
+  // "individual.address.line1": "Your address is missing the street address.",
+  // "individual.address.postal_code": "Your address is missing the postal code.",
+  // "individual.address.state": "Your address is missing the state.",
+  // "individual.dob.day": "Your date of birth is missing the day.",
+  // "individual.dob.month": "Your date of birth is missing the month.",
+  // "individual.dob.year": "Your date of birth is missing the year.",
+  // "individual.id_number": "Your ID number is missing. Please provide it.",
+  // "individual.phone": "We need your phone number to complete the setup.",
+  // "individual.ssn_last_4": "Your SSN is missing. Please provide the last 4 digits.",
+  // "settings.payments.statement_descriptor": "Please set up a statement descriptor in your payment settings.",
+  // "tos_acceptance.date": "You need to accept the terms of service. Provide the date for acceptance.",
+  // "tos_acceptance.ip": "You need to accept the terms of service. Provide the IP address for acceptance."
+
+  const pendingRequirements: any = {
+    'business_profile.url': 'Your profile is missing the URL.',
+    external_account: 'Please add an external account.',
+    'individual.address.city': 'Your address is missing the city.',
+    'individual.address.line1': 'Your address is missing the street address.',
+    'individual.address.postal_code':
+      'Your address is missing the postal code.',
+    'individual.address.state': 'Your address is missing the state.',
+    'individual.dob.day': 'Your date of birth is missing.',
+    'individual.id_number': 'Your ID number is missing.',
+    'individual.phone': 'We need your phone number to complete the setup.',
+    'individual.ssn_last_4':
+      'Your SSN is missing. Please provide the last 4 digits.',
+  };
+
+  const eventuallyDue = connectAccount.account.requirements.eventually_due;
+
+  eventuallyDue.forEach((code: any) => {
+    if (pendingRequirements[code]) {
+      errors.push({code, reason: pendingRequirements[code]});
+    }
+  });
+
+  return errors;
+}
+
+const PendingConnectAccount = ({connectAccount, connectAccountQuery}: any) => {
+  const pictures = useThemeImages();
+  const colors = useThemeColors();
+  const [openWebview, setOpenWebview] = useState(false);
+  const [accountStatusUpdateQuery] =
+    serviceApi.useLazyAccountStatusUpdateQuery();
+
+  const completeSetup = () => {
+    setOpenWebview(true);
+  };
+
+  const closeAction = () => {
+    setOpenWebview(false);
+  };
+
+  const doneSubmittion = async () => {
+    setOpenWebview(false);
+    connectAccountQuery();
+  };
+
+  const errors = addPendingRequirementsErrors(connectAccount);
+
+  return (
+    <>
+      <TouchableOpacity onPress={() => completeSetup()}>
+        <View
+          style={{
+            borderWidth: 0.2,
+            padding: hp(1.5),
+            borderColor: colors.secondaryText,
+            width: '90%',
+            alignSelf: 'center',
+            marginTop: hp(1),
+            borderRadius: hp(1),
+          }}>
+          <Text
+            style={[
+              styles.text,
+              {
+                color: colors.secondaryText,
+                fontSize: hp(1.8),
+                alignSelf: 'flex-start',
+              },
+            ]}>
+            Action Required:
+          </Text>
+          <Gap height={hp(0.5)} />
+          {errors.length > 0
+            ? errors.map((error: any, index: number) => {
+                return (
+                  <View key={index}>
+                    <Text
+                      style={[
+                        styles.text,
+                        {
+                          color: colors.errorText,
+                          fontSize: hp(1.8),
+                          alignSelf: 'flex-start',
+                          fontFamily: 'Satoshi-Regular',
+                        },
+                      ]}>
+                      {error.reason}
+                    </Text>
+                    <Gap height={hp(0.5)} />
+                  </View>
+                );
+              })
+            : null}
+          <View
+            style={{
+              marginVertical: -hp(1),
+              flexDirection: 'row',
+            }}>
+            <Text
+              style={[
+                styles.text,
+                {
+                  color: colors.primary,
+                  fontFamily: 'Satoshi-Medium',
+                  alignSelf: 'center',
+                },
+              ]}>
+              Fix Now
+            </Text>
+            <Image
+              source={pictures.goToPrimary}
+              style={{
+                height: hp(10),
+                width: hp(10),
+                marginTop: -hp(2.5),
+                marginLeft: -wp(6),
+                marginBottom: -hp(2),
+              }}
+            />
+          </View>
+        </View>
+      </TouchableOpacity>
+      <Gap height={hp(2)} />
+      {openWebview && (
+        <WebViewConnect
+          stripeAccount={connectAccount}
+          closeAction={closeAction}
+          doneSubmittion={doneSubmittion}
+        />
+      )}
+    </>
+  );
+};
 
 const Wallet = () => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
+  const dispatch = useAppDispatch();
 
   const [showDetails, setShowDetails] = useState(false);
 
   const storage = useAppSelector(state => state.common.storage);
   const {user, countryList, business} = storage;
 
+  const [userApisQuery] = userApi.useLazyUserProfileQuery();
   const [getDashboardQuery, getDashboardData] =
     userApi.useLazyGetDashboardQuery();
 
   const [connectAccountQuery, connectAccountData] =
     serviceApi.useLazyConnectAccountQuery();
+
+  const [accountStatusUpdateQuery] =
+    serviceApi.useLazyAccountStatusUpdateQuery();
+
   const currency = getCurrency(storage);
 
+  useEffect(() => {
+    (async () => {
+      if (connectAccountData.isSuccess) {
+        const cData = getData(connectAccountData);
+        if (cData.account && cData.account.charges_enabled) {
+          await accountStatusUpdateQuery({
+            stripe_account_id: cData.account.id,
+            stripe_account_status: 'active',
+          });
+          const userData = await userApisQuery();
+          saveUser({dispatch, setData, userData});
+        }
+      }
+    })();
+  }, [connectAccountData]);
+
   useFocusedEffect(() => {
-    getDashboardQuery();
+    getDashboardQuery(user.id);
     connectAccountQuery();
   }, []);
 
   const refreshData = () => {
-    getDashboardQuery();
+    getDashboardQuery(user.id);
     connectAccountQuery();
   };
 
@@ -232,6 +416,13 @@ const Wallet = () => {
         </View> */}
         <Gap height={hp(2)} />
       </View>
+
+      {connectAccount.account && !connectAccount.account.charges_enabled ? (
+        <PendingConnectAccount
+          connectAccount={connectAccount}
+          connectAccountQuery={connectAccountQuery}
+        />
+      ) : null}
 
       {allBusiness.length > 0 &&
         (user.is_pro_user === 0 ||

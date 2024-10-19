@@ -164,6 +164,7 @@ export function Contact(props: any) {
               name="state_id"
               value={schema.data.state_id}
               placeHolder="State"
+              disable={!schema.data.country_id}
               options={stateOptions}
               half
             />

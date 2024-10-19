@@ -62,8 +62,7 @@ const TransactionList = () => {
   const [hasMore, setHasMore] = useState(true);
 
   const storage = useAppSelector(state => state.common.storage);
-  const {user, countryList, business} = storage;
-
+  
   const loadMore = async () => {
     if (loading || !hasMore) return;
     setLoading(true);

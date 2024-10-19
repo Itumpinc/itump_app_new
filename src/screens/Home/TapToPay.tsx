@@ -11,17 +11,12 @@ import {useThemeColors} from '@constants/colors';
 import {useNavigation} from '@react-navigation/native';
 import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
-import Popup from '@src/components/common/popup';
-import Button from '@src/constants/button';
-import ActivateAccountPopup from './ActivateAccountPopup';
 
-export default function ActivateAccount() {
+export const TapToPay = () => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
   const storage = useAppSelector(state => state.common.storage);
-  const {user} = storage;
-  const [modalClose, setModalClose] = useState(false);
 
   return (
     <>
@@ -33,12 +28,7 @@ export default function ActivateAccount() {
           width: wp(90),
           alignSelf: 'center',
         }}>
-        <TouchableOpacity
-          onPress={() =>
-            user.is_pro_user === 1
-              ? navigation.navigate('ConnectBank')
-              : setModalClose(true)
-          }>
+        <TouchableOpacity onPress={() => navigation.navigate('TapToPay')}>
           <View
             style={{
               flexDirection: 'row',
@@ -50,7 +40,7 @@ export default function ActivateAccount() {
             }}>
             <View style={{flexDirection: 'row'}}>
               <Image
-                source={pictures.logo}
+                source={pictures.taptopay}
                 resizeMode="contain"
                 style={{width: 50, height: 50}}
               />
@@ -69,7 +59,7 @@ export default function ActivateAccount() {
                       alignSelf: 'flex-start',
                     },
                   ]}>
-                  Activate Account
+                  Tap to Pay
                 </Text>
                 <Text
                   style={[
@@ -80,7 +70,7 @@ export default function ActivateAccount() {
                       fontSize: hp(1.5),
                     },
                   ]}>
-                  Use Advanced Payment features
+                  Collect payments on your device
                 </Text>
               </View>
             </View>
@@ -92,15 +82,9 @@ export default function ActivateAccount() {
         </TouchableOpacity>
       </View>
       <Gap height={hp(2)} />
-      {modalClose && (
-        <ActivateAccountPopup
-          modalClose={modalClose}
-          setModalClose={setModalClose}
-        />
-      )}
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   text: {

@@ -73,7 +73,7 @@ export function BusinessInformation(props: any) {
             maxLength={150}
           />
 
-          <Text style={styles.mainText}>Business Registration Address</Text>
+          <Text style={styles.mainText}>Business Physical Address</Text>
           <Gap height={hp(1)} />
           <RenderInput
             name="address1"

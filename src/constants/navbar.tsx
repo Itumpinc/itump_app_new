@@ -12,7 +12,7 @@ import {
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 import {useThemeColors} from '@constants/colors';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useNavigation, useNavigationState, useRoute} from '@react-navigation/native';
 import {useThemeImages} from './images';
 import {Gap} from './gap';
 import {useSafeArea} from 'native-base';

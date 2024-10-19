@@ -272,7 +272,9 @@ export const light = {
     sixth: require('@images/business/6.png'),
     seventh: require('@images/business/7.png'),
     eight: require('@images/business/8.png'),
-  }
+  },
+  taptopay: require('@images/tap-to-pay.png'),
+  taptopayWhite: require('@images/tap-to-pay-white.png'),
 };
 
 export const dark = {
@@ -544,7 +546,10 @@ export const dark = {
     sixth: require('@images/business/6-b.png'),
     seventh: require('@images/business/7-b.png'),
     eight: require('@images/business/8-b.png'),
-  }
+  },
+  taptopay: require('@images/tap-to-pay.png'),
+  taptopayWhite: require('@images/tap-to-pay-white.png'),
+  
 };
 
 export const useThemeImages = () => {

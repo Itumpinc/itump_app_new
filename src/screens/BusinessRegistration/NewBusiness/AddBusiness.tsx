@@ -46,7 +46,7 @@ export function AddBusiness(props: any) {
     // },
     {
       component: 'Shareholder',
-      title: 'Shareholder(s)',
+      title: 'Shareholder(s)/Partner(s)',
       status: 'inactive',
     },
     {

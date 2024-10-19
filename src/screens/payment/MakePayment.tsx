@@ -135,6 +135,7 @@ const ItumpMessage = () => {
 };
 
 const MakePayment = (props: any) => {
+  const colors = useThemeColors();
   const {
     makePayment,
     paymentParams,
@@ -194,6 +195,17 @@ const MakePayment = (props: any) => {
       name: user.first_name + ' ' + user.last_name,
       phone: user.phone,
     };
+    const customAppearance = {
+      colors: {
+        primary: colors.primary,
+        componentDivider: colors.boxBorderColor,
+        primaryText: colors.primaryText,
+        secondaryText: colors.secondaryText,
+        placeholderText: colors.placeholder,
+      },
+     };
+   
+     
     const {error} = await initPaymentSheet({
       merchantDisplayName: 'itump',
       customerId: customer,
@@ -203,6 +215,7 @@ const MakePayment = (props: any) => {
       //methods that complete payment after a delay, like SEPA Debit and Sofort.
       // allowsDelayedPaymentMethods: true,
       defaultBillingDetails: billingDetails,
+      appearance: customAppearance,
     });
     if (!error) {
       setLoading(false);
@@ -404,7 +417,7 @@ const MakePayment = (props: any) => {
         loader={loading}
         disabled={disabled}
       />
-      {!notext ? (
+      {/* {!notext ? (
         <>
           <Gap height={hp(2)} />
           <ItumpMessage />
@@ -412,7 +425,7 @@ const MakePayment = (props: any) => {
         </>
       ) : (
         <></>
-      )}
+      )} */}
     </StripeProvider>
   );
 };

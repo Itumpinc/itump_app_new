@@ -41,6 +41,7 @@ import {
   formatAmount,
   getData,
   getfirstlastname,
+  getSettings,
   makeId,
 } from '@src/utils/helpers';
 import {Line} from '@src/constants/Line';
@@ -124,8 +125,8 @@ const PlanCard = (props: any) => {
               fontSize: 12,
             }}>
             You will receive a total of{' '}
-            {formatAmount(plan.total_payable, currencySymbol)} at a daily{' '}
-            {plan.rate}% APR
+            {formatAmount(plan.total_payable, currencySymbol)} at a monthly{' '}
+            {plan.rate}% interest rate
           </Text>
         </View>
       </View>
@@ -169,7 +170,7 @@ const PlanSheet = (props: any) => {
             fontWeight: 700,
             fontSize: 14,
           }}>
-          Select plans to make available
+          Select available plan(s)
         </Text>
         <Image
           source={pictures.reminderIcon}
@@ -203,8 +204,8 @@ const PlanSheet = (props: any) => {
             fontFamily: 'Satoshi-Regular',
             fontSize: 14,
           }}>
-          Itump pay helps you to earn more on your existing bill to your
-          customer if they choose to pay with it.
+          Select the plan(s) you would want your customer to use in paying this
+          invoice.
         </Text>
       </View>
 
@@ -277,6 +278,7 @@ const PlanSheet = (props: any) => {
           textColor="#fff"
           onPress={() => setOpenPlans(false)}
         />
+        <Gap height={hp(4)} />
       </View>
     </Popup>
   );
@@ -305,6 +307,12 @@ const InvoiceSummary = () => {
     userApi.useLazyInvoiceCalculateQuery();
   const [createInvoiceQuery] = userApi.useLazyCreateInvoiceQuery();
   const [loadStateQuery] = commonApi.useLazyLoadStateQuery();
+
+  const {
+    initConfig: {settings},
+  } = storage;
+
+  const serviceCharge = getSettings(settings, 'recurring_rate');
 
   const selectedDuration = selectedPlans
     .map(item => `${item} Months`)
@@ -349,7 +357,8 @@ const InvoiceSummary = () => {
     //   ],
     // });
 
-    const {main_business: mainBusiness, other_business: otherBusiness} = business;
+    const {main_business: mainBusiness, other_business: otherBusiness} =
+      business;
     const businesses = [...mainBusiness, ...otherBusiness];
     const selectedBusiness = businesses.find(
       (b: any) => b.id === params.user_business_id,
@@ -390,7 +399,15 @@ const InvoiceSummary = () => {
     };
 
     navigation.navigate('InvoicePreview', {
-      data: {data, billingAddress, paramsData:params, calculateData, selectedPlans, selectedBusiness, country},
+      data: {
+        data,
+        billingAddress,
+        paramsData: params,
+        calculateData,
+        selectedPlans,
+        selectedBusiness,
+        country,
+      },
     });
   };
 
@@ -550,7 +567,7 @@ const InvoiceSummary = () => {
                     width: wp(80),
                   }}>
                   Enabling this feature will allow your customer to pay this
-                  invoice in installment at a 9.5% APR interest
+                  invoice in installment at a {serviceCharge} monthly interest
                 </Text>
               </>
             )}

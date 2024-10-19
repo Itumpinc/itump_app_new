@@ -121,7 +121,13 @@ const EmailOtp = () => {
     });
   };
 
-  console.log(storage.tokens, storage.user);
+  useEffect(() => {
+    if (schema.data.otp.length === 6) {
+      doSubmit();
+    }
+  }, [schema.data.otp]);
+
+  // console.log(storage.tokens, storage.user);
   return (
     <Container>
       <View style={styles.container}>
@@ -165,14 +171,14 @@ const EmailOtp = () => {
               <OTPTimer onResend={() => resendCode()} timeinsec={30} />
             </View>
           </View>
-          <Button
+          {/* <Button
             text="Continue"
             textColor="white"
             type="submit"
             check={false}
             loader={loader}
             disabled={!schema.valid}
-          />
+          /> */}
         </Form>
       </View>
       <Gap height={hp(5)} />

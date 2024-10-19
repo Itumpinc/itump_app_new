@@ -22,13 +22,22 @@ import {getData} from '@src/utils/helpers';
 import {RenderInput, RenderRadio} from '@src/components/hocs/forms';
 import useStyles from '../styles';
 import Button from '@src/constants/button';
+import {useNavigation} from '@react-navigation/native';
 
 export function ExistingBusinessAddFormation(props: any) {
   const {schema, stepAction, businessDetails} = props;
   const styles = useStyles();
+  const navigation: any = useNavigation();
 
   const submit = () => {
-    stepAction('next');
+    if (schema.data.haveFormedDate === 'new') {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'AddBusiness', params: {id: businessDetails.id}}],
+      });
+    } else {
+      stepAction('next');
+    }
   };
 
   return (
@@ -38,12 +47,18 @@ export function ExistingBusinessAddFormation(props: any) {
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-        <Text style={styles.mainText}>When did you form {businessDetails.business_title}?</Text>
+        <Text style={styles.mainText}>
+          When did you form {businessDetails.business_title}?
+        </Text>
       </View>
       <Gap height={hp(1)} />
       <RenderRadio
         name="haveFormedDate"
         options={[
+          {
+            label: "I haven't formed my company with the state yet.",
+            value: 'new',
+          },
           {
             label: 'I have date when I formed this company',
             value: 'yes',

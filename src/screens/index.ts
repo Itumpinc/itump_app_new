@@ -22,6 +22,9 @@ export {default as OrderSummary} from './payment/OrderSummary';
 export {default as MakePayment} from './payment/MakePayment';
 export {default as BusinessPaymentSuccess} from '@src/screens/BusinessRegistration/NewBusiness/BusinessPaymentSuccess';
 export {default as ServicePaymentSuccess} from '@src/screens/Services/ServicePaymentSuccess';
+export {default as TapToPay} from './payment/Taptopay/TapToPay';
+export {default as TapToPayPayment} from './payment/Taptopay/TapToPayPayment';
+export {default as TapToPaySuccess} from './payment/Taptopay/TapToPaySuccess';
 
 export {default as ServiceList} from './Services/ServiceList';
 export {default as ActivateAccount} from './Invoice/ActivateAccount';
@@ -53,5 +56,3 @@ export {default as Security} from './Account/Security';
 export {default as ChangePassoword} from './Account/ChangePassoword';
 export {default as ContactUs} from './Account/ContactUs';
 export {default as Appearance} from './Account/Appearance';
-
-

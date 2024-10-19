@@ -16,7 +16,13 @@ import Button from '@src/constants/button';
 import NewBusinessFormation from './NewBusinessFormation';
 import Slider from '@src/components/common/slider';
 import {Line} from '@src/constants/Line';
-import {formatAmount, getCurrency, getSettings} from '@src/utils/helpers';
+import {
+  alert,
+  formatAmount,
+  getCurrency,
+  getData,
+  getSettings,
+} from '@src/utils/helpers';
 import {serviceApi} from '@src/store/services/service';
 import {userApi} from '@src/store/services/user';
 import MakePayment from '../payment/MakePayment';
@@ -28,7 +34,12 @@ const ActivateNow = ({setModalClose}: any) => {
   const colors = useThemeColors();
   const storage = useAppSelector(state => state.common.storage);
   const {currency_symbol} = getCurrency(storage);
+  const dispatch = useAppDispatch();
+  const navigation: any = useNavigation();
   const [paymentParams, setPaymentParams] = useState<any>();
+  const [createActivationQuery] = serviceApi.useLazyCreateActivationQuery();
+  const [userApisQuery] = userApi.useLazyUserProfileQuery();
+  const [loader, setLoader] = useState(false);
 
   const {
     user,
@@ -47,7 +58,6 @@ const ActivateNow = ({setModalClose}: any) => {
   };
 
   const makePayment = () => {
-    console.log('i am here');
     setPaymentParams({
       paymentType: 'activation',
       paymentData: schemaData(),
@@ -58,12 +68,59 @@ const ActivateNow = ({setModalClose}: any) => {
     setModalClose();
   };
 
+  const activateNow = async () => {
+    setLoader(true);
+    const createActivationBindData = await createActivationQuery(schemaData());
+    if (createActivationBindData.isSuccess) {
+      setLoader(false);
+      const activationData = getData(createActivationBindData);
+      if(activationData.is_pro_user === 1){
+        const userData = await userApisQuery();
+        saveUser({dispatch, setData, userData});
+        setModalClose();
+        navigation.navigate('ConnectBank');
+      }
+    }
+
+    if (createActivationBindData.isError) {
+      setLoader(false);
+      const error: any = createActivationBindData.error;
+      const data = error && error.data ? error.data : undefined;
+      if (data) {
+        alert({type: 'error', text: data.message});
+      }
+    }
+  };
+
   const proCharge = getSettings(settings, 'pro_charge');
   let amount = 0;
   const data = proCharge.find(
     (charge: any) => charge.country_id === user.country_id,
   );
   if (data) amount = data.amount;
+
+  if (amount === 0) {
+    return (
+      <View style={{alignItems: 'center'}}>
+        <Text style={{color: colors.secondaryText, textAlign: 'center'}}>
+          One time activation fee{' '}
+          <Text style={{textDecorationLine: 'line-through'}}>$99</Text>{' '}
+          <Text style={{color: colors.primary}}>
+            {formatAmount(amount, currency_symbol)}
+          </Text>{' '}
+          today only
+        </Text>
+        <Gap height={hp(2)} />
+        <Button
+          text="Activate Now"
+          textColor={'#fff'}
+          onPress={() => activateNow()}
+          loader={loader}
+        />
+        <Gap height={hp(2)} />
+      </View>
+    );
+  }
 
   return (
     <View style={{alignItems: 'center'}}>
@@ -90,6 +147,7 @@ const ActivateNow = ({setModalClose}: any) => {
           textAlign: 'center',
           opacity: 0.6,
           fontFamily: 'Sathoshi-Light',
+          maxWidth: wp(90),
         }}>
         Your card will be charged a {formatAmount(amount, currency_symbol)}{' '}
         account setup fee to verify your account for Itump suite of payments and

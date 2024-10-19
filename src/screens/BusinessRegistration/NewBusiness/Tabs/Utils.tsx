@@ -12,7 +12,7 @@ export const GetTabHeader = (props: any) => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const styles = useStyles();
-  const {toggleTab, id, title, status, noline = false, style} = props;
+  const {toggleTab, id, title, status, noline = false, style, onlyText} = props;
 
   let tabIcon = null;
   switch (status) {
@@ -30,8 +30,26 @@ export const GetTabHeader = (props: any) => {
       break;
   }
 
+  if (onlyText) {
+    return (
+      <View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingTop: 20,
+            paddingBottom: 20,
+            ...style,
+          }}>
+          <Text style={styles.mainText}>{title}</Text>
+        </View>
+        <View style={{height: 1, backgroundColor: colors.boxBorderColor}} />
+      </View>
+    );
+  }
+
   return (
-    <>
+    <View>
       <Pressable
         onPress={() => toggleTab(id)}
         style={{
@@ -52,12 +70,12 @@ export const GetTabHeader = (props: any) => {
         />
       </Pressable>
       {!noline && (
-        <>
+        <View>
           {status === 'active' ? null : (
             <View style={{height: 1, backgroundColor: colors.boxBorderColor}} />
           )}
-        </>
+        </View>
       )}
-    </>
+    </View>
   );
 };

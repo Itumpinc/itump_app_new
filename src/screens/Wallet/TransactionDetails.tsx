@@ -84,6 +84,10 @@ const TransactionDetails = () => {
           table.remove(); // Remove the table if it contains "powered by"
         }
       });
+      const tables3 = document.querySelectorAll('table .Section.Copy');
+      tables3.forEach(table => {
+        table.remove();
+      });
     })();
   `;
 
@@ -117,6 +121,8 @@ const TransactionDetails = () => {
       setLoader(false);
     }, 1000);
   };
+
+  console.log('charges.receipt_url ===>', charges.receipt_url)
 
   return (
     <Container>

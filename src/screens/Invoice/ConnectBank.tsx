@@ -23,7 +23,7 @@ import {WebView} from 'react-native-webview';
 import Popup from '@src/components/common/popup';
 import {Spinner} from 'native-base';
 
-const WebViewConnect = (props: any) => {
+export const WebViewConnect = (props: any) => {
   const {stripeAccount, closeAction, doneSubmittion} = props;
   if (!(stripeAccount && stripeAccount.accountLink)) return null;
 
@@ -96,11 +96,6 @@ const WebViewConnect = (props: any) => {
     //   webViewRef.current.stopLoading();
     // }
 
-    // if (url.includes('google.com')) {
-    //   const newURL = 'https://reactnative.dev/';
-    //   const redirectTo = 'window.location = "' + newURL + '"';
-    //   this.webview.injectJavaScript(redirectTo);
-    // }
   };
 
   const hideLoader = () => {
@@ -165,11 +160,11 @@ const ConnectBank = () => {
 
   const stripeAccount = getData(connectAccountData);
 
-  useEffect(() => {
-    if (!openWebview) {
-      setLoader(false);
-    }
-  }, [openWebview]);
+  // useEffect(() => {
+  //   if (!openWebview) {
+  //     setLoader(false);
+  //   }
+  // }, [openWebview]);
 
   const createOrCheckAccount = async () => {
     setLoader(true);
@@ -194,20 +189,20 @@ const ConnectBank = () => {
       const error: any = connectAccountData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert({ type: 'error', text: data.message });
+        alert({type: 'error', text: data.message});
       }
     }
   };
 
   const doneConnection = () => {
     setLoader(false);
-    alert({
-      type: 'error',
-      text: 'Your account already been connected!',
-    });
+    // alert({
+    //   type: 'success',
+    //   text: 'Your account already been connected!',
+    // });
     navigation.reset({
       index: 0,
-      routes: [{name: 'Home'}],
+      routes: [{name: 'Wallet'}],
     });
   };
 
@@ -215,7 +210,10 @@ const ConnectBank = () => {
     (async () => {
       const userApiData = await userApisQuery();
       const {user} = getData(userApiData);
-      if (
+
+      if (user.stripe_account_id && user.stripe_account_status !== 'active') {
+        navigation.navigate('Wallet');
+      } else if (
         !(
           user.stripe_account_status == 'pending' ||
           user.stripe_account_status == 'processing'
@@ -236,7 +234,7 @@ const ConnectBank = () => {
     await accountStatusUpdateQuery({
       stripe_account_id: stripeAccount.account.id,
       stripe_account_status: 'processing',
-    })
+    });
     navigation.reset({
       index: 0,
       routes: [{name: 'Home'}],
@@ -244,8 +242,31 @@ const ConnectBank = () => {
   };
 
   const closeAction = () => {
+    setLoader(false);
     setOpenWebview(false);
   };
+
+  if (user.stripe_account_id && user.stripe_account_status !== 'active') {
+    return (
+      <Container>
+        <View
+          style={{
+            alignSelf: 'center',
+            width: wp(90),
+          }}>
+          <View
+            style={{
+              width: wp(90),
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: hp(80),
+            }}>
+            <Spinner size={'lg'} />
+          </View>
+        </View>
+      </Container>
+    );
+  }
 
   return (
     <Container>

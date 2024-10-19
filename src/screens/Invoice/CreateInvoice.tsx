@@ -45,7 +45,7 @@ import {
 import {commonApi} from '@src/store/services/common';
 
 const CustomerListSheet = (props: any) => {
-  const {setSearchValue, selectedEmail} = props;
+  const {setSearchValue, selectedEmail, close} = props;
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const [value, setValue] = useState('');
@@ -88,7 +88,7 @@ const CustomerListSheet = (props: any) => {
   const searchUser = getData(searchUserData);
 
   return (
-    <Popup>
+    <Popup close={close}>
       <View style={{width: '100%'}}>
         <View style={{paddingHorizontal: wp(5)}}>
           <Gap height={hp(2)} />
@@ -356,6 +356,7 @@ const AddBillingAddress = (props: any) => {
                   name="billing_state_id"
                   value={schema.data.billing_state_id}
                   placeHolder="State"
+                  disable={!schema.data.billing_country_id}
                   options={stateOptions}
                   half
                 />
@@ -388,13 +389,13 @@ const AddBillingAddress = (props: any) => {
   );
 };
 
-function CustomerDetails(props: any) {
+export function CustomerDetails(props: any) {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const storage = useAppSelector(state => state.common.storage);
   const {user} = storage;
 
-  const {schema, setSchema} = props;
+  const {schema, setSchema, noBilling} = props;
   const styles = useStyles();
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -438,6 +439,12 @@ function CustomerDetails(props: any) {
             </TouchableOpacity>
           </View>
           <Gap height={hp(2)} />
+          <Text style={{color: colors.secondaryText}}>
+            If the customer are not listed in the list, please manually enter
+            name and email-id.
+          </Text>
+          <Gap height={hp(2)} />
+          
           <RenderInput
             name="customer_name"
             value={schema.data.customer_name}
@@ -449,12 +456,13 @@ function CustomerDetails(props: any) {
             placeHolder="Email"
           />
 
-          <AddBillingAddress schema={schema} />
+          {!noBilling && <AddBillingAddress schema={schema} />}
 
           {searchOpen && (
             <CustomerListSheet
               setSearchValue={searchCustomer}
               selectedEmail={schema.data.email}
+              close={searchAction}
             />
           )}
         </View>

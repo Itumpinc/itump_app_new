@@ -121,6 +121,7 @@ export function Incorporator(props: any) {
               name="incorporator_state_id"
               value={schema.data.incorporator_state_id}
               placeHolder="State"
+              disable={!schema.data.incorporator_country_id}
               options={stateOptions}
               half
             />

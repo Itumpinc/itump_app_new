@@ -45,7 +45,7 @@ import Joi from 'joi';
 import {Button, RenderInput} from '@src/components/hocs/forms';
 import {serviceApi} from '@src/store/services/service';
 
-const ConnectedAccount = ({externalAccount}: any) => {
+const ConnectedAccount = ({externalAccount, connectAccount}: any) => {
   const colors = useThemeColors();
   let cardImage = null;
   let title = '';
@@ -71,6 +71,10 @@ const ConnectedAccount = ({externalAccount}: any) => {
     }
   }
 
+  const status = connectAccount.account.charges_enabled
+    ? 'Verified'
+    : 'Pending';
+
   return (
     <View>
       <Gap height={hp(1)} />
@@ -83,14 +87,23 @@ const ConnectedAccount = ({externalAccount}: any) => {
         <View
           style={[
             {
-              backgroundColor: colors.successBackgroundColor,
+              backgroundColor:
+                status === 'Verified'
+                  ? colors.successBackgroundColor
+                  : colors.errorText + '30',
               paddingVertical: 2,
               paddingHorizontal: 4,
               borderRadius: 4,
               marginLeft: 5,
             },
           ]}>
-          <Text style={{fontSize: 12, color: colors.success}}>Verified</Text>
+          <Text
+            style={{
+              fontSize: 12,
+              color: status === 'Verified' ? colors.success : colors.errorText,
+            }}>
+            {status}
+          </Text>
         </View>
       </View>
       <Gap height={hp(1)} />
@@ -289,20 +302,25 @@ const WalletBalance = (props: any) => {
         </Text>
       </View>
       {externalAccount && (
-        <ConnectedAccount externalAccount={externalAccount} />
+        <ConnectedAccount
+          externalAccount={externalAccount}
+          connectAccount={connectAccount}
+        />
       )}
-      <Gap height={hp(5)} />
+      <Gap height={hp(4)} />
 
-      {!connectAccount &&
+      {!(
+        connectAccount &&
         connectAccount.account &&
-        connectAccount.account.payouts_enabled && (
-          <>
-            <Text style={{color: colors.errorText, fontSize: hp(1.6)}}>
-              Payout disabled with your account, please contact us
-            </Text>
-            <Gap height={hp(2)} />
-          </>
-        )}
+        connectAccount.account.payouts_enabled
+      ) && (
+        <>
+          <Text style={{color: colors.errorText, fontSize: hp(1.6)}}>
+            Payout disabled for your account, Action required!
+          </Text>
+          <Gap height={hp(1.5)} />
+        </>
+      )}
       <Button
         text="Payout Amount"
         textColor="#fff"

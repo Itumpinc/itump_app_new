@@ -102,6 +102,7 @@ export default function FixIssues(props: any) {
   }, [primaryBusiness, business]);
 
   const healthData = getData(getHealthData);
+  // console.log("🚀 ~ FixIssues ~ healthData:", healthData)
   let percentage = 0;
   let title = '';
   if (healthData && typeof healthData.health !== 'undefined') {
@@ -130,7 +131,43 @@ export default function FixIssues(props: any) {
     return serviceItem;
   }
 
-  const HTML = <></>;
+  const registerBusiness = getDetailsUsingService('register_business');
+  // const serviceFincen = getDetailsUsingService('service_fincen_boi');
+  const registerAgent = getDetailsUsingService('register_agent');
+  const createAnnualReport = getDetailsUsingService('create_annual_report');
+  // const createEinId = getDetailsUsingService('create_ein_id');
+  // const secureBusiness = getDetailsUsingService('secure_business');
+
+  const HTML = (
+    <>
+      <TouchableOpacity
+        onPress={() =>
+          registerAgent && registerAgent.message === 'service_not_taken'
+            ? navigation.navigate('register_agent')
+            : navigation.navigate('Health')
+        }>
+        <IssueLayout
+          text={'Register Agent'}
+          status={registerAgent && registerAgent.score > 0 ? 'done' : ''}
+        />
+      </TouchableOpacity>
+      <Line />
+      <TouchableOpacity
+        onPress={() =>
+          createAnnualReport &&
+          createAnnualReport.message === 'service_not_taken'
+            ? navigation.navigate('create_annual_report')
+            : navigation.navigate('Health')
+        }>
+        <IssueLayout
+          text={'Build Annual Report'}
+          status={
+            createAnnualReport && createAnnualReport.score > 0 ? 'done' : ''
+          }
+        />
+      </TouchableOpacity>
+    </>
+  );
 
   if (!(healthData && healthData.services)) {
     let isPro = 'done';
@@ -161,14 +198,6 @@ export default function FixIssues(props: any) {
           <Line />
           <IssueLayout text={'Setup Your Business'} status={''} />
           <Line />
-          <TouchableOpacity onPress={() => navigation.navigate('ServiceList')}>
-            <IssueLayout text={'Check Our Services'} />
-          </TouchableOpacity>
-          <Line />
-          <TouchableOpacity
-            onPress={() => navigation.navigate('build_business_credit')}>
-            <IssueLayout text={'Build Business Credit'} />
-          </TouchableOpacity>
           {HTML}
         </View>
         <Gap height={hp(2)} />
@@ -181,13 +210,6 @@ export default function FixIssues(props: any) {
       </>
     );
   }
-
-  const registerBusiness = getDetailsUsingService('register_business');
-  // const serviceFincen = getDetailsUsingService('service_fincen_boi');
-  // const registerAgent = getDetailsUsingService('register_agent');
-  // const createAnnualReport = getDetailsUsingService('create_annual_report');
-  // const createEinId = getDetailsUsingService('create_ein_id');
-  // const secureBusiness = getDetailsUsingService('secure_business');
 
   return (
     <>

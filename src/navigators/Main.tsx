@@ -41,6 +41,9 @@ import {
   InvoicePreview,
   ContactUs,
   Appearance,
+  TapToPay,
+  TapToPayPayment,
+  TapToPaySuccess,
 } from '@src/screens';
 import * as AddaBusinessScreens from '@src/screens/BusinessRegistration/setup/index';
 import * as ExistingBusinessScreens from '@src/screens/BusinessRegistration/ExistingBusiness/index';
@@ -48,6 +51,7 @@ import * as NewBusinessInformation from '@src/screens/BusinessRegistration/NewBu
 import * as ServiceModule from '@src/screens/Services/index';
 import {useThemeColors} from '@src/constants/colors';
 import {useAppSelector} from '@src/store/store';
+import {useRoute} from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
 const MainNavigator = () => {
@@ -206,6 +210,9 @@ const MainNavigator = () => {
         <Stack.Screen name="InvoicePreview" component={InvoicePreview} />
         <Stack.Screen name="ContactUs" component={ContactUs} />
         <Stack.Screen name="Appearance" component={Appearance} />
+        <Stack.Screen name="TapToPay" component={TapToPay} />
+        <Stack.Screen name="TapToPayPayment" component={TapToPayPayment} />
+        <Stack.Screen name="TapToPaySuccess" component={TapToPaySuccess} />
       </Stack.Navigator>
       <Navbar />
     </>

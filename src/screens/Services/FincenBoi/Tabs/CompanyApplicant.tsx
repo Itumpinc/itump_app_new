@@ -134,6 +134,7 @@ const CompanyApplicantFields = (props: any) => {
               name="applicant_state_id"
               value={schema.data.applicant_state_id}
               placeHolder="State"
+              disable={!schema.data.applicant_country_id}
               options={stateOptions}
               half
             />
@@ -179,6 +180,7 @@ const CompanyApplicantFields = (props: any) => {
               name="applicant_id_jurisdiction_state_id"
               value={schema.data.applicant_id_jurisdiction_state_id}
               placeHolder="State"
+              disable={!schema.data.applicant_id_jurisdiction_country_id}
               options={stateOptions}
               half
             />
@@ -268,6 +270,7 @@ const CompanyApplicantFields = (props: any) => {
                 name="applicant_state_id_1"
                 value={schema.data.applicant_state_id}
                 placeHolder="State"
+                disable={!schema.data.applicant_country_id}
                 options={stateOptions}
                 half
               />
@@ -314,6 +317,7 @@ const CompanyApplicantFields = (props: any) => {
                 name="applicant_id_jurisdiction_state_id_1"
                 value={schema.data.applicant_id_jurisdiction_state_id}
                 placeHolder="State"
+                disable={!schema.data.applicant_id_jurisdiction_country_id}
                 options={stateOptions}
                 half
               />

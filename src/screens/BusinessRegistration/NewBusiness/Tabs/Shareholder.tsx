@@ -123,6 +123,7 @@ const Shareholder1 = (props: any) => {
           name="shareholder_1_state_id"
           value={schema.data.shareholder_1_state_id}
           placeHolder="State"
+          disable={!schema.data.shareholder_1_country_id}
           options={stateOptions}
           half
         />
@@ -240,6 +241,7 @@ const Shareholder2 = (props: any) => {
           name="shareholder_2_state_id"
           value={schema.data.shareholder_2_state_id}
           placeHolder="State"
+          disable={!schema.data.shareholder_2_country_id}
           options={stateOptions}
           half
         />
@@ -357,6 +359,7 @@ const Shareholder3 = (props: any) => {
           name="shareholder_3_state_id"
           value={schema.data.shareholder_3_state_id}
           placeHolder="State"
+          disable={!schema.data.shareholder_3_country_id}
           options={stateOptions}
           half
         />
@@ -474,6 +477,7 @@ const Shareholder4 = (props: any) => {
           name="shareholder_4_state_id"
           value={schema.data.shareholder_4_state_id}
           placeHolder="State"
+          disable={!schema.data.shareholder_4_country_id}
           options={stateOptions}
           half
         />

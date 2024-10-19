@@ -294,6 +294,7 @@ export function ReportingCompany(props: any) {
               name="company_state_id"
               value={schema.data.company_state_id}
               placeHolder="State"
+              disable={!schema.data.company_country_id}
               options={stateOptions}
               half
             />

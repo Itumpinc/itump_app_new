@@ -117,12 +117,12 @@ const SignUp = () => {
       const error: any = lazyRegisterData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert({ type: 'error', text: data.message });
+        alert({type: 'error', text: data.message});
       }
     }
   }, [lazyRegisterData]);
 
-  const registerAction = (country: any) => {
+  const registerAction = () => {
     const data = schema.data;
     const {firstName, lastName} = getfirstlastname(data.name);
     const postData: any = {
@@ -130,7 +130,7 @@ const SignUp = () => {
       last_name: lastName,
       email: data.email,
       password: data.password,
-      country_id: country.id,
+      country_id: 226,
     };
     if (data.phone) {
       postData.phone = data.phone;
@@ -138,21 +138,21 @@ const SignUp = () => {
     lazyRegisterQuery(postData);
   };
 
-  useEffect(() => {
-    if (countryObj && countryObj.id) {
-      registerAction(countryObj);
-    }
-  }, [countryObj]);
+  // useEffect(() => {
+  //   if (countryObj && countryObj.id) {
+  //     registerAction(countryObj);
+  //   }
+  // }, [countryObj]);
 
   const doSubmit = () => {
-    const data = schema.data;
-    const countryList = getData(loadCountryQuery);
-    const {country, phone} = getCountryByPhone(countryList, data.phone);
-    if (!((country && phone) || countryObj)) {
-      setOpenCountry(true);
-    } else {
-      registerAction(country);
-    }
+    // const data = schema.data;
+    // const countryList = getData(loadCountryQuery);
+    // const {country, phone} = getCountryByPhone(countryList, data.phone);
+    // if (!((country && phone) || countryObj)) {
+    //   setOpenCountry(true);
+    // } else {
+    registerAction();
+    // }
   };
 
   return (

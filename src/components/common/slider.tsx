@@ -116,7 +116,7 @@ const Slider = ({
                   backgroundColor:
                     index === activeIndex
                       ? 'rgba(114, 86, 255, 1)'
-                      : 'rgba(255, 255, 255, 0.12)',
+                      : colors.boxBorderColor,
                 },
               ]}
             />

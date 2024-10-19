@@ -223,7 +223,7 @@ const InvoicePreview = () => {
                         color: colors.primary,
                         fontSize: wp(4),
                       }}>
-                      Lofi-Enabled
+                      Lo-Fi Enabled
                     </Text>
                     <Text
                       style={{

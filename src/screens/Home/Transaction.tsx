@@ -31,6 +31,7 @@ import {
 import {Line} from '@src/constants/Line';
 import moment from 'moment';
 import TransactionCard from '../Wallet/TransactionCard';
+import PageLoader from '@src/components/common/PageLoader';
 
 export default function Transaction() {
   const pictures = useThemeImages();
@@ -43,31 +44,18 @@ export default function Transaction() {
     userApi.useLazyGetTransactionsQuery();
 
   useFocusedEffect(() => {
-    getTransactionsQuery('?type=order&limit=2');
+    getTransactionsQuery('?limit=2');
   }, []);
 
-  if (!getTransactionsData.isSuccess) return null;
+  if (!getTransactionsData.isSuccess) return <PageLoader />;
   const transactions = getData(getTransactionsData);
   
-  if (!(transactions.data && transactions.data.length > 0)) return null;
+  // console.log("🚀 ~ Transaction ~ getTransactionsData:", transactions)
+
+  if (!(transactions && transactions.length > 0)) return null;
 
   return (
     <>
-      <Text
-        style={[
-          styles.text,
-          {
-            color: colors.secondaryText,
-            alignSelf: 'flex-start',
-            fontFamily: 'Satoshi-Black',
-            fontSize: hp(2.2),
-            marginLeft: wp(6),
-          },
-        ]}>
-        Finances
-      </Text>
-      <Gap height={hp(2)} />
-
       <View
         style={{
           backgroundColor: colors.activityBox,
@@ -94,9 +82,9 @@ export default function Transaction() {
         </View>
         <Gap height={hp(2)} />
 
-        {transactions.data && transactions.data.length > 0 ? (
-          transactions.data.map((transaction: any, index: number) => {
-            return <TransactionCard item={transaction} key={index} />;
+        {transactions && transactions.length > 0 ? (
+          transactions.map((transaction: any, index: number) => {
+            return <TransactionCard item={transaction} key={index} small/>;
           })
         ) : (
           <View
@@ -133,7 +121,7 @@ export default function Transaction() {
         )}
 
         <Gap height={hp(1.5)} />
-        {transactions.data && transactions.data.length > 0 ? (
+        {transactions && transactions.length > 0 ? (
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('TransactionList', {type: 'order'})
@@ -167,6 +155,7 @@ export default function Transaction() {
     </>
   );
 }
+  
 
 const styles = StyleSheet.create({
   text: {

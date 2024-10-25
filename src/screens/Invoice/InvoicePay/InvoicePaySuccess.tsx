@@ -136,7 +136,7 @@ const InvoicePaySuccess = () => {
 
           <Gap height={hp(6)} />
           <View style={{alignItems: 'center'}}>
-            <Button
+            {/* <Button
               text="See Details"
               onPress={() => navigation.navigate('InvoiceDetails', {
                 invoice_num: payInvoiceData.invoice.invoice_num,
@@ -146,7 +146,7 @@ const InvoicePaySuccess = () => {
               borderColor={colors.primary}
               check
             />
-            <Gap height={hp(2)} />
+            <Gap height={hp(2)} /> */}
 
             <Button
               text="Go to Wallet"

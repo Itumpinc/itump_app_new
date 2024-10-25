@@ -98,11 +98,6 @@ const SelectedModules = () => {
       image: pictures.health,
     },
     {
-      title: 'Itump Credit',
-      subtext: 'Explore Business Credit Opportunities',
-      image: pictures.credit,
-    },
-    {
       title: 'Itump DocuHub',
       subtext: 'Secure vital business information & documents',
       image: pictures.corpcrypt,
@@ -127,6 +122,11 @@ const NonSelectedModules = () => {
   const pictures = useThemeImages();
   const modules = [
     {
+      title: 'Itump Credit',
+      subtext: 'Explore Business Credit Opportunities',
+      image: pictures.credit,
+    },
+    {
       title: 'Itump Assets',
       subtext: 'Track the progress of your business products',
       image: pictures.assets,
@@ -141,21 +141,21 @@ const NonSelectedModules = () => {
       subtext: 'Ensure your Business is Secure',
       image: pictures.security,
     },
-    {
-      title: 'Itump CRM',
-      subtext: 'Manage Customer Relationships',
-      image: pictures.crm,
-    },
-    {
-      title: 'Itump Tasks',
-      subtext: 'Organize Business To-Do List',
-      image: pictures.tasks,
-    },
-    {
-      title: 'Itump Insights',
-      subtext: 'Drive Business Improvement',
-      image: pictures.insights,
-    },
+    // {
+    //   title: 'Itump CRM',
+    //   subtext: 'Manage Customer Relationships',
+    //   image: pictures.crm,
+    // },
+    // {
+    //   title: 'Itump Tasks',
+    //   subtext: 'Organize Business To-Do List',
+    //   image: pictures.tasks,
+    // },
+    // {
+    //   title: 'Itump Insights',
+    //   subtext: 'Drive Business Improvement',
+    //   image: pictures.insights,
+    // },
     {
       title: 'Itump Studio',
       subtext: 'Simplify Domain Purchase and Hosting',
@@ -166,21 +166,21 @@ const NonSelectedModules = () => {
       subtext: 'Simplify Software Integration',
       image: pictures.connect,
     },
-    {
-      title: 'Itump Marketing',
-      subtext: 'Manage Marketing Campaigns and Socials',
-      image: pictures.marketing,
-    },
+    // {
+    //   title: 'Itump Marketing',
+    //   subtext: 'Manage Marketing Campaigns and Socials',
+    //   image: pictures.marketing,
+    // },
     {
       title: 'Itump Feedback',
       subtext: 'Engage Customer Feedback',
       image: pictures.feedback,
     },
-    {
-      title: 'Itump Social',
-      subtext: 'Track Social Media Progress',
-      image: pictures.social,
-    },
+    // {
+    //   title: 'Itump Social',
+    //   subtext: 'Track Social Media Progress',
+    //   image: pictures.social,
+    // },
   ];
 
   return (

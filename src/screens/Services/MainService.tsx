@@ -16,6 +16,8 @@ import * as StepComponent from '@src/screens/Services/serviceStepsIndex';
 import Form from '@src/components/hocs/forms/form';
 import {serviceApi} from '@src/store/services/service';
 import {getData} from '@src/utils/helpers';
+import PageLoader from '@src/components/common/PageLoader';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 
 const ServiceSteps = (props: any) => {
   const navigation: any = useNavigation();
@@ -28,7 +30,9 @@ const ServiceSteps = (props: any) => {
 
   const {steps, currentStep, currentIndex} = getServicesteps(
     serviceData.tags,
-    paramsData.routeParams && paramsData.routeParams.serviceRequestId && route.name !== 'BoiForm'
+    paramsData.routeParams &&
+      paramsData.routeParams.serviceRequestId &&
+      route.name !== 'BoiForm'
       ? 'Review'
       : route.name,
   );
@@ -83,7 +87,6 @@ const ServiceSteps = (props: any) => {
             };
           }
         }
-        // console.log('🚀 ~ defaultData:', serviceData.tags, defaultData);
         setSchema(getServiceSchema(serviceData.tags, defaultData));
       }
     })();
@@ -96,7 +99,7 @@ const ServiceSteps = (props: any) => {
         StepComponent[currentStep.component]
       : null;
 
-  if (!schema) return null;
+  if (!schema) return <PageLoader />;
 
   return (
     <Form formState={schema} formhandler={setSchema} onSubmit={doSubmit}>
@@ -117,7 +120,22 @@ const ServiceSteps = (props: any) => {
 
 export const MainService = (props: any) => {
   const pictures = useThemeImages();
+  const route: any = useRoute();
   const {setParamsData, paramsData} = props;
+  const [loader, setLoader] = useState(false);
+
+  useEffect(() => {
+    if(route.name.indexOf('_') > -1) {
+      console.log('paramsData===>', paramsData);
+      setLoader(true);
+      setParamsData();
+      setTimeout(() => {
+        setLoader(false);
+      }, 500);
+    }
+  }, [route.name]);
+
+  if (loader) return <PageLoader />;
 
   return (
     <Container>

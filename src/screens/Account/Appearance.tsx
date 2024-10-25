@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Modal,
   Platform,
+  Appearance,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useThemeImages} from '@constants/images';
@@ -47,18 +48,21 @@ import {useDispatch} from 'react-redux';
 import {setData, setTheme} from '@src/store/services/storage';
 import {userApi} from '@src/store/services/user';
 
-const Appearance = () => {
+const AppearanceScreen = () => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
   const dispatch = useDispatch();
-  const theme = useAppSelector((state: any) => state.common.theme);
+  const storage = useAppSelector(state => state.common.storage);
+  const {appearance} = storage;
 
-  const [selectedTheme, setSelectedTheme] = useState(theme || 'system');
+  const [selectedTheme, setSelectedTheme] = useState(appearance || 'system');
   const selectTheme = (theme: string) => {
     setSelectedTheme(theme);
+    dispatch(setData({key: 'appearance', value: theme}));
     if (theme === 'system') {
-      dispatch(setTheme(''));
+      const scheme = Appearance.getColorScheme();
+      dispatch(setTheme(scheme));
     } else {
       dispatch(setTheme(theme));
     }
@@ -149,4 +153,4 @@ const Appearance = () => {
   );
 };
 
-export default Appearance;
+export default AppearanceScreen;

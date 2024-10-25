@@ -46,7 +46,7 @@ const TerminalScreen = ({paramsData, paymentLoader}: any) => {
         <Gap height={hp(15)} />
         {paymentLoader && (
           <View style={{position: 'absolute', zIndex: 1, top: '40%'}}>
-            <Spinner size={'lg'} color={'#fff'} />
+            <Spinner color={'#fff'} />
           </View>
         )}
         <View

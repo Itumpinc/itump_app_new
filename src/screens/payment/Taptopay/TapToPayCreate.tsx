@@ -22,9 +22,13 @@ import {useNavigation} from '@react-navigation/native';
 import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
 import {CustomerDetails} from '@src/screens/Invoice/CreateInvoice';
-import Form, {withSchemaData} from '@src/components/hocs/forms/form';
+import Form, {
+  updateSchema,
+  withSchemaData,
+} from '@src/components/hocs/forms/form';
 import Joi from 'joi';
 import {Button, RenderDropdown} from '@src/components/hocs/forms';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 
 function TapToPay({setSchemaData, setGetAmount}: any) {
   const colors = useThemeColors();
@@ -32,6 +36,19 @@ function TapToPay({setSchemaData, setGetAmount}: any) {
   const storage = useAppSelector(state => state.common.storage);
 
   const {user, business, countryList} = storage;
+  const {main_business: mainBusiness, other_business: otherBusiness} = business;
+  const businesses = [...mainBusiness, ...otherBusiness];
+  const options: any = [];
+  for (let index = 0; index < businesses.length; index++) {
+    const bb = businesses[index];
+    if (bb.status === 'active') {
+      options.push({
+        name: bb.business_title,
+        value: bb.id,
+      });
+    }
+  }
+
   let country = countryList.find(
     (country: any) => country.id === user.country_id,
   );
@@ -54,23 +71,18 @@ function TapToPay({setSchemaData, setGetAmount}: any) {
     ),
   );
 
+  useFocusedEffect(() => {
+    if (options.length === 1) {
+      setSchema(
+        updateSchema(schema, 'data', 'user_business_id', options[0].value),
+      );
+    }
+  }, []);
+
   const doSubmit = () => {
     setSchemaData(schema.data);
     setGetAmount(true);
   };
-
-  const {main_business: mainBusiness, other_business: otherBusiness} = business;
-  const businesses = [...mainBusiness, ...otherBusiness];
-  const options = [];
-  for (let index = 0; index < businesses.length; index++) {
-    const bb = businesses[index];
-    if (bb.status === 'active') {
-      options.push({
-        name: bb.business_title,
-        value: bb.id,
-      });
-    }
-  }
 
   return (
     <View style={{width: wp(90), alignSelf: 'center'}}>

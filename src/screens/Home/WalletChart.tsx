@@ -28,7 +28,12 @@ import {logoutAction} from '@src/store/services/storage';
 import {useDispatch} from 'react-redux';
 import {StackActions, useNavigation} from '@react-navigation/native';
 import {useAppSelector} from '@src/store/store';
-import {formatAmount, getCurrency, titleCase} from '@src/utils/helpers';
+import {
+  formatAmount,
+  getCurrency,
+  getDecimalPart,
+  titleCase,
+} from '@src/utils/helpers';
 
 const DotRow = () => {
   return (
@@ -61,34 +66,17 @@ const GraphBackground = ({yLabels}: {yLabels: string[]}) => {
 };
 
 const Chart = ({monthsData, totalRange}: any) => {
-  const viewHeight = 105; // in px
+  const viewHeight = 96; // in px
   const minHeight = 1;
 
   function calculatePillarHeights(item: any) {
-    const sum = item.col2 + item.col3;
-    // const col1Height = Math.max(
-    //   (item.col1 / totalRange) * viewHeight,
-    //   minHeight,
-    // );
-    // const col2Height = Math.max(
-    //   (item.col2 / totalRange) * viewHeight,
-    //   minHeight,
-    // );
+    const sum = item.totalAmount;
     const colHeight = Math.max((sum / totalRange) * viewHeight, minHeight);
 
     return {
       colHeight,
     };
-
-    // return {
-    //   col1Height: col1Height,
-    //   col2Height: col2Height,
-    //   col3Height: col3Height,
-    // };
   }
-
-  // console.log("🚀 ~ WalletChart ~ months:", monthsData, totalRange);
-
   return (
     <View>
       {monthsData.map((item: any, index: number) => {
@@ -138,7 +126,7 @@ export default function WalletChart({dashboardData}: any) {
   ];
 
   function divideRange(maxValue: number, parts = 3) {
-    const step = maxValue / parts;
+    const step = (Math.round(maxValue / 1000) * 1000) / parts;
     const result = [];
 
     for (let i = 0; i <= parts; i++) {
@@ -158,27 +146,33 @@ export default function WalletChart({dashboardData}: any) {
       ? userPersonalisation.monthly_transact_range
       : 4000;
 
-  const rangeArr = divideRange(totalRange);
-
   const monthsData = [];
   for (let index = 0; index < months.length; index++) {
     const month = months[index];
-    if (summary && summary[month]) {
+    const monthData = summary.find((s: any) => s.month === index + 1);
+    console.log('🚀 ~ WalletChart ~ monthData:', monthData);
+
+    if (monthData) {
       monthsData.push({
         label: titleCase(month),
-        col1:
-          userPersonalisation && userPersonalisation.daily_transact_limit
-            ? userPersonalisation.daily_transact_limit
-            : 4000,
-        col2: summary[month].receive,
-        col3: summary[month].spend,
+        totalAmount: monthData.totalAmount / 100,
       });
 
-      if (totalRange < summary[month].receive + summary[month].spend) {
-        totalRange = summary[month].receive + summary[month].spend;
+      if (totalRange < monthData.totalAmount / 100) {
+        totalRange = monthData.totalAmount / 100;
       }
     }
   }
+
+  console.log('🚀 ~ WalletChart ~ summary:', summary);
+  console.log('🚀 ~ WalletChart ~ totalRange:', totalRange);
+  // console.log("🚀 ~ WalletChart ~ userPersonalisation:", summary)
+
+  const rangeArr = divideRange(totalRange);
+  const decimal =
+    accountBalance && accountBalance.total_balance
+      ? getDecimalPart(accountBalance.total_balance)
+      : 0;
 
   return (
     <View>
@@ -199,10 +193,15 @@ export default function WalletChart({dashboardData}: any) {
               }}>
               {accountBalance && accountBalance.total_balance
                 ? formatAmount(
-                    accountBalance.total_balance,
+                    parseInt(accountBalance.total_balance),
                     currency.currency_symbol,
                   )
                 : formatAmount(0, currency.currency_symbol)}
+              {decimal > 0 ? (
+                <Text style={{color: '#F5F5F799'}}>.{decimal}</Text>
+              ) : (
+                <Text style={{color: '#F5F5F799'}}>.00</Text>
+              )}
             </Text>
             <View style={{position: 'relative'}}>
               <GraphBackground yLabels={rangeArr.reverse()} />

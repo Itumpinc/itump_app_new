@@ -29,7 +29,7 @@ import Popup from '@src/components/common/popup';
 import {Spinner} from 'native-base';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 import {userApi} from '@src/store/services/user';
-import {formatAmount, getData, getfirstlastname} from '@src/utils/helpers';
+import {__, formatAmount, getData, getfirstlastname} from '@src/utils/helpers';
 import {OrderCard} from '@src/components/common/ordercard';
 import {useAppSelector} from '@src/store/store';
 import moment from 'moment';
@@ -76,11 +76,15 @@ const OrderList = () => {
       setLoading(false);
       const orderList = getData(loadUsersOrderData);
       if (orderList.rows && orderList.rows.length > 0) {
-        // const newOrders = orderList.rows.filter(
-        //   (row: any) =>
-        //     !data.some((item: any) => item.order.id === row.invoice.id),
-        // );
-        setData((prevData: any) => [...prevData, ...orderList.rows]);
+        const allList = [...data, ...orderList.rows];
+        const uniqueDataById = Object.values(
+          allList.reduce((acc: any, current: any) => {
+            acc[current.id] = current;
+            return acc;
+          }, {}),
+        );
+
+        setData(uniqueDataById);
       } else {
         setHasMore(false);
       }
@@ -114,17 +118,25 @@ const OrderList = () => {
       (c: any) => c.currency_code === list.order.currency,
     );
 
+    let status = list.items[0].status;
+    if (
+      __(list, 'items', '0', 'service', 'tags') === 'service_fincen_boi' &&
+      !__(list, 'service_detail', 'company_email')
+    ) {
+      status = 'missing_details';
+    }
+
     return (
       <TouchableOpacity
         key={list.order.id}
         onPress={() => {
           navigation.navigate('OrderDetails', {
             order_num: list.order.order_num,
-          })
+          });
         }}>
         <OrderCard
           avatar={avatar}
-          status={list.items[0].status}
+          status={status}
           isRecurring={
             list.order.is_recurring &&
             list.order.payment_status === 'partial_paid'
@@ -159,10 +171,7 @@ const OrderList = () => {
   return (
     <Container source={pictures.welcome}>
       <View style={{width: wp(90), alignSelf: 'center'}}>
-        <Header
-          title="Orders"
-          source={pictures.arrowLeft}
-        />
+        <Header title="Orders" source={pictures.arrowLeft} />
         <Gap height={hp(2)} />
         {data.length > 0 ? (
           <FlatList

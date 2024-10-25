@@ -5,7 +5,7 @@ import { useThemeColors } from '@src/constants/colors';
 
 const AvatarCard = (props: any) => {
   const colors = useThemeColors();
-  const {user, size} = props;
+  const {user, size, color} = props;
   if (!user) return null;
 
   const name = `${user.first_name} ${user.last_name}`;
@@ -28,8 +28,7 @@ const AvatarCard = (props: any) => {
   return (
     <View style={{}}>
       <Avatar
-        bg={colors.primary}
-        mr="1"
+        bg={color || colors.primary}
         size={size || "md"}
         source={{
           uri: uri || 'https://bit.ly/broken-link',

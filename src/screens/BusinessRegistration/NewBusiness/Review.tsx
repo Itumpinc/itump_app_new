@@ -25,6 +25,7 @@ import {serviceApi} from '@src/store/services/service';
 import Form, {withSchemaData} from '@src/components/hocs/forms/form';
 import Joi from 'joi';
 import {useNavigation} from '@react-navigation/native';
+import PageLoader from '@src/components/common/PageLoader';
 
 const UserReviewCard = (props: any) => {
   const colors = useThemeColors();
@@ -163,7 +164,7 @@ export const Addons = (props: any) => {
 
   const doSubmit = () => {};
 
-  if (!(services && services.length > 0)) return null;
+  if (!(services && services.length > 0)) return <PageLoader />;
 
   const entityType = businessDetails.entity_type.slug;
   const addonsList = services.filter(

@@ -20,6 +20,7 @@ import {serviceApi} from '@src/store/services/service';
 import {useNavigation} from '@react-navigation/native';
 import useFocusedEffect from '../hooks/useFocusEffect';
 import Slider from './slider';
+import PageLoader from './PageLoader';
 
 const ServiceCard = (props: any) => {
   const {setSchema, setParamsData} = props;
@@ -44,10 +45,13 @@ const ServiceCard = (props: any) => {
   const gotoService = (service: any) => {
     setSchema();
     setParamsData();
-    navigation.navigate(service.tags);
+    navigation.reset({
+      index: 0,
+      routes: [{name: service.tags}],
+    });
   };
 
-  if (!serviceDetailData.isSuccess) return null;
+  if (!serviceDetailData.isSuccess) return <PageLoader />;
 
   const services = getData(serviceDetailData);
   const currency = getCurrency(storage);

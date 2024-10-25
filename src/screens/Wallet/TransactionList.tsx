@@ -62,22 +62,27 @@ const TransactionList = () => {
   const [hasMore, setHasMore] = useState(true);
 
   const storage = useAppSelector(state => state.common.storage);
-  
+
   const loadMore = async () => {
     if (loading || !hasMore) return;
     setLoading(true);
     setPage(page + 1);
-    await getTransactionsQuery(
-      `?type=${paramsType}&page=${page + 1}&limit=${LIMIT}`,
-    );
+    await getTransactionsQuery(`?page=${page + 1}&limit=${LIMIT}`);
   };
 
   useEffect(() => {
     if (getTransactionsData.isSuccess) {
       setLoading(false);
       const list = getData(getTransactionsData);
-      if (list.data && list.data.length > 0) {
-        setData((prevData: any) => [...prevData, ...list.data]);
+      if (list && list.length > 0) {
+        const allList = [...data, ...list];
+        const uniqueDataById = Object.values(
+          allList.reduce((acc: any, current: any) => {
+            acc[current.id] = current;
+            return acc;
+          }, {}),
+        );
+        setData(uniqueDataById);
       } else {
         setHasMore(false);
       }
@@ -94,7 +99,7 @@ const TransactionList = () => {
     setPage(1);
     setLoading(false);
     setHasMore(true);
-    getTransactionsQuery(`?type=${paramsType}&page=1&limit=${LIMIT}`);
+    getTransactionsQuery(`?page=1&limit=${LIMIT}`);
   }, [paramsType]);
 
   const renderFooter = () => {
@@ -112,45 +117,42 @@ const TransactionList = () => {
   };
 
   const renderItem = ({item}: any) => {
-    return <TransactionCard item={item} />;
+    return (
+      <View style={{width: wp(90), alignSelf: 'center'}}>
+        <TransactionCard item={item} />
+      </View>
+    );
   };
 
   return (
-    <Container source={pictures.welcome}>
+    <Container source={pictures.welcome} disableScroll>
       <View style={{width: wp(90), alignSelf: 'center'}}>
         <Header
           title={`${
             paramsType === 'invoice' ? titleCase(paramsType) : ''
           } Transactions`}
           source={pictures.arrowLeft}
+          onPress={() => navigation.goBack()}
         />
-        <Gap height={hp(2)} />
         {data.length > 0 ? (
           <View>
-            {data.length > 10 ? (
-              <FlatList
-                data={data}
-                keyExtractor={item => makeId()} // Unique key for each item
-                renderItem={renderItem} // Function to render each item
-                onEndReached={() => {
-                  if (!isEndReachedCalledDuringMomentum && hasMore) {
-                    loadMore();
-                    isEndReachedCalledDuringMomentum = true;
-                  }
-                }}
-                onMomentumScrollBegin={() => {
-                  isEndReachedCalledDuringMomentum = false;
-                }}
-                onEndReachedThreshold={0.9}
-                ListFooterComponent={renderFooter}
-              />
-            ) : (
-              <View>
-                {data.map((item: any, index: number) => {
-                  return <TransactionCard item={item} key={index} />;
-                })}
-              </View>
-            )}
+            <FlatList
+              data={data}
+              keyExtractor={item => item.id} // Unique key for each item
+              renderItem={renderItem} // Function to render each item
+              onEndReached={() => {
+                if (!isEndReachedCalledDuringMomentum && hasMore) {
+                  loadMore();
+                  isEndReachedCalledDuringMomentum = true;
+                }
+              }}
+              onMomentumScrollBegin={() => {
+                isEndReachedCalledDuringMomentum = false;
+              }}
+              onEndReachedThreshold={0.9}
+              ListFooterComponent={renderFooter}
+              style={{maxHeight: hp(75), marginHorizontal: wp(-5)}}
+            />
           </View>
         ) : (
           <View
@@ -159,6 +161,7 @@ const TransactionList = () => {
               height: hp(60),
               justifyContent: 'center',
             }}>
+            <Gap height={hp(2)} />
             <View
               style={{
                 width: wp(90),

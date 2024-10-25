@@ -33,6 +33,8 @@ import {Steps} from './Steps';
 import {Steps2} from './Steps2';
 import ServiceCompletion from './ServiceCompletion';
 import {getBioMetricCredentials} from '@src/navigators/Utils';
+import {Spinner} from 'native-base';
+import PageLoader from '@src/components/common/PageLoader';
 
 const Health = () => {
   const pictures = useThemeImages();
@@ -96,7 +98,7 @@ const Health = () => {
       serviceDetailData.isSuccess
     )
   )
-    return null;
+    return <PageLoader title="Health" />;
 
   const healthDetails = getData(getHealthData);
   const businessDetails = getData(getBusinessDetailData);

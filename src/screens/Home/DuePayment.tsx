@@ -22,6 +22,7 @@ import {userApi} from '@src/store/services/user';
 import {formatAmount, getData, getfirstlastname} from '@src/utils/helpers';
 import moment from 'moment';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
+import PageLoader from '@src/components/common/PageLoader';
 
 export default function DuePayment() {
   const pictures = useThemeImages();
@@ -35,7 +36,7 @@ export default function DuePayment() {
     listInvoiceQuery('?status=raised');
   }, []);
 
-  if (!listInvoiceData.isSuccess) return null;
+  if (!listInvoiceData.isSuccess) return <PageLoader />;
 
   const invoiceList = getData(listInvoiceData);
   const raisedInvoice = [];

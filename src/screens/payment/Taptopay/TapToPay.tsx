@@ -22,6 +22,9 @@ import {userApi} from '@src/store/services/user';
 import {alert, getData} from '@src/utils/helpers';
 import {StripeTerminalProvider} from '@stripe/stripe-terminal-react-native';
 import TapToPayCreate from './TapToPayCreate';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
+import {Spinner} from 'native-base';
+import PageLoader from '@src/components/common/PageLoader';
 
 export default function TapToPay() {
   const pictures = useThemeImages();
@@ -42,12 +45,22 @@ export default function TapToPay() {
     return secret;
   };
 
+  useFocusedEffect(() => {
+    if (user.stripe_account_status !== 'active') {
+      navigation.navigate('ConnectBank');
+    }
+  }, []);
+
+  if (user.stripe_account_id && user.stripe_account_status !== 'active') {
+    return <PageLoader title="Receive Payment" />;
+  }
+
   return (
     <StripeTerminalProvider
       logLevel="verbose"
       tokenProvider={fetchTokenProvider}>
       <Container source={pictures.welcome}>
-        <View style={{width: wp(90), alignSelf: 'center'}}>
+        <View style={{width: wp(90), alignSelf: 'center', height: hp(90)}}>
           <Header title="Receive Payment" source={pictures.arrowLeft} />
           <TapToPayCreate />
         </View>

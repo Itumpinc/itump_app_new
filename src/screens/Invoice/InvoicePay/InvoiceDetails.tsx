@@ -37,6 +37,7 @@ import {Spinner} from 'native-base';
 import Form, {withSchemaData} from '@src/components/hocs/forms/form';
 import Joi from 'joi';
 import {Button, RenderDropdown, RenderInput} from '@src/components/hocs/forms';
+import PageLoader from '@src/components/common/PageLoader';
 
 const CancelInvoice = ({setOpenCancel, openCancel, invoiceNum}: any) => {
   const pictures = useThemeImages();
@@ -430,10 +431,9 @@ const InvoiceDetails = () => {
     invoiceNumQuery(invoiceNum);
   }, []);
 
-  const cancelInvoice = () => {};
-
-  if (!invoiceNumData.isSuccess) return null;
-
+  if (!invoiceNumData.isSuccess)
+    return <PageLoader title="Invoice Details" />
+  
   const invoiceData = getData(invoiceNumData);
   const {invoice, items, payments} = invoiceData;
 

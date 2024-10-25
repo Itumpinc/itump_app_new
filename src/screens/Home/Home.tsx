@@ -1,6 +1,6 @@
 import {Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -36,6 +36,8 @@ export default function Home() {
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const navigation: any = useNavigation();
+  const { routes, index } = navigation.getState();
+  
   const [userApisQuery, userApisData] = userApi.useLazyUserProfileQuery();
   const storage = useAppSelector(state => state.common.storage);
   const {user: userdetail} = storage;
@@ -50,6 +52,8 @@ export default function Home() {
       saveUser({dispatch, setData, userData});
     })();
   }, []);
+
+  // console.log("🚀 ~ routes, index:", routes, index)
 
   const userProfile = getData(userApisData);
 
@@ -75,23 +79,21 @@ export default function Home() {
   } = userProfile;
 
   const allBusiness = [...mainBusiness, ...otherBusiness];
-
   const dashboardData = getData(getDashboardData);
 
   return (
     <Container>
-      <Gap height={Platform.OS === 'android' ? hp(8) : 1} />
+      <Gap height={Platform.OS === 'android' ? hp(8) : hp(4)} />
       <TopHeader />
       <Gap height={hp(2)} />
 
       <WalletChart dashboardData={dashboardData} />
       <Gap height={hp(2)} />
 
-      {user.is_pro_user === 1 && user.stripe_account_status === 'active' && (
+      {user.is_pro_user === 1 && (
         <TapToPay />
       )}
-
-      {(user.is_pro_user === 0 || user.stripe_account_status === 'pending') && (
+      {(user.is_pro_user === 0) && (
         <ActivateAccount />
       )}
       <DuePayment />

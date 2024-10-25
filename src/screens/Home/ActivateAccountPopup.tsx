@@ -248,7 +248,6 @@ export default function ActivateAccountPopup({modalClose, setModalClose}: any) {
                 style={{
                   color: colors.secondaryText,
                   textAlign: 'center',
-                  opacity: 0.5,
                   fontFamily: 'Satoshi-light',
                 }}>
                 Your all-in-one platform for business management, offering

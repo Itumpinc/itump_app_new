@@ -44,6 +44,8 @@ import {
   TapToPay,
   TapToPayPayment,
   TapToPaySuccess,
+  LegalOption,
+  Legal,
 } from '@src/screens';
 import * as AddaBusinessScreens from '@src/screens/BusinessRegistration/setup/index';
 import * as ExistingBusinessScreens from '@src/screens/BusinessRegistration/ExistingBusiness/index';
@@ -70,9 +72,33 @@ const MainNavigator = () => {
       <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{headerShown: false, animation: 'none'}}>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Modules" component={Modules} />
-        <Stack.Screen name="Health" component={Health} />
+        <Stack.Screen
+          name="Home"
+          children={(props: any) => (
+            <>
+              <Home {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="Modules"
+          children={(props: any) => (
+            <>
+              <Modules {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="Health"
+          children={(props: any) => (
+            <>
+              <Health {...props} />
+              <Navbar />
+            </>
+          )}
+        />
 
         {Object.keys(AddaBusinessScreens).map(screenKey => {
           // @ts-ignore
@@ -82,13 +108,16 @@ const MainNavigator = () => {
               key={screenKey}
               name={screenKey}
               children={(props: any) => (
-                <AddaBusiness
-                  {...props}
-                  setSchema={setSchema}
-                  schema={schema}
-                  setParamsData={setParamsData}
-                  paramsData={paramsData}
-                />
+                <>
+                  <AddaBusiness
+                    {...props}
+                    setSchema={setSchema}
+                    schema={schema}
+                    setParamsData={setParamsData}
+                    paramsData={paramsData}
+                  />
+                  <Navbar />
+                </>
               )}
             />
           );
@@ -101,13 +130,16 @@ const MainNavigator = () => {
               key={screenKey}
               name={screenKey}
               children={(props: any) => (
-                <ExistingBusiness
-                  {...props}
-                  setSchema={setSchema}
-                  schema={schema}
-                  setParamsData={setParamsData}
-                  paramsData={paramsData}
-                />
+                <>
+                  <ExistingBusiness
+                    {...props}
+                    setSchema={setSchema}
+                    schema={schema}
+                    setParamsData={setParamsData}
+                    paramsData={paramsData}
+                  />
+                  <Navbar />
+                </>
               )}
             />
           );
@@ -120,20 +152,47 @@ const MainNavigator = () => {
               key={screenKey}
               name={screenKey}
               children={(props: any) => (
-                <NewBusiness
-                  {...props}
-                  setSchema={setSchema}
-                  schema={schema}
-                  setParamsData={setParamsData}
-                  paramsData={paramsData}
-                />
+                <>
+                  <NewBusiness
+                    {...props}
+                    setSchema={setSchema}
+                    schema={schema}
+                    setParamsData={setParamsData}
+                    paramsData={paramsData}
+                  />
+                  <Navbar />
+                </>
               )}
             />
           );
         })}
-        <Stack.Screen name="OrderSummary" component={OrderSummary} />
-        <Stack.Screen name="Account" component={Account} />
-        <Stack.Screen name="MakePayment" component={MakePayment} />
+        <Stack.Screen
+          name="OrderSummary"
+          children={(props: any) => (
+            <>
+              <OrderSummary {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="Account"
+          children={(props: any) => (
+            <>
+              <Account {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="MakePayment"
+          children={(props: any) => (
+            <>
+              <MakePayment {...props} />
+              <Navbar />
+            </>
+          )}
+        />
         <Stack.Screen
           name="BusinessPaymentSuccess"
           component={BusinessPaymentSuccess}
@@ -141,13 +200,16 @@ const MainNavigator = () => {
         <Stack.Screen
           name="ServicePaymentSuccess"
           children={(props: any) => (
-            <ServicePaymentSuccess
-              {...props}
-              setSchema={setSchema}
-              schema={schema}
-              setParamsData={setParamsData}
-              paramsData={paramsData}
-            />
+            <>
+              <ServicePaymentSuccess
+                {...props}
+                setSchema={setSchema}
+                schema={schema}
+                setParamsData={setParamsData}
+                paramsData={paramsData}
+              />
+              <Navbar />
+            </>
           )}
         />
 
@@ -159,62 +221,302 @@ const MainNavigator = () => {
               key={screenKey}
               name={screenKey}
               children={(props: any) => (
-                <ScreenComponent
-                  {...props}
-                  setSchema={setSchema}
-                  schema={schema}
-                  setParamsData={setParamsData}
-                  paramsData={paramsData}
-                />
+                <>
+                  <ScreenComponent
+                    {...props}
+                    setSchema={setSchema}
+                    schema={schema}
+                    setParamsData={setParamsData}
+                    paramsData={paramsData}
+                  />
+                  <Navbar />
+                </>
               )}
             />
           );
         })}
-        <Stack.Screen name="ActivateAccount" component={ActivateAccount} />
-        <Stack.Screen name="ConnectBank" component={ConnectBank} />
-        <Stack.Screen name="CreateInvoice" component={CreateInvoice} />
-        <Stack.Screen name="InvoiceSummary" component={InvoiceSummary} />
-        <Stack.Screen name="InvoiceSuccess" component={InvoiceSuccess} />
-        <Stack.Screen name="InvoicePayment" component={InvoicePayment} />
-        <Stack.Screen name="InvoicePaySuccess" component={InvoicePaySuccess} />
-        <Stack.Screen name="InvoiceDetails" component={InvoiceDetails} />
-        <Stack.Screen name="Downloads" component={Downloads} />
+        <Stack.Screen
+          name="ActivateAccount"
+          children={(props: any) => (
+            <>
+              <ActivateAccount {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="ConnectBank"
+          children={(props: any) => (
+            <>
+              <ConnectBank {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="CreateInvoice"
+          children={(props: any) => (
+            <>
+              <CreateInvoice {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="InvoiceSummary"
+          children={(props: any) => (
+            <>
+              <InvoiceSummary {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="InvoiceSuccess"
+          children={(props: any) => (
+            <>
+              <InvoiceSuccess {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="InvoicePayment"
+          children={(props: any) => (
+            <>
+              <InvoicePayment {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="InvoicePaySuccess"
+          children={(props: any) => (
+            <>
+              <InvoicePaySuccess {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="InvoiceDetails"
+          children={(props: any) => (
+            <>
+              <InvoiceDetails {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="Downloads"
+          children={(props: any) => (
+            <>
+              <Downloads {...props} />
+              <Navbar />
+            </>
+          )}
+        />
         <Stack.Screen
           name="Concrypt"
           children={(props: any) => (
-            <Concrypt
-              {...props}
-              setSchema={setSchema}
-              schema={schema}
-              setParamsData={setParamsData}
-              paramsData={paramsData}
-            />
+            <>
+              <Concrypt
+                {...props}
+                setSchema={setSchema}
+                schema={schema}
+                setParamsData={setParamsData}
+                paramsData={paramsData}
+              />
+              <Navbar />
+            </>
           )}
         />
-        <Stack.Screen name="InvoiceList" component={InvoiceList} />
-        <Stack.Screen name="Wallet" component={Wallet} />
-        <Stack.Screen name="OrderList" component={OrderList} />
-        <Stack.Screen name="OrderDetails" component={OrderDetails} />
-        <Stack.Screen name="TransactionList" component={TransactionList} />
-        <Stack.Screen name="AccountOption" component={AccountOption} />
-        <Stack.Screen name="CloseAccount" component={CloseAccount} />
-        <Stack.Screen name="Profile" component={Profile} />
-        <Stack.Screen name="Security" component={Security} />
-        <Stack.Screen name="ChangePassoword" component={ChangePassoword} />
-        <Stack.Screen name="WithdrawlSuccess" component={WithdrawlSuccess} />
+        <Stack.Screen
+          name="InvoiceList"
+          children={(props: any) => (
+            <>
+              <InvoiceList {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="Wallet"
+          children={(props: any) => (
+            <>
+              <Wallet {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="OrderList"
+          children={(props: any) => (
+            <>
+              <OrderList {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="OrderDetails"
+          children={(props: any) => (
+            <>
+              <OrderDetails {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="TransactionList"
+          children={(props: any) => (
+            <>
+              <TransactionList {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="AccountOption"
+          children={(props: any) => (
+            <>
+              <AccountOption {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="CloseAccount"
+          children={(props: any) => (
+            <>
+              <CloseAccount {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="Profile"
+          children={(props: any) => (
+            <>
+              <Profile {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="Security"
+          children={(props: any) => (
+            <>
+              <Security {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="ChangePassoword"
+          children={(props: any) => (
+            <>
+              <ChangePassoword {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="WithdrawlSuccess"
+          children={(props: any) => (
+            <>
+              <WithdrawlSuccess {...props} />
+              <Navbar />
+            </>
+          )}
+        />
         <Stack.Screen
           name="TransactionDetails"
           component={TransactionDetails}
         />
-        <Stack.Screen name="AddDocuments" component={AddDocuments} />
-        <Stack.Screen name="InvoicePreview" component={InvoicePreview} />
-        <Stack.Screen name="ContactUs" component={ContactUs} />
-        <Stack.Screen name="Appearance" component={Appearance} />
-        <Stack.Screen name="TapToPay" component={TapToPay} />
-        <Stack.Screen name="TapToPayPayment" component={TapToPayPayment} />
-        <Stack.Screen name="TapToPaySuccess" component={TapToPaySuccess} />
+        <Stack.Screen
+          name="AddDocuments"
+          children={(props: any) => (
+            <>
+              <AddDocuments {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="InvoicePreview"
+          children={(props: any) => (
+            <>
+              <InvoicePreview {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="ContactUs"
+          children={(props: any) => (
+            <>
+              <ContactUs {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="Appearance"
+          children={(props: any) => (
+            <>
+              <Appearance {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="LegalOption"
+          children={(props: any) => (
+            <>
+              <LegalOption {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="Legal"
+          children={(props: any) => (
+            <>
+              <Legal {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+
+        <Stack.Screen
+          name="TapToPay"
+          children={(props: any) => (
+            <>
+              <TapToPay {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="TapToPayPayment"
+          children={(props: any) => (
+            <>
+              <TapToPayPayment {...props} />
+              <Navbar />
+            </>
+          )}
+        />
+        <Stack.Screen
+          name="TapToPaySuccess"
+          children={(props: any) => (
+            <>
+              <TapToPaySuccess {...props} />
+              <Navbar />
+            </>
+          )}
+        />
       </Stack.Navigator>
-      <Navbar />
     </>
   );
 };

@@ -446,8 +446,7 @@ const InvoiceSummary = () => {
 
   if (!params || !country) return null;
 
-  // console.log('🚀 ~ InvoiceSummary ~ params:', params);
-
+  
   const {main_business: mainBusiness, other_business: otherBusiness} = business;
   const businesses = [...mainBusiness, ...otherBusiness];
   const selectedBusiness = businesses.find(
@@ -457,6 +456,8 @@ const InvoiceSummary = () => {
   const {firstName, lastName} = getfirstlastname(
     selectedBusiness.business_title,
   );
+
+  console.log('🚀 ~ InvoiceSummary ~ params:', calculateData);
 
   return (
     <Container>
@@ -704,13 +705,13 @@ const InvoiceSummary = () => {
           <Gap height={hp(2)} />
           <View style={{alignItems: 'center'}}>
             <Button
-              text="Send"
+              text={`Preview Invoice (${formatAmount(calculateData.grand_total, country.currency_symbol)})`}
               onPress={() => sendInvoice()}
               textColor="white"
               backgroundColor={colors.primary}
               borderColor={colors.primary}
             />
-            <Gap height={hp(2)} />
+            <Gap height={hp(5)} />
           </View>
         </View>
       </View>

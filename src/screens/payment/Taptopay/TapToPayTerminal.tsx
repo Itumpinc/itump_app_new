@@ -133,7 +133,7 @@ const DiscoverReader = (props: any) => {
     setDiscoveringLoading(true);
     // List of discovered readers will be available within useStripeTerminal hook
     const {error: discoverReadersError} = await discoverReaders({
-      discoveryMethod: 'localMobile', // 'localMobile',
+      discoveryMethod: 'bluetoothScan', // 'localMobile',
       simulated: simulated ? true : undefined,
     });
 
@@ -171,14 +171,14 @@ const DiscoverReader = (props: any) => {
       return;
     }
     setDiscoveringCard(true);
-    const {reader, error} = await connectLocalMobileReader({
+    const {reader, error} = await connectBluetoothReader({
       autoReconnectOnUnexpectedDisconnect: true,
       reader: discoveredReaders[0],
       // Since the simulated reader is not associated with a real location, we recommend
       // specifying its existing mock location.
       locationId: locationId, // discoveredReaders[0].locationId,
       // onBehalfOf: user.stripe_account_id,
-      merchantDisplayName: paramsData.business.business_title,
+      // merchantDisplayName: paramsData.business.business_title,
     });
 
     if (error) {

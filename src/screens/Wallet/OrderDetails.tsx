@@ -23,6 +23,7 @@ import {Line} from '@src/constants/Line';
 import {userApi} from '@src/store/services/user';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 import {
+  __,
   alert,
   formatAmount,
   getData,
@@ -38,6 +39,7 @@ import Form, {withSchemaData} from '@src/components/hocs/forms/form';
 import Joi from 'joi';
 import {Button, RenderDropdown, RenderInput} from '@src/components/hocs/forms';
 import {orderApi} from '@src/store/services/order';
+import PageLoader from '@src/components/common/PageLoader';
 
 const TrackingState = ({timeline, index}: any) => {
   const pictures = useThemeImages();
@@ -272,7 +274,7 @@ const OrderTimeline = (props: any) => {
     orderDetailStatusQuery(item.id);
   }, []);
 
-  if (!orderDetailStatusData.isSuccess) return null;
+  if (!orderDetailStatusData.isSuccess) return <PageLoader />;
 
   const orderItemLogs = getData(orderDetailStatusData);
 
@@ -387,6 +389,7 @@ const OrderTimeline = (props: any) => {
     <View>
       <Gap height={hp(1.5)} />
       <Line />
+      <Gap height={hp(1)} />
       <Text
         style={{
           color: colors.primaryText,
@@ -397,7 +400,7 @@ const OrderTimeline = (props: any) => {
         Timeline
       </Text>
 
-      <Gap height={hp(1)} />
+      <Gap height={hp(2)} />
 
       {/* start timeline */}
 
@@ -485,19 +488,33 @@ const OrderDetails = () => {
     if (serviceDetail.service.tags === 'register_business') {
       navigation.navigate('Health');
     } else {
-      navigation.navigate(serviceDetail.service.tags, {
-        action: 'done_already',
-        businessID: serviceDetail.company_id,
-        serviceRequestId: serviceDetail.id,
-        takePayment: false,
-        detailView: true,
-      });
+      if (
+        __(serviceDetail, 'service', 'tags') === 'service_fincen_boi' &&
+        !__(serviceDetail, 'company_email')
+      ) {
+        navigation.navigate('BoiForm', {
+          edit: true,
+          serviceData: serviceDetail.service,
+          businessID: serviceDetail.company_id,
+          serviceRequestId: serviceDetail.id,
+          service_id: serviceDetail.service_id,
+        });
+      } else {
+        navigation.navigate(serviceDetail.service.tags, {
+          action: 'done_already',
+          businessID: serviceDetail.company_id,
+          serviceRequestId: serviceDetail.id,
+          takePayment: false,
+          detailView: true,
+        });
+      }
     }
   };
 
-  if (!orderDetailData.isSuccess) return null;
+  if (!orderDetailData.isSuccess) return <PageLoader />;
 
   const orderData = getData(orderDetailData);
+  
   const {order, items, service_detail: serviceDetail} = orderData;
 
   const country = countryList.find(
@@ -508,6 +525,7 @@ const OrderDetails = () => {
     confirm: 'Paid and Confirmed',
     processing: 'In Progress',
     completed: 'Completed',
+    missing_details: 'Paid / Missing Details',
   };
 
   const date = moment(order.created_at).format('DD MMM YYYY, hh:mm A');
@@ -516,13 +534,23 @@ const OrderDetails = () => {
     confirm: colors.lightPrimary,
     processing: colors.lightOrange,
     completed: colors.successBackgroundColor,
+    missing_details: colors.errorText + '30',
   };
 
   const textColor: any = {
     confirm: colors.primary,
     processing: colors.darkOrange,
     completed: colors.success,
+    missing_details: colors.errorText,
   };
+
+  let status = __(items, '0', 'status');
+  if (
+    __(serviceDetail, 'service', 'tags') === 'service_fincen_boi' &&
+    !__(serviceDetail, 'company_email')
+  ) {
+    status = 'missing_details';
+  }
 
   return (
     <Container>
@@ -532,7 +560,7 @@ const OrderDetails = () => {
           width: wp(90),
         }}>
         <Header title="Order Details" source={pictures.arrowLeft} />
-        <View style={{width: wp(90)}}>
+        <View style={{width: wp(90), minHeight: hp(62)}}>
           <View
             style={{
               width: wp(90),
@@ -576,27 +604,27 @@ const OrderDetails = () => {
                   fontFamily: 'Satoshi-Regular',
                   fontSize: 14,
                 }}>
-                {statusList[items[0].status]} {date}
+                {statusList[status]} {date}
               </Text>
             </View>
             <Gap height={hp(2)} />
             <View
               style={{
-                backgroundColor: statusColor[items[0].status],
+                backgroundColor: statusColor[status],
                 borderRadius: 14,
                 alignSelf: 'center',
                 justifyContent: 'center',
               }}>
               <Text
                 style={{
-                  color: textColor[items[0].status],
+                  color: textColor[status],
                   fontFamily: 'Satoshi-Regular',
                   fontSize: 14,
                   textAlign: 'center',
                   paddingVertical: wp(1),
                   paddingHorizontal: 15,
                 }}>
-                {statusList[items[0].status]}
+                {statusList[status]}
               </Text>
             </View>
             <Gap height={hp(2)} />
@@ -620,6 +648,7 @@ const OrderDetails = () => {
             ) : null}
           </View>
 
+          <Gap height={hp(1)} />
           <View style={{}}>
             <Text
               style={{
@@ -640,20 +669,19 @@ const OrderDetails = () => {
               #{order.order_num}
             </Text>
           </View>
-
+          <Gap height={hp(1)} />
           <OrderTimeline item={items[0]} order={order} />
           {/* <Gap height={hp(2)} />
           <TimeLine order={order} user={user} country={country} /> */}
-          <Gap height={hp(6)} />
-
-          {serviceDetail.service.tags !== 'register_business' && <Button
-            text={`View Details`}
+        </View>
+        {serviceDetail.service.tags !== 'register_business' && (
+          <Button
+            text={status === 'missing_details' ? `Add Details` : `View Details`}
             textColor={'#fff'}
             onPress={() => openDetails(order, serviceDetail)}
-          />}
-
-          <Gap height={hp(6)} />
-        </View>
+          />
+        )}
+        <Gap height={hp(6)} />
       </View>
     </Container>
   );

@@ -47,6 +47,7 @@ import moment from 'moment';
 import {formataddress} from '@src/screens/BusinessRegistration/Utils';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 import MakePayment from '@src/screens/payment/MakePayment';
+import {Spinner} from 'native-base';
 
 const Details = ({invoice, avatar}: any) => {
   const colors = useThemeColors();
@@ -341,7 +342,7 @@ const InvoicePayment = () => {
 
   const makePayment = () => {
     if (!isEnabled && !selectedPlans) {
-      alert({ type: 'error', text: 'Please select Plan' });
+      alert({type: 'error', text: 'Please select Plan'});
       return false;
     }
 
@@ -388,10 +389,21 @@ const InvoicePayment = () => {
     }
   }, [invoiceNumData]);
 
-  if (!invoiceNumData.isSuccess) return null;
+  if (!invoiceNumData.isSuccess)
+    return (
+      <Container>
+        <View style={{width: wp(90), alignSelf: 'center'}}>
+          <Header title="Invoice" source={pictures.arrowLeft} />
+        </View>
+        <View style={{height: hp(60), justifyContent: 'center'}}>
+          <Spinner />
+        </View>
+      </Container>
+    );
 
   const invoiceData = getData(invoiceNumData);
   const {invoice, items} = invoiceData;
+  console.log("🚀 ~ InvoicePayment ~ invoice:", invoice)
 
   let avatar = invoice.user;
   avatar.billing_address = formataddress({
@@ -412,25 +424,30 @@ const InvoicePayment = () => {
     avatar = {
       first_name: firstName,
       last_name: lastName,
-      email: invoice.user_business.detail.email,
-      billing_address: formataddress({
-        address: invoice.user_business.detail.address1,
-        address2: invoice.user_business.detail.address2,
-        city: invoice.user_business.detail.city,
-        zipcode: invoice.user_business.detail.zipcode,
-        country_id: invoice.user_business.detail.country_id,
-        state_id: invoice.user_business.detail.state_id,
-        country: countryList,
-        state: [],
-      }),
     };
+    if(invoice.user_business.detail){
+      avatar = {
+        first_name: firstName,
+        last_name: lastName,
+        email: invoice.user_business.detail.email,
+        billing_address: formataddress({
+          address: invoice.user_business.detail.address1,
+          address2: invoice.user_business.detail.address2,
+          city: invoice.user_business.detail.city,
+          zipcode: invoice.user_business.detail.zipcode,
+          country_id: invoice.user_business.detail.country_id,
+          state_id: invoice.user_business.detail.state_id,
+          country: countryList,
+          state: [],
+        }),
+      };
+    }
   }
 
   const country = countryList.find(
     (c: any) => c.currency_code === invoice.currency,
   );
   const calculateData = getData(invoiceCalculateData);
-  console.log("🚀 ~ InvoicePayment ~ calculateData:", calculateData)
 
   const plansAvailable = invoice.available_plans
     ? invoice.available_plans.split(',')
@@ -442,6 +459,7 @@ const InvoicePayment = () => {
         style={{
           alignSelf: 'center',
           width: wp(90),
+          minHeight: hp(80),
         }}>
         <Header title="Invoice" source={pictures.arrowLeft} />
         <View style={{width: wp(90), alignItems: 'center'}}>

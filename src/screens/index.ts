@@ -56,3 +56,5 @@ export {default as Security} from './Account/Security';
 export {default as ChangePassoword} from './Account/ChangePassoword';
 export {default as ContactUs} from './Account/ContactUs';
 export {default as Appearance} from './Account/Appearance';
+export {default as LegalOption} from './Account/LegalOption';
+export {default as Legal} from './Account/Legal';

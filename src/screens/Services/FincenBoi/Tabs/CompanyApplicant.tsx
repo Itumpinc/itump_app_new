@@ -406,6 +406,11 @@ export function CompanyApplicant(props: any) {
           />
 
           <Gap height={hp(2)} />
+          <Button
+            text="Next"
+            textColor="white"
+            onPress={() => toggleTab('BeneficialApplicant')}
+          />
         </View>
       )}
     </View>

@@ -22,7 +22,7 @@ import useStyles from '@src/screens/BusinessRegistration/styles';
 import Container from '@src/components/common/container';
 import Header from '@src/constants/header';
 import {useNavigation} from '@react-navigation/native';
-import {useAppSelector} from '@src/store/store';
+import {useAppDispatch, useAppSelector} from '@src/store/store';
 import {alert, getData, getfirstlastname} from '@src/utils/helpers';
 import Form, {withSchemaData} from '@src/components/hocs/forms/form';
 import Joi from 'joi';
@@ -38,12 +38,15 @@ import {
 } from '../BusinessRegistration/Utils';
 import {commonApi} from '@src/store/services/common';
 import {userApi} from '@src/store/services/user';
+import {saveUser} from '@src/navigators/Utils';
+import {setData} from '@src/store/services/storage';
 
 const Profile = () => {
   const styles = useStyles();
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
+  const dispatch = useAppDispatch();
   const storage = useAppSelector(state => state.common.storage);
   const {countryList, user} = storage;
   const options = getCountryOptions(countryList, true);
@@ -52,6 +55,7 @@ const Profile = () => {
   const [loadStateQuery] = commonApi.useLazyLoadStateQuery();
   const [updateProfileQuery, updateProfileData] =
     userApi.useLazyUpdateProfileQuery();
+  const [userApisQuery] = userApi.useLazyUserProfileQuery();
 
   const [schema, setSchema] = useState(
     withSchemaData(
@@ -116,6 +120,8 @@ const Profile = () => {
 
     const updateProfileData = await updateProfileQuery(data);
     if (updateProfileData.isSuccess) {
+      const userData = await userApisQuery();
+      saveUser({dispatch, setData, userData});
       alert({
         type: 'success',
         text: 'Profile Updated Successfully',
@@ -126,7 +132,7 @@ const Profile = () => {
       const error: any = updateProfileData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert({ type: 'error', text: data.message });
+        alert({type: 'error', text: data.message});
       }
     }
   };

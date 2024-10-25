@@ -46,7 +46,7 @@ const IssueLayout = ({text, onPress, status}: any) => {
   }
 
   return (
-    <View
+    <TouchableOpacity
       style={{
         flexDirection: 'row',
         width: '90%',
@@ -54,7 +54,9 @@ const IssueLayout = ({text, onPress, status}: any) => {
         alignItems: 'center',
         alignSelf: 'center',
         marginVertical: hp(1.5),
-      }}>
+      }}
+      disabled={!onPress}
+      onPress={onPress || (() => {})}>
       <Text
         style={[
           styles.text,
@@ -77,7 +79,7 @@ const IssueLayout = ({text, onPress, status}: any) => {
           }}
         />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -102,7 +104,7 @@ export default function FixIssues(props: any) {
   }, [primaryBusiness, business]);
 
   const healthData = getData(getHealthData);
-  // console.log("🚀 ~ FixIssues ~ healthData:", healthData)
+
   let percentage = 0;
   let title = '';
   if (healthData && typeof healthData.health !== 'undefined') {
@@ -140,25 +142,14 @@ export default function FixIssues(props: any) {
 
   const HTML = (
     <>
-      <TouchableOpacity
-        onPress={() =>
-          registerAgent && registerAgent.message === 'service_not_taken'
-            ? navigation.navigate('register_agent')
-            : navigation.navigate('Health')
-        }>
+      <TouchableOpacity onPress={() => navigation.navigate('Health')}>
         <IssueLayout
           text={'Register Agent'}
           status={registerAgent && registerAgent.score > 0 ? 'done' : ''}
         />
       </TouchableOpacity>
       <Line />
-      <TouchableOpacity
-        onPress={() =>
-          createAnnualReport &&
-          createAnnualReport.message === 'service_not_taken'
-            ? navigation.navigate('create_annual_report')
-            : navigation.navigate('Health')
-        }>
+      <TouchableOpacity onPress={() => navigation.navigate('Health')}>
         <IssueLayout
           text={'Build Annual Report'}
           status={
@@ -196,7 +187,11 @@ export default function FixIssues(props: any) {
             <IssueLayout text={'Activate Account'} status={isPro} />
           </TouchableOpacity>
           <Line />
-          <IssueLayout text={'Setup Your Business'} status={''} />
+          <IssueLayout
+            text={'Setup Your Business'}
+            status={''}
+            onPress={() => navigation.navigate('register_business')}
+          />
           <Line />
           {HTML}
         </View>
@@ -291,9 +286,17 @@ export default function FixIssues(props: any) {
         <IssueLayout
           text={'Activate Account'}
           status={
-            user.is_pro_user === 0 || user.stripe_account_status === 'pending'
+            user.is_pro_user === 0 || user.stripe_account_status === 'inactive'
+              ? ''
+              : user.is_pro_user === 1 &&
+                user.stripe_account_status === 'pending'
               ? 'pending'
               : 'done'
+          }
+          onPress={() =>
+            user.is_pro_user === 0 || user.stripe_account_status === 'inactive'
+              ? setModalClose(true)
+              : navigation.navigate('ConnectBank')
           }
         />
         <Line />
@@ -304,6 +307,7 @@ export default function FixIssues(props: any) {
               ? 'done'
               : 'pending'
           }
+          onPress={() => navigation.navigate('Health')}
         />
         <Line />
         {HTML}

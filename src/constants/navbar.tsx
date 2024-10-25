@@ -12,7 +12,11 @@ import {
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 import {useThemeColors} from '@constants/colors';
-import {useNavigation, useNavigationState, useRoute} from '@react-navigation/native';
+import {
+  useNavigation,
+  useNavigationState,
+  useRoute,
+} from '@react-navigation/native';
 import {useThemeImages} from './images';
 import {Gap} from './gap';
 import {useSafeArea} from 'native-base';
@@ -25,7 +29,9 @@ const Navbar = () => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
-  const [focus, setFocus] = useState('Home');
+  
+  const route: any = useRoute();
+  const {name} = route;
 
   const [modalClose, setModalClose] = useState(false);
   const storage = useAppSelector(state => state.common.storage);
@@ -36,23 +42,19 @@ const Navbar = () => {
 
   const handleHome = () => {
     navigation.navigate('Home');
-    setFocus('Home');
   };
   const handleSearch = () => {
     if (user.is_pro_user !== 1) {
       setModalClose(true);
     } else {
       navigation.navigate('InvoiceList');
-      setFocus('Invoice');
     }
   };
   const handleAccount = () => {
     navigation.navigate('Account');
-    setFocus('Account');
   };
   const handleUpdates = () => {
     navigation.navigate('Wallet');
-    setFocus('Wallet');
   };
 
   return (
@@ -60,7 +62,7 @@ const Navbar = () => {
       <TouchableOpacity
         onPress={handleHome}
         style={{alignItems: 'center', justifyContent: 'center'}}>
-        {focus == 'Home' ? (
+        {name == 'Home' ? (
           <Image
             source={pictures.homePrimary}
             style={{height: hp(3), width: hp(3)}}
@@ -72,7 +74,7 @@ const Navbar = () => {
         <Text
           style={[
             styles.textStyle,
-            {color: focus == 'Home' ? colors.primary : colors.primaryText},
+            {color: name == 'Home' ? colors.primary : colors.primaryText},
           ]}>
           Home
         </Text>
@@ -80,7 +82,7 @@ const Navbar = () => {
       <TouchableOpacity
         onPress={handleSearch}
         style={{alignItems: 'center', justifyContent: 'center'}}>
-        {focus == 'Invoice' ? <InvoiceS /> : <Invoice />}
+        {name == 'Invoice' ? <InvoiceS /> : <Invoice />}
         {/* <Image
           source={focus == 'Invoice' ? pictures.moneyPurple : pictures.money}
           style={{height: hp(3), width: hp(3)}}
@@ -89,7 +91,7 @@ const Navbar = () => {
         <Text
           style={[
             styles.textStyle,
-            {color: focus == 'Invoice' ? colors.primary : colors.primaryText},
+            {color: name == 'Invoice' ? colors.primary : colors.primaryText},
           ]}>
           Invoice
         </Text>
@@ -97,12 +99,12 @@ const Navbar = () => {
       <TouchableOpacity
         onPress={handleUpdates}
         style={{alignItems: 'center', justifyContent: 'center'}}>
-        {focus == 'Wallet' ? <WalletS /> : <Wallet />}
+        {name == 'Wallet' ? <WalletS /> : <Wallet />}
         <Gap height={hp(1)} />
         <Text
           style={[
             styles.textStyle,
-            {color: focus == 'Wallet' ? colors.primary : colors.primaryText},
+            {color: name == 'Wallet' ? colors.primary : colors.primaryText},
           ]}>
           Wallet
         </Text>
@@ -110,12 +112,12 @@ const Navbar = () => {
       <TouchableOpacity
         onPress={handleAccount}
         style={{alignItems: 'center', justifyContent: 'center'}}>
-        {focus == 'Account' ? <AccountS /> : <Account />}
+        {name == 'Account' ? <AccountS /> : <Account />}
         <Gap height={hp(0.5)} />
         <Text
           style={[
             styles.textStyle,
-            {color: focus == 'Account' ? colors.primary : colors.primaryText},
+            {color: name == 'Account' ? colors.primary : colors.primaryText},
           ]}>
           Account
         </Text>

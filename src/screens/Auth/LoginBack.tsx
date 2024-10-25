@@ -44,7 +44,7 @@ const LoginBack = () => {
   const [resendAuthCodeQuery] = userApi.useLazyResendAuthCodeQuery();
 
   const storage = useAppSelector(state => state.common.storage);
-  const {faceid_enabled} = storage;
+  const {faceid_enabled, biometricCre} = storage;
   let email = route.params ? route.params.email : '';
   if (!email) {
     email = storage.user ? storage.user.email : storage.email;
@@ -74,8 +74,10 @@ const LoginBack = () => {
     try {
       const credentials = await Keychain.getGenericPassword();
       if (credentials) {
+        dispatch(setData({key: 'biometricCre', value: true}));
         setBiometricCre(true);
       } else {
+        dispatch(setData({key: 'biometricCre', value: false}));
         setBiometricCre(false);
       }
     } catch (error) {
@@ -85,19 +87,19 @@ const LoginBack = () => {
   };
 
   const biometricLogin = async () => {
-    const {email, password} = await getBioMetricCredentials();
-    // console.log(email, password);
-    if (email && password) {
+    const {email: bioEmail, password} = await getBioMetricCredentials();
+    // console.log(email, bioEmail, password);
+    if (email && bioEmail && password && email === bioEmail) {
       loginwithPasswordQuery({
         email,
         password,
       });
     } else {
-      setBiometricCre(false);
-      resetBioMetricCredentials();
+      // setBiometricCre(false);
+      // resetBioMetricCredentials();
       alert({
-        type: 'success',
-        text: 'There is some issue with auth, Please login with password.',
+        type: 'error',
+        text: 'Auth Credentials are not matching, Please login with password.',
       });
     }
   };
@@ -107,7 +109,11 @@ const LoginBack = () => {
   };
 
   useEffect(() => {
-    checkBiometricCredentials();
+    if (typeof biometricCre === 'undefined') {
+      checkBiometricCredentials();
+    } else {
+      setBiometricCre(biometricCre);
+    }
   }, []);
 
   useEffect(() => {
@@ -123,13 +129,14 @@ const LoginBack = () => {
             password: schema.data.password,
           });
         } else if (storage.user.is_first_pass_gen === 0) {
+          // navigation.dispatch(StackActions.replace('Main'));
           navigation.dispatch(StackActions.replace('ConfirmAccount'));
         } else {
-          if (!hasBiometricCre)
-            await setBioMetricCredentials({
-              email,
-              password: schema.data.password,
-            });
+          await setBioMetricCredentials({
+            email,
+            password: schema.data.password,
+          });
+
           navigation.dispatch(StackActions.replace('Main'));
         }
       }
@@ -137,7 +144,7 @@ const LoginBack = () => {
   }, [storage.user, storage.tokens, afterLogin]);
 
   useEffect(() => {
-    if (loginwithPasswordData.isSuccess) {      
+    if (loginwithPasswordData.isSuccess) {
       const {user, tokens} = getData(loginwithPasswordData);
       setAfterLogin(true);
       afterLoginAction({
@@ -154,7 +161,7 @@ const LoginBack = () => {
       const error: any = loginwithPasswordData.error;
       const data = error && error.data ? error.data : undefined;
       if (data) {
-        alert({ type: 'error', text: data.message });
+        alert({type: 'error', text: data.message});
       }
       setSchema(updateSchema(schema, 'errors', 'password', ''));
     }
@@ -211,8 +218,6 @@ const LoginBack = () => {
       });
     }
   };
-
-  // console.log(user);
 
   return (
     <Container>

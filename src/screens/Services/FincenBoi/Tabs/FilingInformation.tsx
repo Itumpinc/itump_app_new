@@ -93,12 +93,12 @@ export function FilingInformation(props: any) {
             optionDots
           />
           <Gap height={hp(2)} />
-          {/* <Button
+          <Button
             text="Next"
             textColor="white"
-            onPress={() => toggleTab('BusinessInformation')}
+            onPress={() => toggleTab('ReportingCompany')}
           />
-          <Gap height={hp(4)} /> */}
+          <Gap height={hp(4)} />
         </View>
       )}
     </View>

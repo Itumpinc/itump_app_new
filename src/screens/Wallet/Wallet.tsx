@@ -33,6 +33,7 @@ import {
   formatAmount,
   getCurrency,
   getData,
+  getDecimalPart,
   getfirstlastname,
 } from '@src/utils/helpers';
 import {OrderCard} from '@src/components/common/ordercard';
@@ -53,7 +54,7 @@ function addPendingRequirementsErrors(connectAccount: any) {
   if (connectAccount.account.requirements.errors.length > 0)
     return connectAccount.account.requirements.errors;
 
-  const errors: any = [];
+  let errors: any = [];
 
   // "business_profile.mcc": "Your business profile is missing the MCC.",
   // "business_profile.url": "Your business profile is missing the URL.",
@@ -94,6 +95,15 @@ function addPendingRequirementsErrors(connectAccount: any) {
       errors.push({code, reason: pendingRequirements[code]});
     }
   });
+
+  if (errors.length > 3) {
+    errors = [
+      {
+        code: 'other',
+        reason: 'There are multiple issues with your account setup.',
+      },
+    ];
+  }
 
   return errors;
 }
@@ -291,6 +301,11 @@ const Wallet = () => {
   const dashboardData = getData(getDashboardData);
   const connectAccount = getData(connectAccountData);
 
+  const decimal =
+    dashboardData && dashboardData.account_balance
+      ? getDecimalPart(dashboardData.account_balance.balance)
+      : 0;
+
   return (
     <Container source={pictures.welcome}>
       <View style={{width: wp(90), alignSelf: 'center'}}>
@@ -316,16 +331,18 @@ const Wallet = () => {
                 marginRight: wp(3),
               }}>
               {dashboardData && dashboardData.account_balance
-                ? formatAmount(
-                    dashboardData.account_balance.total_balance,
-                    currency.currency_symbol,
-                  )
-                : `${currency.currency_symbol}0.00`}
+                ? formatAmount(parseInt(dashboardData.account_balance.balance, 10), currency.currency_symbol)
+                : `${currency.currency_symbol}0`}
+              {decimal > 0 ? (
+                <Text style={{color: '#F5F5F799'}}>.{decimal}</Text>
+              ) : (
+                <Text style={{color: '#F5F5F799'}}>.00</Text>
+              )}
             </Text>
-            <Image
+            {/* <Image
               source={pictures.eyeIcon}
               style={{width: hp(3), height: hp(3), marginBottom: hp(1)}}
-            />
+            /> */}
           </View>
           {typeof dashboardData.account_balance !== 'undefined' && (
             <>
@@ -422,25 +439,38 @@ const Wallet = () => {
           connectAccount={connectAccount}
           connectAccountQuery={connectAccountQuery}
         />
-      ) : null}
+      ) : (
+        <>
+          {user.is_pro_user === 0 && (
+            <>
+              <Gap height={hp(0.5)} />
+              <ActivateAccount />
+            </>
+          )}
+        </>
+      )}
 
-      {allBusiness.length > 0 &&
-        (user.is_pro_user === 0 ||
-          (connectAccount &&
-            connectAccount.account &&
-            connectAccount.account.charges_enabled === false)) && (
-          <>
-            <Gap height={hp(0.5)} />
-            <ActivateAccount />
-          </>
-        )}
       {allBusiness.length === 0 && <NewBusinessFormation />}
 
+      <Text
+        style={[
+          styles.text,
+          {
+            color: colors.secondaryText,
+            alignSelf: 'flex-start',
+            fontFamily: 'Satoshi-Black',
+            fontSize: hp(2.2),
+            marginLeft: wp(6),
+          },
+        ]}>
+        Finances
+      </Text>
+      <Gap height={hp(2)} />
       <Transaction />
       <Gap height={hp(2)} />
       <Invoices />
       {showDetails && typeof dashboardData.account_balance !== 'undefined' && (
-        <Popup closeIcon close={() => setShowDetails(false)} height={60}>
+        <Popup closeIcon close={() => setShowDetails(false)} height={80}>
           <WalletBalance
             accountBalance={dashboardData.account_balance}
             currency={currency}

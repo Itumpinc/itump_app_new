@@ -20,7 +20,8 @@ import {getData, getSettings} from '@src/utils/helpers';
 import {commonApi} from '@src/store/services/common';
 import HTMLContent from './htmlContent';
 
-const PrivacyPolicy = ({data: {type}}: any) => {
+export const PrivacyPolicy = ({data: {type, from}}: any) => {
+  const colors = useThemeColors();
   const storage = useAppSelector(state => state.common.storage);
   const {
     initConfig: {settings},
@@ -39,10 +40,28 @@ const PrivacyPolicy = ({data: {type}}: any) => {
     );
   }
 
+  const style = {
+    p: {
+      color: colors.secondaryText,
+      lineHeight: 24
+    },
+    span: {
+      color: colors.secondaryText,
+    },
+    a:{
+      color: colors.primary,
+      textDecoration: 'underline'
+    }
+  };
+
   const html = JSON.parse(boxData.data).popup_body;
   return (
-    <View style={{width: '100%', paddingHorizontal: 20, paddingTop: 20}}>
-      <HTMLContent htmlContent={html} />
+    <View
+      style={[
+        {width: '100%'},
+        from ? {} : {paddingHorizontal: 20, paddingTop: 20},
+      ]}>
+      <HTMLContent htmlContent={html} style={style} />
     </View>
   );
 };

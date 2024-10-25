@@ -55,13 +55,18 @@ export const ServiceHOC = (props: any) => {
         serviceData: paramsData.serviceData,
         routeParams: route.params,
       });
+    }else if (route.name === 'BoiForm' && route.params && route.params.businessID && route.params.edit) {
+      setParamsData({
+        serviceData: route.params.serviceData,
+        routeParams: route.params,
+      });
     }
   }, [serviceDetailData, JSON.stringify(route.params)]);
 
   if (!(paramsData && paramsData.serviceData)) {
     return (
       <View style={{height: hp(70), justifyContent: 'center'}}>
-        <Spinner size="lg" />
+        <Spinner/>
       </View>
     );
   }

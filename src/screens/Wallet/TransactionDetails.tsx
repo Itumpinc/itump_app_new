@@ -51,12 +51,18 @@ const TransactionDetails = () => {
   const [loader, setLoader] = useState(true);
   const [closeAction, setCloseAction] = useState(false);
   const transactionDetail = route.params.transaction;
+  console.log(
+    '🚀 ~ TransactionDetails ~ transactionDetail:',
+    transactionDetail,
+  );
   const storage = useAppSelector(state => state.common.storage);
   const {countryList} = storage;
 
-  const charges = transactionDetail.charges.data[0];
+  const charges = __(transactionDetail, 'charges', 'data', 0)
+    ? transactionDetail.charges.data[0]
+    : transactionDetail;
   const country = countryList.find(
-    (c: any) => c.currency_code === charges.currency.toUpperCase(),
+    (c: any) => c.currency_code === transactionDetail.currency.toUpperCase(),
   );
 
   const injectedToHtml = () => {
@@ -122,7 +128,7 @@ const TransactionDetails = () => {
     }, 1000);
   };
 
-  console.log('charges.receipt_url ===>', charges.receipt_url)
+  // console.log('charges.receipt_url ===>', charges)
 
   return (
     <Container>
@@ -134,7 +140,7 @@ const TransactionDetails = () => {
         <Header
           title="Transaction Details"
           source={pictures.arrowLeft}
-          onPress={() => navigation.navigate('InvoiceList')}
+          onPress={() => navigation.goBack()}
         />
         <View style={{width: wp(90)}}>
           <View
@@ -164,22 +170,26 @@ const TransactionDetails = () => {
                   lineHeight: hp(5),
                 }}>
                 {formatAmount(
-                  charges.amount_captured / 100,
+                  (charges.amount_captured
+                    ? charges.amount_captured
+                    : charges.amount) / 100,
                   country.currency_symbol,
                 )}
               </Text>
-              <Text
-                style={{
-                  color: colors.primaryText,
-                  fontFamily: 'Satoshi-Regular',
-                  fontSize: 14,
-                  marginBottom: 5,
-                }}>
-                to{' '}
-                <Text style={{fontWeight: 700}}>
-                  {charges.calculated_statement_descriptor}
+              {charges.calculated_statement_descriptor && (
+                <Text
+                  style={{
+                    color: colors.primaryText,
+                    fontFamily: 'Satoshi-Regular',
+                    fontSize: 14,
+                    marginBottom: 5,
+                  }}>
+                  to{' '}
+                  <Text style={{fontWeight: 700}}>
+                    {charges.calculated_statement_descriptor}
+                  </Text>
                 </Text>
-              </Text>
+              )}
 
               <Text
                 style={{
@@ -193,27 +203,29 @@ const TransactionDetails = () => {
               </Text>
             </View>
             <Gap height={hp(2)} />
-            <View
-              style={{
-                backgroundColor:
-                  statusColor[charges.refunded ? 'refund' : charges.status],
-                borderRadius: 14,
-                alignSelf: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text
+            {textColor[charges.refunded ? 'refund' : charges.status] && (
+              <View
                 style={{
-                  color:
-                    textColor[charges.refunded ? 'refund' : charges.status],
-                  fontFamily: 'Satoshi-Regular',
-                  fontSize: 14,
-                  textAlign: 'center',
-                  paddingVertical: wp(1),
-                  paddingHorizontal: 15,
+                  backgroundColor:
+                    statusColor[charges.refunded ? 'refund' : charges.status],
+                  borderRadius: 14,
+                  alignSelf: 'center',
+                  justifyContent: 'center',
                 }}>
-                {titleCase(charges.status)}
-              </Text>
-            </View>
+                <Text
+                  style={{
+                    color:
+                      textColor[charges.refunded ? 'refund' : charges.status],
+                    fontFamily: 'Satoshi-Regular',
+                    fontSize: 14,
+                    textAlign: 'center',
+                    paddingVertical: wp(1),
+                    paddingHorizontal: 15,
+                  }}>
+                  {titleCase(charges.status)}
+                </Text>
+              </View>
+            )}
             <Gap height={hp(2)} />
           </View>
           <Gap height={hp(2)} />
@@ -234,7 +246,9 @@ const TransactionDetails = () => {
                 fontFamily: 'Satoshi-Medium',
                 fontSize: 16,
               }}>
-              {orderName ? 'Order (' + orderName + ')' : 'Activation'}
+              {transactionDetail.object === 'payout'
+                ? 'Payout'
+                : titleCase(transactionDetail.metadata.type)}
             </Text>
           </View>
           <Gap height={hp(2)} />
@@ -255,7 +269,10 @@ const TransactionDetails = () => {
                 fontFamily: 'Satoshi-Medium',
                 fontSize: 16,
               }}>
-              #{charges.balance_transaction.toUpperCase()}
+              #
+              {charges.balance_transaction
+                ? charges.balance_transaction.toUpperCase()
+                : 'TXN_XXXXXXXXXXXXXX'}
             </Text>
           </View>
           <Gap height={hp(2)} />
@@ -270,42 +287,65 @@ const TransactionDetails = () => {
               Payment Method
             </Text>
             <Gap height={hp(0.8)} />
-            <Text
-              style={{
-                color: colors.boldText,
-                fontFamily: 'Satoshi-Medium',
-                fontSize: 16,
-              }}>
-              {titleCase(charges.payment_method_details.type) + '\n'}
-              {__(charges, 'payment_method_details', 'card', 'last4')
-                ? `****${charges.payment_method_details.card.last4}`
-                : ''}
-            </Text>
+            {charges.payment_method_details ? (
+              <Text
+                style={{
+                  color: colors.boldText,
+                  fontFamily: 'Satoshi-Medium',
+                  fontSize: 16,
+                }}>
+                {titleCase(charges.payment_method_details.type) + '\n'}
+                {__(charges, 'payment_method_details', 'card', 'last4')
+                  ? `****${charges.payment_method_details.card.last4}`
+                  : ''}
+              </Text>
+            ) : (
+              <Text
+                style={{
+                  color: colors.boldText,
+                  fontFamily: 'Satoshi-Medium',
+                  fontSize: 16,
+                }}>
+                {transactionDetail.object === 'payout' && transactionDetail.type
+                  ? transactionDetail.type
+                      .split('_')
+                      .map(
+                        (word: string) =>
+                          word.charAt(0).toUpperCase() + word.slice(1),
+                      )
+                      .join(' ')
+                  : '-----'}
+              </Text>
+            )}
           </View>
           <Gap height={hp(6)} />
         </View>
         <Line />
         <Gap height={hp(2)} />
-        <TouchableOpacity onPress={() => navigation.navigate('ContactUs')}>
-          <Text style={{color: colors.secondaryText}}>
-            Issue with your transaction?{' '}
-            <Text
-              style={[
-                {color: colors.primary, textDecorationLine: 'underline'},
-              ]}>
-              Dispute Transaction
-            </Text>
-          </Text>
-        </TouchableOpacity>
-        <Gap height={hp(3)} />
-        <Button
-          text="Get Receipt"
-          onPress={() => setCloseAction(true)}
-          backgroundColor={'transparent'}
-          textColor={colors.primary}
-          borderColor={colors.primary}
-          check
-        />
+        {transactionDetail.object === 'payout' ? null : (
+          <>
+            <TouchableOpacity onPress={() => navigation.navigate('ContactUs')}>
+              <Text style={{color: colors.secondaryText}}>
+                Issue with your transaction?{' '}
+                <Text
+                  style={[
+                    {color: colors.primary, textDecorationLine: 'underline'},
+                  ]}>
+                  Dispute Transaction
+                </Text>
+              </Text>
+            </TouchableOpacity>
+            <Gap height={hp(3)} />
+            <Button
+              text="Get Receipt"
+              onPress={() => setCloseAction(true)}
+              backgroundColor={'transparent'}
+              textColor={colors.primary}
+              borderColor={colors.primary}
+              check
+            />
+          </>
+        )}
       </View>
       {closeAction && (
         <Popup
@@ -324,7 +364,7 @@ const TransactionDetails = () => {
                   top: hp(80) / 2,
                   zIndex: 8,
                 }}>
-                <Spinner size={'lg'} />
+                <Spinner />
               </View>
             )}
             <WebView

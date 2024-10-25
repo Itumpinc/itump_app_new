@@ -237,13 +237,19 @@ export const Steps = (props: any) => {
   }, [healthDetails]);
 
   let action = () => {};
+
   if (businessDetails.is_business_existing === 1 && !businessDetails.detail) {
     action = () =>
-      navigation.navigate('ExistingBusinessAddFormation', {
-        id: businessDetails.id,
-      });
+      registerBusiness.message === 'no_documents'
+        ? navigation.navigate('AddDocuments', {business_id: businessDetails.id})
+        : navigation.navigate('ExistingBusinessAddFormation', {
+            id: businessDetails.id,
+          });
   } else {
-    action = () => navigation.navigate('AddBusiness', {id: businessDetails.id});
+    action = () =>
+      registerBusiness.message === 'no_documents'
+        ? navigation.navigate('AddDocuments', {business_id: businessDetails.id})
+        : navigation.navigate('AddBusiness', {id: businessDetails.id});
   }
 
   return (
@@ -332,6 +338,8 @@ export const Steps = (props: any) => {
           onPress={
             registerBusiness.total_score === registerBusiness.score
               ? ''
+              : registerBusiness.message === 'no_documents'
+              ? 'Add Documents'
               : 'Add Details'
           }
           onPressAction={action}

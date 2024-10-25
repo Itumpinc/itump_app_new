@@ -38,7 +38,7 @@ import NewBusinessFormation from '../Home/NewBusinessFormation';
 const LIMIT = 20;
 let isEndReachedCalledDuringMomentum = false;
 
-const InvoiceList = () => {
+const InvoiceList = ({limit}: {limit?: number}) => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
@@ -73,10 +73,11 @@ const InvoiceList = () => {
     if (loading || !hasMore) return;
     setLoading(true);
     setPage(page + 1);
-    await listInvoiceQuery(`?page=${page + 1}&limit=${LIMIT}`);
+    await listInvoiceQuery(`?page=${page + 1}&limit=${limit || LIMIT}`);
   };
 
   useEffect(() => {
+    // console.log('🚀 ~ invoiceList:', listInvoicedata);
     if (listInvoicedata.isSuccess) {
       setLoading(false);
       const invoiceList = getData(listInvoicedata);
@@ -160,7 +161,7 @@ const InvoiceList = () => {
                 list.invoice.to_user.last_name
               : avatar.first_name + ' ' + avatar.last_name
           }
-          date={`Created on ${moment(list.invoice.created_at).format(
+          date={`${myInvoice ? 'Raised' : 'Received'} on ${moment(list.invoice.created_at).format(
             'DD MMM YYYY',
           )}`}
           money={formatAmount(

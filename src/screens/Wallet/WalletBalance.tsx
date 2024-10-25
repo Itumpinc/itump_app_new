@@ -77,9 +77,11 @@ const ConnectedAccount = ({externalAccount, connectAccount}: any) => {
 
   return (
     <View>
-      <Gap height={hp(1)} />
-      <Line />
-      <Gap height={hp(1)} />
+      <Gap height={hp(2)} />
+      <View style={{opacity: 0.5}}>
+        <Line />
+      </View>
+      <Gap height={hp(3)} />
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Text style={{color: colors.secondaryText, fontSize: hp(1.6)}}>
           Connected Account
@@ -226,88 +228,114 @@ const WalletBalance = (props: any) => {
 
   return (
     <View style={{width: wp(90), alignSelf: 'center', paddingTop: hp(4)}}>
-      <View>
-        <Text
-          style={{
-            color: colors.secondaryText,
-            fontSize: hp(1.6),
-            opacity: 0.6,
-          }}>
-          Total balance
-        </Text>
-        <Gap height={hp(0.5)} />
-        <Text
-          style={{
-            color: colors.secondaryText,
-            fontFamily: 'Satoshi-Bold',
-            fontSize: hp(2.5),
-          }}>
-          {formatAmount(accountBalance.total_balance, currency.currency_symbol)}{' '}
-          <Text style={{opacity: 0.5, fontSize: hp(2)}}>
-            {accountBalance.currency.toUpperCase()}
-          </Text>
-        </Text>
+      <View style={styles.backgroundContainer}>
+        <Image
+          source={pictures.walletBackground}
+          style={[styles.backgroundImage]}
+        />
+        <View style={styles.infoContainer}>
+          <View>
+            <Text
+              style={{
+                color: 'white',
+                fontSize: hp(1.6),
+              }}>
+              Total balance
+            </Text>
+            <Gap height={hp(0.5)} />
+            <Text
+              style={{
+                color: 'white',
+                fontFamily: 'Satoshi-Bold',
+                fontSize: 22,
+
+                marginRight: wp(3),
+              }}>
+              {formatAmount(
+                accountBalance.total_balance,
+                currency.currency_symbol,
+              )}
+            </Text>
+          </View>
+        </View>
       </View>
-      <Gap height={hp(1)} />
-      <Line />
-      <Gap height={hp(1)} />
-      <View>
-        <Text
+      <Gap height={hp(2)} />
+      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View
           style={{
-            color: colors.secondaryText,
-            fontSize: hp(1.6),
-            opacity: 0.6,
+            borderWidth: 1,
+            borderColor: colors.boxBorderColor,
+            borderRadius: 10,
+            padding: 15,
+            width: wp(43),
           }}>
-          Available to pay out
-        </Text>
-        <Gap height={hp(0.5)} />
-        <Text
+          <View style={[styles.infoContainer, {paddingLeft: 0}]}>
+            <View>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: hp(1.6),
+                }}>
+                Available to pay out
+              </Text>
+              <Gap height={hp(0.5)} />
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'Satoshi-Bold',
+                  fontSize: 22,
+
+                  marginRight: wp(3),
+                }}>
+                {formatAmount(accountBalance.balance, currency.currency_symbol)}
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View
           style={{
-            color: colors.secondaryText,
-            fontFamily: 'Satoshi-Bold',
-            fontSize: hp(2.5),
+            borderWidth: 1,
+            borderColor: colors.boxBorderColor,
+            borderRadius: 10,
+            padding: 15,
+            width: wp(43),
           }}>
-          {formatAmount(accountBalance.balance, currency.currency_symbol)}{' '}
-          <Text style={{opacity: 0.5, fontSize: hp(2)}}>
-            {accountBalance.currency.toUpperCase()}
-          </Text>
-        </Text>
+          <View style={[styles.infoContainer, {paddingLeft: 0}]}>
+            <View>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: hp(1.6),
+                }}>
+                Available soon
+              </Text>
+              <Gap height={hp(0.5)} />
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'Satoshi-Bold',
+                  fontSize: 22,
+
+                  marginRight: wp(3),
+                }}>
+                {formatAmount(
+                  accountBalance.available_soon,
+                  currency.currency_symbol,
+                )}
+              </Text>
+            </View>
+          </View>
+        </View>
       </View>
-      <Gap height={hp(1)} />
-      <Line />
-      <Gap height={hp(1)} />
-      <View>
-        <Text
-          style={{
-            color: colors.secondaryText,
-            fontSize: hp(1.6),
-            opacity: 0.6,
-          }}>
-          Available soon
-        </Text>
-        <Gap height={hp(0.5)} />
-        <Text
-          style={{
-            fontFamily: 'Satoshi-Bold',
-            fontSize: hp(2.5),
-            color: colors.secondaryText,
-          }}>
-          {formatAmount(
-            accountBalance.available_soon,
-            currency.currency_symbol,
-          )}{' '}
-          <Text style={{opacity: 0.5, fontSize: hp(2)}}>
-            {accountBalance.currency.toUpperCase()}
-          </Text>
-        </Text>
-      </View>
+      <Gap height={hp(2)} />
+
       {externalAccount && (
         <ConnectedAccount
           externalAccount={externalAccount}
           connectAccount={connectAccount}
         />
       )}
-      <Gap height={hp(4)} />
+      <Gap height={hp(8)} />
 
       {!(
         connectAccount &&
@@ -493,6 +521,29 @@ const styles = StyleSheet.create({
     // elevation: 2,
     width: wp(34),
     marginHorizontal: 10,
+  },
+
+  backgroundContainer: {
+    position: 'relative',
+    width: Platform.OS == 'ios' ? hp(42) : hp(45),
+    height: Platform.OS == 'ios' ? hp(10) : hp(15),
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  backgroundImage: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  infoContainer: {
+    paddingLeft: wp(4),
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
   },
 });
 

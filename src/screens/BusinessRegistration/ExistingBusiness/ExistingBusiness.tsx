@@ -16,6 +16,7 @@ import Form from '@src/components/hocs/forms/form';
 import {serviceApi} from '@src/store/services/service';
 import {getData} from '@src/utils/helpers';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
+import PageLoader from '@src/components/common/PageLoader';
 
 export default function ExistingBusiness(props: any) {
   const pictures = useThemeImages();
@@ -69,7 +70,16 @@ export default function ExistingBusiness(props: any) {
 
   const doSubmit = () => {};
 
-  if (!schema) return null;
+  if (!schema)
+    return (
+      <PageLoader
+        title={
+          currentStep && currentStep.component === 'ExistingBusinessSuccess'
+            ? 'What Next?'
+            : 'Add a Business'
+        }
+      />
+    );
 
   // console.log(schema.data);
 

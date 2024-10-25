@@ -31,26 +31,28 @@ import {
 import {Line} from '@src/constants/Line';
 import moment from 'moment';
 import TransactionCard from '../Wallet/TransactionCard';
+import PageLoader from '@src/components/common/PageLoader';
 
 export default function Invoices() {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
   const storage = useAppSelector(state => state.common.storage);
-  const {user} = storage;
+  const {user, countryList} = storage;
 
-  const [getTransactionsQuery, getTransactionsData] =
-    userApi.useLazyGetTransactionsQuery();
+  const [listInvoiceQuery, listInvoicedata] = userApi.useLazyListInvoiceQuery();
 
   useFocusedEffect(() => {
-    getTransactionsQuery('?type=invoice&limit=2');
+    listInvoiceQuery(`?page=1&limit=2`);
   }, []);
 
-  if (!getTransactionsData.isSuccess) return null;
+  if (!listInvoicedata.isSuccess) return <PageLoader />;
 
-  const transactions = getData(getTransactionsData);
-  if (!(transactions.data && transactions.data.length > 0)) return null;
-  
+  const invoiceList = getData(listInvoicedata);
+  if (!(invoiceList.rows && invoiceList.rows.length > 0)) {
+    return null;
+  }
+
   return (
     <>
       <View
@@ -79,73 +81,109 @@ export default function Invoices() {
         </View>
         <Gap height={hp(2)} />
 
-        {transactions.data && transactions.data.length > 0 ? (
-          transactions.data.map((transaction: any, index: number) => {
-            return <TransactionCard item={transaction} key={index} />;
-          })
-        ) : (
-          <View
-            style={{
-              backgroundColor: colors.activityBox,
-              paddingVertical: hp(2),
-              borderRadius: hp(2),
-              width: '90%',
-              alignSelf: 'center',
-            }}>
-            <View
+        {invoiceList.rows.length > 0
+          ? invoiceList.rows.map((list: any, index: number) => {
+              const myInvoice = list.invoice.user_id === user.id;
+              let avatar = list.invoice.user;
+              if (
+                list.invoice.user_business &&
+                list.invoice.user_business.business_title
+              ) {
+                const {firstName, lastName} = getfirstlastname(
+                  list.invoice.user_business.business_title,
+                );
+                avatar = {
+                  first_name: firstName,
+                  last_name: lastName,
+                };
+              }
+              const country = countryList.find(
+                (c: any) => c.currency_code === list.invoice.currency,
+              );
+
+              let screen = 'InvoiceDetails';
+              if (list.invoice.status === 'raised' && !myInvoice) {
+                screen = 'InvoicePayment';
+              }
+
+              return (
+                <TouchableOpacity
+                  key={list.invoice.id}
+                  onPress={() =>
+                    navigation.navigate(screen, {
+                      invoice_num: list.invoice.invoice_num,
+                    })
+                  }>
+                  <OrderCard
+                    avatar={avatar}
+                    status={list.invoice.status}
+                    title={
+                      myInvoice
+                        ? list.invoice.to_user.first_name +
+                          ' ' +
+                          list.invoice.to_user.last_name
+                        : avatar.first_name + ' ' + avatar.last_name
+                    }
+                    date={`${myInvoice ? 'Raised' : 'Received'} on ${moment(
+                      list.invoice.created_at,
+                    ).format('DD MMM YYYY')}`}
+                    money={formatAmount(
+                      myInvoice
+                        ? list.invoice.invoice_amount
+                        : list.invoice.total_amount,
+                      country.currency_symbol,
+                    )}
+                    isRecurring={list.invoice.is_recurring}
+                    myInvoice={myInvoice}
+                    small
+                  />
+                  {index !== invoiceList.rows.length - 1 && (
+                    <>
+                      <Gap height={hp(2)} />
+                      <Line />
+                      <Gap height={hp(2)} />
+                    </>
+                  )}
+                </TouchableOpacity>
+              );
+            })
+          : null}
+
+        <Gap height={hp(2)} />
+        {invoiceList.rows && invoiceList.rows.length > 0 && (
+          <>
+            <View style={{width: '90%'}}>
+              <Line />
+            </View>
+            <Gap height={hp(3)} />
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('InvoiceList')
+              }
               style={{
-                borderWidth: 0.2,
-                padding: hp(1.5),
-                borderColor: colors.secondaryText,
-                width: '92%',
-                alignSelf: 'center',
-                marginTop: hp(1),
-                borderRadius: hp(1),
+                alignSelf: 'flex-start',
+                paddingLeft: wp(4),
+                flexDirection: 'row',
+                alignItems: 'center',
               }}>
               <Text
                 style={[
                   styles.text,
                   {
-                    color: colors.secondaryText,
-                    fontSize: hp(1.8),
-                    alignSelf: 'flex-start',
+                    color: colors.primary,
+                    fontFamily: 'Satoshi-Medium',
+                    marginRight: wp(1),
+                    alignSelf: 'center',
                   },
                 ]}>
-                No Invoice Found!
+                See All Invoices
               </Text>
-            </View>
-          </View>
-        )}
-
-        <Gap height={hp(1.5)} />
-        {transactions.data && transactions.data.length > 0 && (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('TransactionList', {type: 'invoice'})
-            }
-            style={{
-              alignSelf: 'flex-start',
-              paddingLeft: wp(4),
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Text
-              style={[
-                styles.text,
-                {
-                  color: colors.primary,
-                  fontFamily: 'Satoshi-Medium',
-                  marginRight: wp(1),
-                  alignSelf: 'center',
-                },
-              ]}>
-              See All Invoices
-            </Text>
-            <Image
-              source={pictures.arrowRightPrimary}
-              style={{height: hp(2), width: hp(2), marginTop: 3}}
-            />
-          </TouchableOpacity>
+              <Image
+                source={pictures.arrowRightPrimary}
+                style={{height: hp(2), width: hp(2), marginTop: 3}}
+              />
+            </TouchableOpacity>
+          </>
         )}
       </View>
       <Gap height={hp(2)} />

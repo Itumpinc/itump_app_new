@@ -43,17 +43,31 @@ export const updateSchema = (
   };
 };
 
+const getName = (name: string) => {
+  return name
+    .toLowerCase()
+    .split('_')
+    .filter(word => word !== 'id') // Ignore 'id'
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
 const isSchemaValid = (schema: any, formState: any, data: any) => {
   if (typeof schema.validate === 'function') {
     const {error} = schema.validate(data);
     const {errors} = deepCopy(formState);
 
     if (error) {
-      console.log('error.details===>', error.details);
+      // console.log('error.details===>', error.details);
       for (let index = 0; index < error.details.length; index++) {
         const er = error.details[index];
-        errors[er.path[0]] = er.message;
+        let message = er.message;
+        if (er.type === 'number.base') {
+          message = getName(er.path[0])+' cannot be empty';
+        }
+        errors[er.path[0]] = message;
       }
+
       return {
         valid: Object.keys(errors).length === 0,
         errors,
@@ -207,7 +221,7 @@ const Form = (props: {
     const {error} = schema.validate({[name]: value}, {abortEarly: false});
     const errors = {...formState.errors};
     if (error) {
-      // console.log(error);
+      // console.log('error===>', error.details);
       const validationError = error.details.find(
         (err: any) => err.path[0] === name,
       );

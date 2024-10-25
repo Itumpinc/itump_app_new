@@ -1,22 +1,24 @@
 import {StyleSheet, View, Image, TouchableOpacity} from 'react-native';
 
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useThemeImages} from '@constants/images';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {Text} from 'native-base';
+import {Spinner, Text} from 'native-base';
 import {useThemeColors} from '@constants/colors';
 import {useNavigation} from '@react-navigation/native';
 import {useAppSelector} from '@src/store/store';
 import {Gap} from '@src/constants/gap';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 
 export const TapToPay = () => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
   const storage = useAppSelector(state => state.common.storage);
+  const {user} = storage;
 
   return (
     <>

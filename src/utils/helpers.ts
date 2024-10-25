@@ -73,8 +73,6 @@ export const getfirstlastname = (fullName: string) => {
 };
 
 export function alert(message: string | Object | any, native = false) {
-  console.log(message);
-
   if (native && typeof message === 'string') {
     Alert.alert(message);
   } else {
@@ -138,6 +136,11 @@ export function createImgUrl(url: string, imgEndPoint: string) {
     }
     return imgEndPoint.replace('http://', 'https://') + url;
   }
+}
+
+export function getDecimalPart(number: number) {
+  const decimalPart = number.toString().split('.')[1];
+  return decimalPart ? parseInt(decimalPart) : 0;
 }
 
 export function formatAmount(num: number | number, currency?: string) {

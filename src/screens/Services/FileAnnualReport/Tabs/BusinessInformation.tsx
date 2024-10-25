@@ -16,7 +16,6 @@ import {
   RenderPhone,
 } from '@src/components/hocs/forms';
 import {industry} from '@src/utils/services';
-import Button from '@src/constants/button';
 import useStyles from '@src/screens/BusinessRegistration/styles';
 import {GetTabHeader} from '@src/screens/BusinessRegistration/NewBusiness/Tabs/Utils';
 import {useAppSelector} from '@src/store/store';
@@ -72,10 +71,10 @@ export function BusinessInformation(props: any) {
       setSchema(
         updateSchema(schema, 'data', '', {
           company_industry: businessData.detail.industry_type,
-          company_establishment_date: moment(
+          company_establishment_date: businessData.detail.formation_date ? moment(
             businessData.detail.formation_date,
             'YYYY-MM-DD',
-          ).format('MM-DD-YYYY'),
+          ).format('MM-DD-YYYY') : '',
         }),
       );
     }

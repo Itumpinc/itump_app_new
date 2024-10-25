@@ -54,7 +54,7 @@ const Input = (props: {
 
   const colors = useThemeColors();
   const split = value ? value.split('-') : [];
-  const loadCountryQuery = commonApi.useLoadCountryQuery();
+  const loadCountryQuery = commonApi.useLoadCountryQuery('?all=1');
   const [selectedCountry, setSelectedCountry] = useState<any>();
   const [countryData, setCountryData] = useState([]);
   const [show, setShow] = useState(false);

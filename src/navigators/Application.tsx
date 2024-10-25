@@ -55,7 +55,7 @@ export const toastConfig = () => {
             paddingTop: 8,
             paddingBottom: 8,
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
           },
         ]}>
         {image}
@@ -87,10 +87,13 @@ export const toastConfig = () => {
 
 const ApplicationNavigator = () => {
   const dispatch = useAppDispatch();
-  const selectedtheme = useAppSelector((state: any) => state.common.theme);
-  if (!selectedtheme) {
+  const storage = useAppSelector(state => state.common.storage);
+  const {appearance} = storage;
+  if (appearance === 'system' || !appearance) {
     const scheme = Appearance.getColorScheme();
     dispatch(setTheme(scheme));
+  } else {
+    dispatch(setTheme(appearance));
   }
 
   return (

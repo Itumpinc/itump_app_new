@@ -70,13 +70,14 @@ export function ExistingBusinessAddFormation(props: any) {
         ]}
       />
 
-      <Gap height={hp(46)} />
+      <Gap height={hp(35)} />
       <Button
         text="Next"
         textColor="white"
         onPress={submit}
         disabled={!(schema.data && schema.data.haveFormedDate)}
       />
+      <Gap height={hp(5)} />
     </>
   );
 }

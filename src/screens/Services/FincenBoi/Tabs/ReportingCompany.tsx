@@ -52,25 +52,10 @@ export function ReportingCompany(props: any) {
     serviceApi.useLazyServiceRequestDetailQuery();
 
   useEffect(() => {
-    if (serviceRequestDetailData.isSuccess) {
-      const serviceRequestDetail = getData(serviceRequestDetailData);
-      setTimeout(() => {
-        setSchema(
-          updateSchema(
-            schema,
-            'data',
-            'alternate_company_name',
-            serviceRequestDetail.dba_name,
-          ),
-        );
-      }, 500);
-    }
-  }, [serviceRequestDetailData]);
-
-  useEffect(() => {
-    if (businessDetailData.isSuccess) {
+    if (businessDetailData.isSuccess && serviceRequestDetailData.isSuccess) {
       const businessData = getData(businessDetailData);
-      
+      const serviceRequestDetail = getData(serviceRequestDetailData);
+
       let fillData = {
         business_title: businessData.business_title,
         jurisdiction_country_id: businessData.country.id,
@@ -82,6 +67,7 @@ export function ReportingCompany(props: any) {
         company_zipcode: businessData.detail.zipcode,
         company_email: businessData.detail.email,
         company_phone: businessData.detail.phone_num,
+        alternate_company_name: serviceRequestDetail.dba_name
       };
 
       if (businessData.detail.ein) {
@@ -104,8 +90,9 @@ export function ReportingCompany(props: any) {
       }
 
       const incorporator = businessData.users.find(
-        (u: any) => u.business_user_type === 'incorporator',
+        (u: any) => u.business_user_type === 'shareholder',
       );
+
       if (incorporator) {
         fillData = {
           ...fillData,
@@ -124,9 +111,11 @@ export function ReportingCompany(props: any) {
         };
       }
 
-      setSchema(updateSchema(schema, 'data', '', fillData));
+      setTimeout(() => {
+        setSchema(updateSchema(schema, 'data', '', fillData));
+      }, 500);
     }
-  }, [businessDetailData]);
+  }, [businessDetailData, serviceRequestDetailData]);
 
   useEffect(() => {
     if (selectedBusiness) {
@@ -153,6 +142,9 @@ export function ReportingCompany(props: any) {
       }
     })();
   }, [schema.data.company_country_id]);
+
+  console.log('--------------------------------');
+  console.log('schema.data====>', schema.data);
 
   return (
     <View>
@@ -311,7 +303,14 @@ export function ReportingCompany(props: any) {
             placeHolder="Zip/Postal Code"
           />
 
+      
           <Gap height={hp(2)} />
+          <Button
+            text="Next"
+            textColor="white"
+            onPress={() => toggleTab('CompanyApplicant')}
+          />
+          <Gap height={hp(4)} />
         </View>
       )}
     </View>

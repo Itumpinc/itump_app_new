@@ -24,6 +24,7 @@ import {Gap} from '@src/constants/gap';
 import {Line} from '@src/constants/Line';
 import {useThemeColors} from '@src/constants/colors';
 import MakePayment from './MakePayment';
+import PageLoader from '@src/components/common/PageLoader';
 
 const SelectPlanBlock = (props: any) => {
   const colors = useThemeColors();
@@ -317,7 +318,7 @@ const OrderSummary = () => {
       createServiceOrderData.isSuccess
     )
   )
-    return null;
+    return <PageLoader title="Order Summary" />;
 
   const computationData = getData(createServiceOrderComputationData);
   const serviceOrderData = getData(createServiceOrderData);

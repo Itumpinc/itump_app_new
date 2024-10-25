@@ -20,9 +20,10 @@ import {Gap} from '@src/constants/gap';
 import {OrderCard} from '@src/components/common/ordercard';
 import {orderApi} from '@src/store/services/order';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
-import {formatAmount, getData, getfirstlastname} from '@src/utils/helpers';
+import {__, formatAmount, getData, getfirstlastname} from '@src/utils/helpers';
 import moment from 'moment';
 import {Line} from '@src/constants/Line';
+import PageLoader from '@src/components/common/PageLoader';
 
 export default function RecentOrders() {
   const pictures = useThemeImages();
@@ -38,10 +39,10 @@ export default function RecentOrders() {
     loadUsersOrderQuery(`?page=1&limit=2`);
   }, []);
 
-  if (!loadUsersOrderData.isSuccess) return null;
+  if (!loadUsersOrderData.isSuccess) return <PageLoader />;
 
   const data = getData(loadUsersOrderData);
-  if(!(data.rows && data.rows.length > 0)) return null;
+  if (!(data.rows && data.rows.length > 0)) return null;
   return (
     <>
       <View
@@ -82,6 +83,15 @@ export default function RecentOrders() {
             (c: any) => c.currency_code === list.order.currency,
           );
 
+          let status = list.items[0].status;
+          if (
+            __(list, 'items', '0', 'service', 'tags') ===
+              'service_fincen_boi' &&
+            !__(list, 'service_detail', 'company_email')
+          ) {
+            status = 'missing_details';
+          }
+
           return (
             <TouchableOpacity
               key={list.order.id}
@@ -92,7 +102,7 @@ export default function RecentOrders() {
               }}>
               <OrderCard
                 avatar={avatar}
-                status={list.items[0].status}
+                status={status}
                 isRecurring={
                   list.order.is_recurring &&
                   list.order.payment_status === 'partial_paid'
@@ -121,7 +131,8 @@ export default function RecentOrders() {
             paddingLeft: wp(4),
             flexDirection: 'row',
             alignItems: 'center',
-          }} onPress={()=>navigation.navigate('OrderList')}>
+          }}
+          onPress={() => navigation.navigate('OrderList')}>
           <Text
             style={[
               styles.text,

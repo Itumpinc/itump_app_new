@@ -21,6 +21,7 @@ import Header from '@src/constants/header';
 import Button from '@src/constants/button';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {formatAmount} from '@src/utils/helpers';
+import PageLoader from '@src/components/common/PageLoader';
 
 const InvoiceSuccess = () => {
   const pictures = useThemeImages();
@@ -43,7 +44,7 @@ const InvoiceSuccess = () => {
     });
   };
 
-  if (!params) return null;
+  if (!params) return <PageLoader title="Send Invoice" />;
 
   return (
     <Container>
@@ -101,11 +102,37 @@ const InvoiceSuccess = () => {
             </View>
           </View>
 
-          <Gap height={hp(10)} />
+          <Gap height={hp(6)} />
+          <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between'}}>
+            <Button
+              text="Send More"
+              onPress={() => {
+                  navigation.navigate('CreateInvoice');
+              }}
+              textColor={colors.primary}
+              icon={true}
+              iconSource={pictures.Detail}
+              backgroundColor={colors.background}
+              borderColor={colors.primary}
+              check={true}
+              half
+            />
+            <Button
+              text="Go Home"
+              onPress={()=>navigation.navigate('Home')}
+              textColor={colors.primary}
+              borderColor={colors.primary}
+              icon={true}
+              iconSource={pictures.HomeButtonPrimary}
+              check={true}
+              half
+            />
+          </View>
+          <Gap height={hp(2)} />
           <View style={{alignItems: 'center'}}>
             <Button
               text="Go to Wallet"
-              onPress={() => navigation.navigate('InvoiceList')}
+              onPress={() => navigation.navigate('Wallet')}
               textColor="white"
               backgroundColor={colors.primary}
               borderColor={colors.primary}

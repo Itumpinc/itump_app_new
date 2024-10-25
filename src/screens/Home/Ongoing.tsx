@@ -23,6 +23,7 @@ import Popup from '@src/components/common/popup';
 import Button from '@src/constants/button';
 import {orderApi} from '@src/store/services/order';
 import {getData} from '@src/utils/helpers';
+import PageLoader from '@src/components/common/PageLoader';
 
 export default function Ongoing(props: any) {
   const colors = useThemeColors();
@@ -48,7 +49,7 @@ export default function Ongoing(props: any) {
 
   const loadUsersOrderData = orderApi.useLoadUsersOrderQuery('');
 
-  if (!loadUsersOrderData.isSuccess) return null;
+  if (!loadUsersOrderData.isSuccess) return <PageLoader />;
 
   const loadUsersOrder = getData(loadUsersOrderData);
 

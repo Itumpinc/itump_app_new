@@ -15,6 +15,7 @@ import {Text} from 'native-base';
 import {useThemeColors} from '@constants/colors';
 import {Gap} from '@src/constants/gap';
 import AvatarCard from './avatarCard';
+import {titleCase} from '@src/utils/helpers';
 
 export const OrderCard = ({
   title,
@@ -26,7 +27,9 @@ export const OrderCard = ({
   isRecurring,
   myInvoice,
   style,
-  small
+  small,
+  transactionType,
+  type,
 }: any) => {
   const colors = useThemeColors();
   const statusColor: any = {
@@ -41,6 +44,7 @@ export const OrderCard = ({
     processing: colors.lightOrange,
     completed: colors.successBackgroundColor,
     tried: colors.errorText + '30',
+    missing_details: colors.errorText + '30',
   };
 
   const textColor: any = {
@@ -54,6 +58,7 @@ export const OrderCard = ({
     processing: colors.darkOrange,
     completed: colors.success,
     tried: colors.errorText,
+    missing_details: colors.errorText,
   };
 
   const statusList: any = {
@@ -63,7 +68,8 @@ export const OrderCard = ({
     confirm: 'Paid and Confirmed',
     processing: 'In Progress',
     completed: 'Completed',
-    tried: 'Tried and Failed'
+    tried: 'Tried and Failed',
+    missing_details: 'Paid / Missing Details',
   };
 
   return (
@@ -149,6 +155,24 @@ export const OrderCard = ({
           ]}>
           {title}
         </Text>
+        {type ? (
+          <>
+            <Gap height={hp(0)} />
+            <Text
+              style={[
+                styles.text,
+                {
+                  color: colors.secondaryText,
+                  fontFamily: 'Satoshi-Regular',
+                  alignSelf: 'flex-start',
+                  fontSize: hp(1.5),
+                },
+              ]}>
+              {titleCase(type)}
+            </Text>
+          </>
+        ) : null}
+
         <Gap height={hp(0)} />
         <Text
           style={[
@@ -163,6 +187,7 @@ export const OrderCard = ({
           {date}
         </Text>
       </View>
+
       {money && (
         <View style={{width: wp(25)}}>
           <Text
@@ -174,7 +199,7 @@ export const OrderCard = ({
                 color: colors.secondaryText,
               },
             ]}>
-            {money}
+            {transactionType === 'debit' ? '-' : '+'} {money}
           </Text>
         </View>
       )}

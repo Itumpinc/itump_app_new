@@ -105,8 +105,6 @@ const Review = (props: any) => {
         });
       }
 
-      console.log(applicants);
-
       let JSONData = {
         company_id: schema.data.company_id,
         filing_type: schema.data.filing_type,
@@ -136,7 +134,7 @@ const Review = (props: any) => {
         beneficiary_state_id: schema.data.beneficiary_state_id || 0,
         beneficiary_city: schema.data.beneficiary_city,
         beneficiary_address: schema.data.beneficiary_address,
-        beneficiary_dob: schema.data.beneficiary_dob,
+        beneficiary_dob: schema.data.beneficiary_dob || '01-01-1970',
         beneficiary_address2: schema.data.beneficiary_address2,
         beneficiary_zipcode: schema.data.beneficiary_zipcode,
         beneficiary_id_type: schema.data.beneficiary_id_type,
@@ -168,7 +166,7 @@ const Review = (props: any) => {
         };
       }
 
-      console.log(JSONData);
+      // console.log(JSONData); 
 
       let serviceCreateUpdateData = await serviceUpdateQuery({
         id:

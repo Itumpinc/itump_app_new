@@ -821,7 +821,7 @@ const Concrypt = (props: any) => {
           <Details details={getData(businessDetailData)} {...props} />
         ) : (
           <View style={{height: hp(60), justifyContent: 'center'}}>
-            <Spinner size={'lg'} />
+            <Spinner />
           </View>
         )}
 

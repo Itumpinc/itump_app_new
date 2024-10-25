@@ -22,6 +22,7 @@ import {setData} from '@src/store/services/storage';
 import {WebView} from 'react-native-webview';
 import Popup from '@src/components/common/popup';
 import {Spinner} from 'native-base';
+import PageLoader from '@src/components/common/PageLoader';
 
 export const WebViewConnect = (props: any) => {
   const {stripeAccount, closeAction, doneSubmittion} = props;
@@ -95,7 +96,6 @@ export const WebViewConnect = (props: any) => {
     // if (url.includes('?errors=true')) {
     //   webViewRef.current.stopLoading();
     // }
-
   };
 
   const hideLoader = () => {
@@ -117,7 +117,7 @@ export const WebViewConnect = (props: any) => {
               top: hp(80) / 2,
               zIndex: 8,
             }}>
-            <Spinner size={'lg'} />
+            <Spinner />
           </View>
         )}
         <WebView
@@ -143,6 +143,7 @@ const ConnectBank = () => {
   const styles = useStyles();
   const navigation: any = useNavigation();
   const pictures = useThemeImages();
+  const colors = useThemeColors();
   const dispatch = useAppDispatch();
 
   const storage = useAppSelector(state => state.common.storage);
@@ -246,26 +247,8 @@ const ConnectBank = () => {
     setOpenWebview(false);
   };
 
-  if (user.stripe_account_id && user.stripe_account_status !== 'active') {
-    return (
-      <Container>
-        <View
-          style={{
-            alignSelf: 'center',
-            width: wp(90),
-          }}>
-          <View
-            style={{
-              width: wp(90),
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: hp(80),
-            }}>
-            <Spinner size={'lg'} />
-          </View>
-        </View>
-      </Container>
-    );
+  if (user.stripe_account_id) {
+    return <PageLoader />;
   }
 
   return (
@@ -289,16 +272,29 @@ const ConnectBank = () => {
               styles.secondaryText,
               {textAlign: 'center', lineHeight: 22},
             ]}>
-            Congratulations, Now you are ready to connect bank account to begin
-            collection funds from customers.
+            To enable Itump deposit your funds directly in your bank account for
+            ease of business management. Itump Pay helps you to collect payments
+            from customers, and deposits to your account in no time. See our
+            legals for{' '}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('LegalOption')}>
+              <Text
+                style={{
+                  textDecorationLine: 'underline',
+                  color: colors.primary,
+                }}>
+                Terms and Privacy
+              </Text>
+            </TouchableOpacity>
           </Text>
-          <Gap height={hp(20)} />
+          <Gap height={hp(18)} />
           <Button
             text="Continue"
             textColor="white"
             onPress={() => connectBank()}
             loader={loader}
           />
+          <Gap height={hp(5)} />
         </View>
       </View>
       {openWebview && (

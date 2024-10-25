@@ -105,8 +105,6 @@ const Review = (props: any) => {
         };
       }
 
-      console.log('🚀 ~ submit ~ JSONData:', JSONData);
-
       let serviceCreateUpdateData;
       if (paramsData.routeParams && paramsData.routeParams.serviceRequestId) {
         serviceCreateUpdateData = await serviceUpdateQuery({

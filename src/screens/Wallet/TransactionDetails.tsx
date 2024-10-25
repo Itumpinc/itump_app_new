@@ -51,10 +51,7 @@ const TransactionDetails = () => {
   const [loader, setLoader] = useState(true);
   const [closeAction, setCloseAction] = useState(false);
   const transactionDetail = route.params.transaction;
-  console.log(
-    '🚀 ~ TransactionDetails ~ transactionDetail:',
-    transactionDetail,
-  );
+  
   const storage = useAppSelector(state => state.common.storage);
   const {countryList} = storage;
 

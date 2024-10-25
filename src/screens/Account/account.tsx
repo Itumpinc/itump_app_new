@@ -55,8 +55,6 @@ const Account = () => {
     business => business.id === primaryBusinessId,
   );
 
-  console.log('🚀 ~ Account ~ primaryBusinessData:', primaryBusinessData);
-
   return (
     <Container backgroundColor="#7256FF">
       <Gap height={Platform.OS === 'android' ? hp(10) : hp(0)} />

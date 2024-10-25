@@ -47,19 +47,6 @@ const InvoicePreview = () => {
     country,
   } = params;
 
-  console.log(
-    '🚀 ~ InvoicePreview ~ {data, billingAddress, paramsData}:',
-    JSON.stringify({
-      data,
-      billingAddress,
-      paramsData,
-      calculateData,
-      selectedPlans,
-      selectedBusiness,
-      country,
-    }),
-  );
-
   const createInvoice = async () => {
     setLoading(true);
     const createInvoiceData = await createInvoiceQuery(data);

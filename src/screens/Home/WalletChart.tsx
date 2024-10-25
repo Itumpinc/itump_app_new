@@ -150,8 +150,6 @@ export default function WalletChart({dashboardData}: any) {
   for (let index = 0; index < months.length; index++) {
     const month = months[index];
     const monthData = summary.find((s: any) => s.month === index + 1);
-    console.log('🚀 ~ WalletChart ~ monthData:', monthData);
-
     if (monthData) {
       monthsData.push({
         label: titleCase(month),
@@ -163,10 +161,6 @@ export default function WalletChart({dashboardData}: any) {
       }
     }
   }
-
-  console.log('🚀 ~ WalletChart ~ summary:', summary);
-  console.log('🚀 ~ WalletChart ~ totalRange:', totalRange);
-  // console.log("🚀 ~ WalletChart ~ userPersonalisation:", summary)
 
   const rangeArr = divideRange(totalRange);
   const decimal =

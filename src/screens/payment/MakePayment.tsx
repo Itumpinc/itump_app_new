@@ -16,7 +16,11 @@ import {
 } from 'react-native-responsive-screen';
 import Container from '@components/common/container';
 import Header from '@src/constants/header';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {__, alert, getData, getSettings} from '@src/utils/helpers';
 import {useAppDispatch, useAppSelector} from '@src/store/store';
 import useStyles from '../BusinessRegistration/styles';
@@ -180,16 +184,39 @@ const MakePayment = (props: any) => {
     initPaymentSheet,
     presentPaymentSheet,
     resetPaymentSheetCustomer,
+    dismissPlatformPay,
+    openPlatformPaySetup,
     retrievePaymentIntent,
   } = useStripe();
   const [loading, setLoading] = useState(false);
   const [bindingPayment, setBindingPayment] = useState(true);
+  const [isPaymentSheetInitialized, setIsPaymentSheetInitialized] =
+    useState(false);
 
   const initializePaymentSheet = async ({
     paymentIntent,
     ephemeralKey,
     customer,
   }: any) => {
+    if (isPaymentSheetInitialized) {
+      const {error} = await presentPaymentSheet();
+      if (error) {
+        if (error.code !== 'Canceled') {
+          alert({
+            type: 'error',
+            text: `Error code: ${error.code} ${error.message}`,
+          });
+        }
+        setLoading(false);
+      } else {
+        // Handle successful payment
+        setLoading(false);
+        setBindingPayment(false);
+      }
+
+      return; // Skip re-initializing
+    }
+
     const billingDetails = {
       email: user.email,
       name: user.first_name + ' ' + user.last_name,
@@ -203,9 +230,8 @@ const MakePayment = (props: any) => {
         secondaryText: colors.secondaryText,
         placeholderText: colors.placeholder,
       },
-     };
-   
-     
+    };
+
     const {error} = await initPaymentSheet({
       merchantDisplayName: 'itump',
       customerId: customer,
@@ -214,11 +240,17 @@ const MakePayment = (props: any) => {
       // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
       //methods that complete payment after a delay, like SEPA Debit and Sofort.
       // allowsDelayedPaymentMethods: true,
+      returnURL: 'itump://stripe-redirect',
       defaultBillingDetails: billingDetails,
       appearance: customAppearance,
+      applePay: {
+        merchantCountryCode: 'US',
+      },
     });
+
     if (!error) {
       setLoading(false);
+      setIsPaymentSheetInitialized(true);
       setBindingPayment(false);
     } else {
       setLoading(false);
@@ -321,9 +353,11 @@ const MakePayment = (props: any) => {
   };
 
   useEffect(() => {
+    // console.log('i am here=======>', isPaymentSheetInitialized, bindingPayment)
     if (!bindingPayment) {
       (async () => {
         const {error} = await presentPaymentSheet();
+        console.log('🚀 ~ error:', error);
         if (error) {
           if (error.code !== 'Canceled') {
             alert({
@@ -331,7 +365,7 @@ const MakePayment = (props: any) => {
               text: `Error code: ${error.code} ${error.message}`,
             });
           }
-          resetPaymentSheetCustomer();
+          await resetPaymentSheetCustomer();
           setResetButton(true);
           setTimeout(() => {
             setResetButton(false);
@@ -392,12 +426,17 @@ const MakePayment = (props: any) => {
     }
   }, [paymentParams]);
 
+  // console.log('resetButton===>', resetButton);
+
   if (resetButton) {
     return null;
   }
 
   return (
-    <StripeProvider publishableKey={stripePubKey} urlScheme="itump">
+    <StripeProvider
+      publishableKey={stripePubKey}
+      urlScheme="itump"
+      merchantIdentifier="merchant.com.com.itump">
       {!notext ? (
         <>
           <AgreeTerms

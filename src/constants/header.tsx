@@ -147,8 +147,8 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   secondRightImageStyle: {
-    width: hp(2.5),
-    height: hp(2.5),
+    width: hp(3.5),
+    height: hp(3.5),
     alignSelf: 'center',
     resizeMode: 'contain',
     marginRight: wp(3),

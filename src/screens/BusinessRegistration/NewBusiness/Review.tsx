@@ -524,13 +524,13 @@ export function NewBusinessReview(props: any) {
       <Gap height={hp(3)} />
       {businessDetails.status === 'active' ? (
         <Button
-          text="Review Order"
+          text="Review information"
           textColor="white"
           onPress={() => navigation.navigate('Health')}
         />
       ) : (
         <Button
-          text="Review Order"
+          text="Review information"
           textColor="white"
           onPress={submit}
           disabled={!addonsSchemaValid}

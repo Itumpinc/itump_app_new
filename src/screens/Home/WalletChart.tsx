@@ -65,34 +65,79 @@ const GraphBackground = ({yLabels}: {yLabels: string[]}) => {
   );
 };
 
+const ChartPiller = ({
+  index,
+  colHeight,
+  item,
+}: {
+  index: number;
+  colHeight: number;
+  item: any;
+}) => {
+  const [displayAmount, setDisplayAmount] = useState(false);
+
+  return (
+    <TouchableOpacity
+      key={index}
+      style={{marginLeft: wp(index * 25)}}
+      activeOpacity={1}
+      onPress={() => setDisplayAmount(!displayAmount)}>
+      <View
+        style={[
+          styles.chartLine,
+          {
+            height: colHeight,
+            left: wp(index + 1 * 10),
+            width: 80,
+          },
+        ]}>
+        {displayAmount && (
+          <View
+            style={{
+              position: 'absolute',
+              top: -8,
+              left: 0,
+              right: 0,
+              width: '80%',
+              backgroundColor: '#7256FF',
+              borderRadius: 10,
+              marginHorizontal: 10,
+            }}>
+            <Text
+              style={{textAlign: 'center', color: '#fff', fontSize: wp(2.8)}}>
+              {item.totalAmount}
+            </Text>
+          </View>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
+};
+
 const Chart = ({monthsData, totalRange}: any) => {
-  const viewHeight = 96; // in px
+  const maxViewHeight = 93; // in px
   const minHeight = 1;
 
   function calculatePillarHeights(item: any) {
-    const sum = item.totalAmount;
-    const colHeight = Math.max((sum / totalRange) * viewHeight, minHeight);
-
-    return {
-      colHeight,
-    };
+    const {totalAmount} = item;
+    const colHeight = Math.max(
+      (totalAmount / totalRange) * maxViewHeight,
+      minHeight,
+    ); // Ensures a minimum height
+    return {colHeight};
   }
+
   return (
     <View>
       {monthsData.map((item: any, index: number) => {
-        const pillarHeights = calculatePillarHeights(item);
+        const {colHeight} = calculatePillarHeights(item);
         return (
-          <View key={index} style={{marginLeft: wp(index * 25)}}>
-            <View
-              style={[
-                styles.chartLine,
-                {
-                  height: pillarHeights.colHeight,
-                  left: wp(index + 1 * 10),
-                  width: 80,
-                },
-              ]}></View>
-          </View>
+          <ChartPiller
+            key={index}
+            index={index}
+            colHeight={colHeight}
+            item={item}
+          />
         );
       })}
     </View>
@@ -149,19 +194,22 @@ export default function WalletChart({dashboardData}: any) {
   const monthsData = [];
   for (let index = 0; index < months.length; index++) {
     const month = months[index];
-    const monthData = summary.find((s: any) => s.month === index + 1);
-    if (monthData) {
-      monthsData.push({
-        label: titleCase(month),
-        totalAmount: monthData.totalAmount / 100,
-      });
+    if (summary) {
+      const monthData = summary.find((s: any) => s.month === index + 1);
+      if (monthData) {
+        monthsData.push({
+          label: titleCase(month),
+          totalAmount: monthData.totalAmount / 100,
+        });
 
-      if (totalRange < monthData.totalAmount / 100) {
-        totalRange = monthData.totalAmount / 100;
+        if (totalRange < monthData.totalAmount / 100) {
+          totalRange = monthData.totalAmount / 100;
+        }
       }
     }
   }
 
+  totalRange = totalRange * 1.5;
   const rangeArr = divideRange(totalRange);
   const decimal =
     accountBalance && accountBalance.total_balance

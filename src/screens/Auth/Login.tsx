@@ -53,7 +53,7 @@ const Login = () => {
           schema,
           'errors',
           'email',
-          "Your email doesn't exist with us, Please use Sign Up.",
+          "Email not found. Please try again or sign up.",
         ),
       );
     }

@@ -31,6 +31,8 @@ import {
   setBioMetricCredentials,
 } from '@src/navigators/Utils';
 import OTPTimer from '@src/components/common/otp-timer';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
+import AvatarCard from '@src/components/common/avatarCard';
 
 const LoginBack = () => {
   const pictures = useThemeImages();
@@ -115,6 +117,12 @@ const LoginBack = () => {
       setBiometricCre(biometricCre);
     }
   }, []);
+
+  useEffect(() => {
+    if (!email) {
+      goToLogin();
+    }
+  }, [email]);
 
   useEffect(() => {
     (async () => {
@@ -266,7 +274,8 @@ const LoginBack = () => {
             </Text>
           </View>
           <View>
-            <Image source={pictures.dummyProfileImage} style={styles.profile} />
+            <AvatarCard user={user} />
+            {/* <Image source={pictures.dummyProfileImage} style={styles.profile} /> */}
           </View>
         </View>
         <Gap height={hp(4)} />

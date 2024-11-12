@@ -73,7 +73,6 @@ const ServiceSteps = (props: any) => {
             ...{company_id: paramsData.routeParams.businessID},
           };
         }
-
         if (paramsData.routeParams && paramsData.routeParams.serviceRequestId) {
           const serviceRequestDetailData = await serviceRequestDetailQuery({
             service_id: paramsData.routeParams.serviceRequestId,
@@ -126,7 +125,6 @@ export const MainService = (props: any) => {
 
   useEffect(() => {
     if(route.name.indexOf('_') > -1) {
-      console.log('paramsData===>', paramsData);
       setLoader(true);
       setParamsData();
       setTimeout(() => {

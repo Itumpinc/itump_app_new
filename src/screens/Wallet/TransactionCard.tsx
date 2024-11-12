@@ -45,10 +45,7 @@ const TransactionCard = ({item, small}: any) => {
             title="Payout"
             isRecurring={false}
             date={moment.unix(item.created).format('DD MMM yyyy, hh:mm A')}
-            money={formatAmount(
-              item.amount / 100,
-              currency.currency_symbol,
-            )}
+            money={formatAmount(item.amount / 100, currency.currency_symbol)}
             transactionType={'debit'}
             small={small}
           />
@@ -170,6 +167,42 @@ const TransactionCard = ({item, small}: any) => {
               currency.currency_symbol,
             )}
             transactionType={'debit'}
+            small={small}
+          />
+        </TouchableOpacity>
+
+        <Gap height={hp(2)} />
+        <Line />
+        <Gap height={hp(2)} />
+      </View>,
+    );
+  } else if (item.metadata.type === 'taptopay' && item.amount_received > 0) {
+    transactions.push(
+      <View key={makeId()}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('TransactionDetails', {
+              transaction: item,
+            })
+          }>
+          <OrderCard
+            avatar={
+              item.user_detail
+                ? item.user_detail
+                : {first_name: 'UN', last_name: ''}
+            }
+            title={
+              item.user_detail
+                ? item.user_detail.first_name + ' ' + item.user_detail.last_name
+                : 'Tap To Pay'
+            }
+            type={item.metadata.type}
+            date={moment.unix(item.created).format('DD MMM yyyy, hh:mm A')}
+            money={formatAmount(
+              item.amount_received / 100,
+              currency.currency_symbol,
+            )}
+            transactionType={'credit'}
             small={small}
           />
         </TouchableOpacity>

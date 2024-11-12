@@ -16,6 +16,12 @@ import {logoutAction, setData} from '@src/store/services/storage';
 import {commonApi} from '@src/store/services/common';
 import {getData} from '@src/utils/helpers';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
+import {
+  requestUserPermission,
+  handleDeepLinking,
+  deepLinkNavigation,
+  getUrlcreadentials,
+} from '@src/utils/notification';
 
 const Startup = () => {
   const pictures = useThemeImages();

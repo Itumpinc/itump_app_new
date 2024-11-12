@@ -272,20 +272,26 @@ const Wallet = () => {
 
   const data = [
     {
-      label: 'Send Pay',
-      onPress: () => {},
+      label: 'Send invoice',
       color: colors.boldText,
       icon: pictures.sendIcon,
+      onPress: () => {
+        navigation.navigate('InvoiceList');
+      },
     },
     {
-      label: 'Receive Pay',
-      onPress: () => {},
+      label: 'Tap to Pay',
+      onPress: () => {
+        navigation.navigate('TapToPay');
+      },
       color: colors.boldText,
       icon: pictures.receiveMoneyIcon,
     },
     {
-      label: 'Fund Account',
-      onPress: () => {},
+      label: 'Activities',
+      onPress: () => {
+        navigation.navigate('TransactionList', {finances: false});
+      },
       color: colors.boldText,
       icon: pictures.addIconPrimary,
     },
@@ -303,7 +309,7 @@ const Wallet = () => {
 
   const decimal =
     dashboardData && dashboardData.account_balance
-      ? getDecimalPart(dashboardData.account_balance.balance)
+      ? getDecimalPart(dashboardData.account_balance.total_balance)
       : 0;
 
   return (
@@ -331,7 +337,10 @@ const Wallet = () => {
                 marginRight: wp(3),
               }}>
               {dashboardData && dashboardData.account_balance
-                ? formatAmount(parseInt(dashboardData.account_balance.balance, 10), currency.currency_symbol)
+                ? formatAmount(
+                    parseInt(dashboardData.account_balance.total_balance, 10),
+                    currency.currency_symbol,
+                  )
                 : `${currency.currency_symbol}0`}
               {decimal > 0 ? (
                 <Text style={{color: '#F5F5F799'}}>.{decimal}</Text>
@@ -390,7 +399,7 @@ const Wallet = () => {
             </>
           )}
         </View>
-        {/* <Gap height={hp(2)} />
+        <Gap height={hp(2)} />
         <View
           style={{
             flexDirection: 'row',
@@ -400,7 +409,7 @@ const Wallet = () => {
           {data.map((item, index) => (
             <TouchableOpacity
               key={index}
-              onPress={() => item.onPress}
+              onPress={item.onPress}
               style={
                 {
                   // padding: 10,
@@ -430,7 +439,7 @@ const Wallet = () => {
               </View>
             </TouchableOpacity>
           ))}
-        </View> */}
+        </View>
         <Gap height={hp(2)} />
       </View>
 
@@ -452,7 +461,7 @@ const Wallet = () => {
 
       {allBusiness.length === 0 && <NewBusinessFormation />}
 
-      <Text
+      {/* <Text
         style={[
           styles.text,
           {
@@ -465,10 +474,10 @@ const Wallet = () => {
         ]}>
         Finances
       </Text>
-      <Gap height={hp(2)} />
-      <Transaction />
-      <Gap height={hp(2)} />
-      <Invoices />
+      <Gap height={hp(2)} /> */}
+      <Transaction finances={true} />
+      {/* <Gap height={hp(2)} />
+      <Invoices /> */}
       {showDetails && typeof dashboardData.account_balance !== 'undefined' && (
         <Popup closeIcon close={() => setShowDetails(false)} height={80}>
           <WalletBalance

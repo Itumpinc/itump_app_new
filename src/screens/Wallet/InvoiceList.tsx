@@ -34,6 +34,7 @@ import {OrderCard} from '@src/components/common/ordercard';
 import {useAppSelector} from '@src/store/store';
 import moment from 'moment';
 import NewBusinessFormation from '../Home/NewBusinessFormation';
+import PageLoader from '@src/components/common/PageLoader';
 
 const LIMIT = 20;
 let isEndReachedCalledDuringMomentum = false;
@@ -45,6 +46,7 @@ const InvoiceList = ({limit}: {limit?: number}) => {
 
   const [listInvoiceQuery, listInvoicedata] = userApi.useLazyListInvoiceQuery();
   const [data, setData] = useState<any>([]); // Stores the list data
+  const [invoiceList, setInvoiceList] = useState<any>([]); // Stores the list data
   const [page, setPage] = useState(1); // Tracks the current page
   const [count, setCount] = useState(1);
   const [loading, setLoading] = useState(false); // Loading state
@@ -59,7 +61,7 @@ const InvoiceList = ({limit}: {limit?: number}) => {
       business;
     allBusiness = [...mainBusiness, ...otherBusiness];
   }
-  const [tab, setTab] = useState(allBusiness.length > 0 ? 'Raised' : 'Invoice');
+  const [tab, setTab] = useState('all');
 
   const headerPress = () => {
     navigation.navigate('Home');
@@ -76,18 +78,37 @@ const InvoiceList = ({limit}: {limit?: number}) => {
     await listInvoiceQuery(`?page=${page + 1}&limit=${limit || LIMIT}`);
   };
 
+  const handleTabData = (tab: string, data:any[]) => {
+    let updatedList = data;
+    if (tab === 'open') {
+      updatedList = data.filter(
+        (item: any) => item.invoice.status === 'raised',
+      );
+    } else if (tab === 'due') {
+      updatedList = data.filter(
+        (item: any) =>
+          item.invoice.status === 'partial_paid' ||
+          item.invoice.status === 'raised',
+      );
+    } else if (tab === 'paid') {
+      updatedList = data.filter((item: any) => item.invoice.status === 'paid');
+    }
+    setInvoiceList(updatedList);
+  };
+
   useEffect(() => {
     // console.log('🚀 ~ invoiceList:', listInvoicedata);
     if (listInvoicedata.isSuccess) {
       setLoading(false);
       const invoiceList = getData(listInvoicedata);
-      setCount(invoiceList.count);
+      // setCount(invoiceList.count);
       if (invoiceList.rows && invoiceList.rows.length > 0) {
         const newInvoices = invoiceList.rows.filter(
           (row: any) =>
             !data.some((item: any) => item.invoice.id === row.invoice.id),
         );
-        setData((prevData: any) => [...prevData, ...newInvoices]);
+        setData([...data, ...newInvoices]);
+        handleTabData('all', [...data, ...newInvoices]);
       } else {
         setHasMore(false);
       }
@@ -99,8 +120,13 @@ const InvoiceList = ({limit}: {limit?: number}) => {
     }
   }, [listInvoicedata]);
 
+  useEffect(() => {
+    handleTabData(tab, data);
+  }, [tab]);
+
   useFocusedEffect(() => {
     setData([]);
+    setTab('all');
     setPage(1);
     setLoading(false);
     setHasMore(true);
@@ -128,15 +154,15 @@ const InvoiceList = ({limit}: {limit?: number}) => {
 
     const myInvoice = list.invoice.user_id === user.id;
 
-    if (allBusiness.length > 0) {
-      if (tab === 'Raised' && !myInvoice) {
-        return null;
-      } else if (tab === 'Invoice' && myInvoice) {
-        return null;
-      }
-    } else if (!myInvoice && list.invoice.status === 'cancelled') {
-      return null;
-    }
+    // if (allBusiness.length > 0) {
+    //   if (tab === 'Raised' && !myInvoice) {
+    //     return null;
+    //   } else if (tab === 'Invoice' && myInvoice) {
+    //     return null;
+    //   }
+    // } else if (!myInvoice && list.invoice.status === 'cancelled') {
+    //   return null;
+    // }
 
     let screen = 'InvoiceDetails';
     if (list.invoice.status === 'raised' && !myInvoice) {
@@ -161,9 +187,9 @@ const InvoiceList = ({limit}: {limit?: number}) => {
                 list.invoice.to_user.last_name
               : avatar.first_name + ' ' + avatar.last_name
           }
-          date={`${myInvoice ? 'Raised' : 'Received'} on ${moment(list.invoice.created_at).format(
-            'DD MMM YYYY',
-          )}`}
+          date={`${myInvoice ? 'Invoice Sent' : 'Invoice Received'} on ${moment(
+            list.invoice.created_at,
+          ).format('DD MMM YYYY')}`}
           money={formatAmount(
             myInvoice ? list.invoice.invoice_amount : list.invoice.total_amount,
             country.currency_symbol,
@@ -192,9 +218,17 @@ const InvoiceList = ({limit}: {limit?: number}) => {
     return null;
   };
 
+  // console.log(data.length, invoiceList);
+
+  if (
+    data.length < LIMIT &&
+    (listInvoicedata.isFetching || listInvoicedata.isLoading)
+  )
+    return <PageLoader title="Invoices" />;
+
   return (
-    <Container source={pictures.welcome}>
-      <View style={{width: wp(90), alignSelf: 'center'}}>
+    <Container source={pictures.welcome} disableScroll>
+      <View style={{width: wp(90), alignSelf: 'center', minHeight: hp(80)}}>
         <Header
           title="Invoices"
           source={pictures.arrowLeft}
@@ -202,7 +236,96 @@ const InvoiceList = ({limit}: {limit?: number}) => {
           secondLastRightImageSource={pictures.plusIconBr}
           secondLastRightPress={rightPress}
         />
-        <Gap height={hp(2)} />
+        <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+          <TouchableOpacity
+            style={{
+              marginRight: wp(5),
+              minWidth: wp(10),
+              borderBottomWidth: 2,
+              borderBottomColor: tab === 'all' ? colors.primary : 'transparent',
+            }}
+            onPress={() => setTab('all')}>
+            <Text
+              style={[
+                {
+                  color: colors.secondaryText,
+                  fontSize: 16,
+                  textAlign: 'center',
+                },
+                {
+                  fontFamily: 'Satoshi-Bold',
+                  color: tab === 'all' ? colors.primary : colors.placeholder,
+                },
+              ]}>
+              All
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              marginRight: wp(5),
+              minWidth: wp(10),
+              borderBottomWidth: 2,
+              borderBottomColor:
+                tab === 'open' ? colors.primary : 'transparent',
+            }}
+            onPress={() => setTab('open')}>
+            <Text
+              style={[
+                {
+                  fontSize: 16,
+                  textAlign: 'center',
+                  color: tab === 'open' ? colors.primary : colors.placeholder,
+                },
+              ]}>
+              Open
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              marginRight: wp(5),
+              minWidth: wp(10),
+              borderBottomWidth: 2,
+              borderBottomColor: tab === 'due' ? colors.primary : 'transparent',
+            }}
+            onPress={() => setTab('due')}>
+            <Text
+              style={[
+                {
+                  fontSize: 16,
+                  textAlign: 'center',
+                  color: tab === 'due' ? colors.primary : colors.placeholder,
+                },
+              ]}>
+              Lo-Fi
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              marginRight: wp(5),
+              minWidth: wp(10),
+              borderBottomWidth: 2,
+              borderBottomColor:
+                tab === 'paid' ? colors.primary : 'transparent',
+            }}
+            onPress={() => setTab('paid')}>
+            <Text
+              style={[
+                {
+                  fontSize: 16,
+                  textAlign: 'center',
+                  color: tab === 'paid' ? colors.primary : colors.placeholder,
+                },
+              ]}>
+              Paid
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <Line />
+        <Gap height={hp(4)} />
+        {/* 
         {allBusiness.length > 0 && (
           <>
             <View
@@ -216,7 +339,26 @@ const InvoiceList = ({limit}: {limit?: number}) => {
               <TouchableOpacity
                 style={[
                   {
-                    width: wp(35),
+                    width: wp(25),
+                    paddingVertical: 15,
+                    backgroundColor: colors.activityBox,
+                    alignItems: 'center',
+                    borderRadius: 10,
+                  },
+                  tab === 'Payment' ? {backgroundColor: colors.primary} : {},
+                ]}
+                onPress={() => setTab('Payment')}>
+                <Text
+                  style={[
+                    {color: tab === 'Payment' ? '#fff' : colors.secondaryText},
+                  ]}>
+                  Payments
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  {
+                    width: wp(25),
                     paddingVertical: 15,
                     backgroundColor: colors.activityBox,
                     alignItems: 'center',
@@ -229,13 +371,13 @@ const InvoiceList = ({limit}: {limit?: number}) => {
                   style={[
                     {color: tab === 'Invoice' ? '#fff' : colors.secondaryText},
                   ]}>
-                  Incoming
+                  Received
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
                   {
-                    width: wp(35),
+                    width: wp(25),
                     paddingVertical: 15,
                     backgroundColor: colors.activityBox,
                     alignItems: 'center',
@@ -248,17 +390,17 @@ const InvoiceList = ({limit}: {limit?: number}) => {
                   style={[
                     {color: tab === 'Raised' ? '#fff' : colors.secondaryText},
                   ]}>
-                  Outgoing
+                  Sent
                 </Text>
               </TouchableOpacity>
             </View>
             <Gap height={hp(3)} />
           </>
-        )}
+        )} */}
 
         {data.length > 0 ? (
           <FlatList
-            data={data}
+            data={invoiceList}
             keyExtractor={item => item.invoice.invoice_num} // Unique key for each item
             renderItem={renderItem} // Function to render each item
             onEndReached={() => {

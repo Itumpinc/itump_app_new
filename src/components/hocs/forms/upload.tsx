@@ -142,7 +142,8 @@ const Upload = (props: {
       };
       break;
     }
-    setSelectedFile(files);
+
+    if (Object.keys(files).length > 0) setSelectedFile(files);
     onChange({name, value: Object.keys(files).length > 0 ? files : ''});
   };
 
@@ -154,7 +155,7 @@ const Upload = (props: {
   useEffect(() => {
     (async () => {
       // value
-      // console.log('props.value', props.value);
+      // console.log('props.value', value);
       if (value && Object.keys(value).length > 0) {
         setSelectedFile(value);
       } else {

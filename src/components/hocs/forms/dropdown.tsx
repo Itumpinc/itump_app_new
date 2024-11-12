@@ -19,6 +19,9 @@ import {useThemeImages} from '@constants/images';
 import {useThemeColors} from '@constants/colors';
 import {Gap} from '@src/constants/gap';
 import {getSelectedOption} from '@src/utils/helpers';
+import Button from '@src/constants/button';
+import Popup from '@src/components/common/popup';
+import AddBusinessPopup from '@src/screens/BusinessRegistration/AddBusinessPopup';
 
 const Dropdown = (props: {
   name: string;
@@ -35,6 +38,7 @@ const Dropdown = (props: {
   required: boolean;
   close?: boolean;
   half?: boolean;
+  addBusiness?: boolean;
 }) => {
   const {
     value,
@@ -49,6 +53,7 @@ const Dropdown = (props: {
     close,
     options,
     half,
+    addBusiness,
   } = props;
 
   const pictures = useThemeImages();
@@ -56,6 +61,7 @@ const Dropdown = (props: {
   const [searchValue, setSearchValue] = useState('');
   const [filteredData, setFilteredData] = useState(options);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [openBusiness, setOpenBusiness] = useState(false);
 
   const handleDropdownPress = () => {
     setDropdownOpen(!dropdownOpen);
@@ -86,6 +92,11 @@ const Dropdown = (props: {
       setFilteredData(filtered);
     }
   }, [searchValue, options]);
+
+  const gotoBusiness = () => {
+    setDropdownOpen(false);
+    setOpenBusiness(true);
+  };
 
   let paddingTop = hp(0.8);
   if (Platform.OS === 'ios') {
@@ -225,9 +236,25 @@ const Dropdown = (props: {
 
           {filteredData.length === 0 ? (
             <View style={styles.countryMessage}>
-              <Text style={[styles.searchMessageText, {color: colors.primary}]}>
-                Sorry we can't find your search :(
-              </Text>
+              {addBusiness ? (
+                <>
+                  <Text
+                    style={[styles.searchMessageText, {color: colors.primary}]}>
+                    Sorry we can't find any business :(
+                  </Text>
+                  <Gap height={hp(4)} />
+                  <Button
+                    text="Add/Form a new Business"
+                    textColor="#fff"
+                    onPress={() => gotoBusiness()}
+                  />
+                </>
+              ) : (
+                <Text
+                  style={[styles.searchMessageText, {color: colors.primary}]}>
+                  Sorry we can't find your search :(
+                </Text>
+              )}
             </View>
           ) : (
             <FlatList
@@ -259,6 +286,12 @@ const Dropdown = (props: {
           )}
         </View>
       </Modal>
+
+      {openBusiness && (
+        <Popup close={() => setOpenBusiness(false)} height={90}>
+          <AddBusinessPopup close={() => setOpenBusiness(false)} />
+        </Popup>
+      )}
     </View>
   );
 };

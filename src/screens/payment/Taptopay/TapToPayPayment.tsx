@@ -25,9 +25,18 @@ import {alert, formatAmount, getData} from '@src/utils/helpers';
 import {StripeTerminalProvider} from '@stripe/stripe-terminal-react-native';
 import {TapToPayTerminal} from './TapToPayTerminal';
 
-const TerminalScreen = ({paramsData, paymentLoader}: any) => {
+const TerminalScreen = ({paramsData, paymentLoader, status}: any) => {
   const pictures = useThemeImages();
   const colors = useThemeColors();
+
+  const [statusList, setstatusList] = useState([]);
+
+  useEffect(() => {
+    const d: any = [...statusList];
+    d.push(status);
+    setstatusList(d);
+  }, [status]);
+
   return (
     <View
       style={{
@@ -85,6 +94,15 @@ const TerminalScreen = ({paramsData, paymentLoader}: any) => {
           <Text style={{color: '#fff', fontFamily: 'Satoshi-Regular'}}>
             {paramsData.memo}
           </Text>
+          {statusList.map((s: any, index: number) => {
+            return (
+              <Text
+                style={{color: '#fff', fontFamily: 'Satoshi-Regular'}}
+                key={index}>
+                {JSON.stringify(s)}
+              </Text>
+            );
+          })}
         </View>
       </View>
     </View>
@@ -110,7 +128,7 @@ export default function TapToPayPayment() {
   }, []);
 
   useEffect(() => {
-    if (status) {
+    if (status && (status.status === 'success' || status.status === 'error')) {
       const paramsData = route.params.data;
       navigation.navigate('TapToPaySuccess', {
         status: status.status,
@@ -145,7 +163,11 @@ export default function TapToPayPayment() {
       logLevel="verbose"
       tokenProvider={fetchTokenProvider}>
       <Container backgroundColor={colors.primary}>
-        <TerminalScreen paramsData={paramsData} paymentLoader={paymentLoader} />
+        <TerminalScreen
+          paramsData={paramsData}
+          paymentLoader={paymentLoader}
+          status={status}
+        />
         <TapToPayTerminal
           paramsData={paramsData}
           setStatus={setStatus}

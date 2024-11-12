@@ -33,7 +33,7 @@ import moment from 'moment';
 import TransactionCard from '../Wallet/TransactionCard';
 import PageLoader from '@src/components/common/PageLoader';
 
-export default function Transaction() {
+export default function Transaction({finances = false}: {finances: boolean}) {
   const pictures = useThemeImages();
   const colors = useThemeColors();
   const navigation: any = useNavigation();
@@ -44,14 +44,12 @@ export default function Transaction() {
     userApi.useLazyGetTransactionsQuery();
 
   useFocusedEffect(() => {
-    getTransactionsQuery('?limit=2');
+    getTransactionsQuery(`?limit=10&finance=${finances}`);
   }, []);
 
   if (!getTransactionsData.isSuccess) return <PageLoader />;
   const transactions = getData(getTransactionsData);
   
-  // console.log("🚀 ~ Transaction ~ getTransactionsData:", transactions)
-
   if (!(transactions && transactions.length > 0)) return null;
 
   return (
@@ -77,7 +75,7 @@ export default function Transaction() {
               styles.text,
               {color: colors.secondaryText, fontSize: hp(2)},
             ]}>
-            Transactions
+            {finances ? 'Finances' : 'Transactions'}
           </Text>
         </View>
         <Gap height={hp(2)} />
@@ -124,7 +122,7 @@ export default function Transaction() {
         {transactions && transactions.length > 0 ? (
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate('TransactionList', {type: 'order'})
+              navigation.navigate('TransactionList', {finances: finances})
             }
             style={{
               alignSelf: 'flex-start',
@@ -142,7 +140,7 @@ export default function Transaction() {
                   alignSelf: 'center',
                 },
               ]}>
-              See All Transactions
+              See All {finances ? 'Finances' : 'Transactions'}
             </Text>
             <Image
               source={pictures.arrowRightPrimary}

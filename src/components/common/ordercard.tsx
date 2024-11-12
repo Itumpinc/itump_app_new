@@ -62,7 +62,7 @@ export const OrderCard = ({
   };
 
   const statusList: any = {
-    raised: myInvoice ? 'Awaiting Payment' : 'Payment Pending',
+    raised: myInvoice ? 'Awaiting Payment' : 'Pay Invoice',
     paid: 'Paid',
     cancelled: 'Cancelled',
     confirm: 'Paid and Confirmed',
@@ -70,6 +70,14 @@ export const OrderCard = ({
     completed: 'Completed',
     tried: 'Tried and Failed',
     missing_details: 'Paid / Missing Details',
+  };
+
+  const types: any = {
+    order: 'Order',
+    invoice: transactionType === 'credit' ? 'Invoice Received' : 'Invoice Paid',
+    activation: 'Activation',
+    payout: 'Payout Deposited',
+    taptopay: 'Tap to Pay Received',
   };
 
   return (
@@ -168,7 +176,7 @@ export const OrderCard = ({
                   fontSize: hp(1.5),
                 },
               ]}>
-              {titleCase(type)}
+              {titleCase(types[type])}
             </Text>
           </>
         ) : null}
@@ -199,7 +207,8 @@ export const OrderCard = ({
                 color: colors.secondaryText,
               },
             ]}>
-            {transactionType === 'debit' ? '-' : '+'} {money}
+            {transactionType ? (transactionType === 'debit' ? '-' : '+') : ''}{' '}
+            {money}
           </Text>
         </View>
       )}

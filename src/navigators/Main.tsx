@@ -71,7 +71,7 @@ const MainNavigator = () => {
     <>
       <Stack.Navigator
         initialRouteName="Home"
-        screenOptions={{headerShown: false, animation: 'none'}}>
+        screenOptions={{headerShown: false}}>
         <Stack.Screen
           name="Home"
           children={(props: any) => (

@@ -10,7 +10,7 @@ export const commonApi = api.injectEndpoints({
     }),
     loadCountry: builder.query<any, string|void>({
       query: (query?: string) => ({
-        url: `/v1/master/country/dropdown${query}`,
+        url: `/v1/master/country/dropdown${query || ''}`,
       }),
     }),
     loadState: builder.query<any, number>({

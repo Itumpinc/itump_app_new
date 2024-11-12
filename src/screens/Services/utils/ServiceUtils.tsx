@@ -108,65 +108,75 @@ export const getServiceSchema = (tags: string, defaultData: any = {}) => {
     case 'secure_business':
       formationSchema = secureSchema(defaultData);
       break;
-    case 'service_fincen_boi':
-      console.log('defaultData====?', defaultData);
-      defaultData = {
-        ...defaultData,
-        ...{
-          request_to_receive_fincen:
-            defaultData.request_to_receive_fincen === '1' ? true : false,
-          foriegn_pool_vehicle:
-            defaultData.foriegn_pool_vehicle === '1' ? true : false,
-        },
-      };
-
-      if (defaultData.applicants[0]) {
+    case 'service_fincen_boi': {
+      try {
         defaultData = {
           ...defaultData,
-          applicant_first_name: defaultData.applicants[0].applicant_first_name,
-          applicant_last_name: defaultData.applicants[0].applicant_last_name,
-          applicant_fincen_id: defaultData.applicants[0].applicant_fincen_id,
-          applicant_country_id: defaultData.applicants[0].applicant_country_id,
-          applicant_state_id: defaultData.applicants[0].applicant_state_id,
-          applicant_city: defaultData.applicants[0].applicant_city,
-          applicant_address: defaultData.applicants[0].applicant_address,
-          applicant_dob: defaultData.applicants[0].applicant_dob,
-          applicant_address2: defaultData.applicants[0].applicant_address2,
-          applicant_zipcode: defaultData.applicants[0].applicant_zipcode,
-          applicant_id_type: defaultData.applicants[0].applicant_id_type,
-          applicant_id_number: defaultData.applicants[0].applicant_id_number,
-          applicant_id_jurisdiction_state_id:
-            defaultData.applicants[0].applicant_id_jurisdiction_state_id,
-          applicant_id_jurisdiction_country_id:
-            defaultData.applicants[0].applicant_id_jurisdiction_country_id,
+          ...{
+            request_to_receive_fincen:
+              defaultData.request_to_receive_fincen === '1' ? true : false,
+            foriegn_pool_vehicle:
+              defaultData.foriegn_pool_vehicle === '1' ? true : false,
+          },
         };
-      }
 
-      if (defaultData.applicants[1]) {
-        defaultData = {
-          ...defaultData,
-          applicant_first_name_1: defaultData.applicants[1].applicant_first_name,
-          applicant_last_name_1: defaultData.applicants[1].applicant_last_name,
-          applicant_fincen_id_1: defaultData.applicants[1].applicant_fincen_id,
-          applicant_country_id_1: defaultData.applicants[1].applicant_country_id,
-          applicant_state_id_1: defaultData.applicants[1].applicant_state_id,
-          applicant_city_1: defaultData.applicants[1].applicant_city,
-          applicant_address_1: defaultData.applicants[1].applicant_address,
-          applicant_dob_1: defaultData.applicants[1].applicant_dob,
-          applicant_address2_1: defaultData.applicants[1].applicant_address2,
-          applicant_zipcode_1: defaultData.applicants[1].applicant_zipcode,
-          applicant_id_type_1: defaultData.applicants[1].applicant_id_type,
-          applicant_id_number_1: defaultData.applicants[1].applicant_id_number,
-          applicant_id_jurisdiction_state_id_1:
-            defaultData.applicants[1].applicant_id_jurisdiction_state_id,
-          applicant_id_jurisdiction_country_id_1:
-            defaultData.applicants[1].applicant_id_jurisdiction_country_id,
-        };
+        if (defaultData.applicants[0]) {
+          defaultData = {
+            ...defaultData,
+            applicant_first_name:
+              defaultData.applicants[0].applicant_first_name,
+            applicant_last_name: defaultData.applicants[0].applicant_last_name,
+            applicant_fincen_id: defaultData.applicants[0].applicant_fincen_id,
+            applicant_country_id:
+              defaultData.applicants[0].applicant_country_id,
+            applicant_state_id: defaultData.applicants[0].applicant_state_id,
+            applicant_city: defaultData.applicants[0].applicant_city,
+            applicant_address: defaultData.applicants[0].applicant_address,
+            applicant_dob: defaultData.applicants[0].applicant_dob,
+            applicant_address2: defaultData.applicants[0].applicant_address2,
+            applicant_zipcode: defaultData.applicants[0].applicant_zipcode,
+            applicant_id_type: defaultData.applicants[0].applicant_id_type,
+            applicant_id_number: defaultData.applicants[0].applicant_id_number,
+            applicant_id_jurisdiction_state_id:
+              defaultData.applicants[0].applicant_id_jurisdiction_state_id,
+            applicant_id_jurisdiction_country_id:
+              defaultData.applicants[0].applicant_id_jurisdiction_country_id,
+          };
+        }
+
+        if (defaultData.applicants[1]) {
+          defaultData = {
+            ...defaultData,
+            applicant_first_name_1:
+              defaultData.applicants[1].applicant_first_name,
+            applicant_last_name_1:
+              defaultData.applicants[1].applicant_last_name,
+            applicant_fincen_id_1:
+              defaultData.applicants[1].applicant_fincen_id,
+            applicant_country_id_1:
+              defaultData.applicants[1].applicant_country_id,
+            applicant_state_id_1: defaultData.applicants[1].applicant_state_id,
+            applicant_city_1: defaultData.applicants[1].applicant_city,
+            applicant_address_1: defaultData.applicants[1].applicant_address,
+            applicant_dob_1: defaultData.applicants[1].applicant_dob,
+            applicant_address2_1: defaultData.applicants[1].applicant_address2,
+            applicant_zipcode_1: defaultData.applicants[1].applicant_zipcode,
+            applicant_id_type_1: defaultData.applicants[1].applicant_id_type,
+            applicant_id_number_1:
+              defaultData.applicants[1].applicant_id_number,
+            applicant_id_jurisdiction_state_id_1:
+              defaultData.applicants[1].applicant_id_jurisdiction_state_id,
+            applicant_id_jurisdiction_country_id_1:
+              defaultData.applicants[1].applicant_id_jurisdiction_country_id,
+          };
+        }
+      } catch (err) {
+        console.log(err);
       }
 
       formationSchema = fincenBoiSchema(defaultData);
       break;
-
+    }
     default:
       break;
   }

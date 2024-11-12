@@ -88,6 +88,7 @@ import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 // }
 
 const DiscoverReader = (props: any) => {
+  const navigation: any = useNavigation();
   const {
     connectingReader,
     setConnectingReader,
@@ -95,6 +96,7 @@ const DiscoverReader = (props: any) => {
     locationId,
     user,
     paramsData,
+    setStatus,
   } = props;
 
   const [discoveringLoading, setDiscoveringLoading] = useState(true);
@@ -109,9 +111,23 @@ const DiscoverReader = (props: any) => {
   } = useStripeTerminal({
     onDidChangeConnectionStatus: status => {
       console.log('status=====>', status);
+      setStatus({
+        status: 'info',
+        data: {
+          message: 'onDidChangeConnectionStatus start',
+          res: {status},
+        },
+      });
     },
     onUpdateDiscoveredReaders: readers => {
       console.log('readers=====>', readers);
+      setStatus({
+        status: 'info',
+        data: {
+          message: 'readers',
+          res: {readers},
+        },
+      });
       // After the SDK discovers a reader, your app can connect to it.
       // Here, we're automatically connecting to the first discovered reader.
       handleConnectReader();
@@ -122,10 +138,31 @@ const DiscoverReader = (props: any) => {
           'Discover readers error',
           `${finishError.code}, ${finishError.message}`,
         );
+
+        if (
+          finishError &&
+          // @ts-ignore
+          finishError.code ==
+            'INTEGRATION_ERROR.LOCAL_MOBILE_UNSUPPORTED_DEVICE'
+        ) {
+          navigation.navigate('TapToPaySuccess', {
+            status: 'error',
+            data: {
+              message: finishError.message,
+            },
+          });
+        }
       } else {
         console.log('onFinishDiscoveringReaders success');
+        setStatus({
+          status: 'info',
+          data: {
+            message: 'onFinishDiscoveringReaders',
+            res: {},
+          },
+        });
+        setDiscoveringLoading(false);
       }
-      setDiscoveringLoading(false);
     },
   });
 
@@ -133,11 +170,27 @@ const DiscoverReader = (props: any) => {
     setDiscoveringLoading(true);
     // List of discovered readers will be available within useStripeTerminal hook
     const {error: discoverReadersError} = await discoverReaders({
-      discoveryMethod: 'bluetoothScan', // 'localMobile',
-      simulated: simulated ? true : undefined,
+      discoveryMethod: 'localMobile', // 'localMobile','bluetoothScan',
+      // simulated: simulated ? true : undefined,
+    });
+
+    setStatus({
+      status: 'info',
+      data: {
+        message: 'discoverReadersError',
+        res: {discoverReadersError},
+      },
     });
 
     if (discoverReadersError) {
+      setStatus({
+        status: 'info',
+        data: {
+          message: 'onFinishDiscoveringReaders',
+          res: {discoveredReaders, discoveringCard},
+        },
+      });
+      
       const {code, message} = discoverReadersError;
       console.log('Discover readers error: ', `${code}, ${message}`);
 
@@ -153,6 +206,14 @@ const DiscoverReader = (props: any) => {
   }, [handleDiscoverReaders]);
 
   useEffect(() => {
+    setStatus({
+      status: 'info',
+      data: {
+        message: 'onFinishDiscoveringReaders',
+        res: {discoveredReaders, discoveringCard},
+      },
+    });
+
     if (discoveredReaders.length > 0 && !discoveringCard) {
       handleConnectReader();
     }
@@ -171,20 +232,20 @@ const DiscoverReader = (props: any) => {
       return;
     }
     setDiscoveringCard(true);
-    const {reader, error} = await connectBluetoothReader({
+    const {reader, error} = await connectLocalMobileReader({
       autoReconnectOnUnexpectedDisconnect: true,
       reader: discoveredReaders[0],
       // Since the simulated reader is not associated with a real location, we recommend
       // specifying its existing mock location.
       locationId: locationId, // discoveredReaders[0].locationId,
-      // onBehalfOf: user.stripe_account_id,
-      // merchantDisplayName: paramsData.business.business_title,
+      onBehalfOf: user.stripe_account_id,
+      merchantDisplayName: paramsData.business.business_title,
     });
 
     if (error) {
       alert({
         type: 'error',
-        text: 'Error to connect with Card Reader',
+        text: error.message || 'Error to connect with Card Reader',
       });
       console.log('connectBluetoothReader error', error);
       return;
@@ -219,6 +280,7 @@ const TapToPayHandler = (props: any) => {
     setPaymentLoader,
     connectingReader,
     paymentLoader,
+    // simulated
   } = props;
   const pictures = useThemeImages();
   const colors = useThemeColors();
@@ -235,14 +297,26 @@ const TapToPayHandler = (props: any) => {
     confirmPaymentIntent,
     retrievePaymentIntent,
     cancelCollectPaymentMethod,
-    setSimulatedCard,
+    // setSimulatedCard,
   } = useStripeTerminal({
     onDidRequestReaderDisplayMessage: message => {
       console.log('message====>', message);
+      alert({
+        type: 'success',
+        text: 'onDidRequestReaderDisplayMessage',
+      });
     },
   });
 
   useEffect(() => {
+    setStatus({
+      status: 'info',
+      data: {
+        message: 'connectingReader start',
+        res: {connectingReader, paymentLoader},
+      },
+    });
+
     if (connectingReader && !paymentLoader) {
       setPaymentLoader(true);
       _createPaymentIntent();
@@ -259,7 +333,9 @@ const TapToPayHandler = (props: any) => {
   console.log('connectingReader===>', connectingReader, paymentLoader);
 
   const _createPaymentIntent = async () => {
-    await setSimulatedCard('4242424242424242');
+    // if(simulated){
+    //   await setSimulatedCard('4242424242424242');
+    // }
     const tapToPayIntentData = await tapToPayIntentQuery({
       to_user_id: paramsData.to_user_id,
       user_business_id: paramsData.user_business_id,
@@ -331,25 +407,57 @@ const TapToPayHandler = (props: any) => {
 
   const _collectPaymentMethod = async (pi: PaymentIntent.Type) => {
     console.log('pi===>', pi);
+    setStatus({
+      status: 'info',
+      data: {
+        message: 'collectPaymentMethod',
+        res: pi,
+      },
+    });
+
     const {paymentIntent, error} = await collectPaymentMethod({
       paymentIntent: pi,
       // skipTipping: true,
       // tipEligibleAmount: undefined,
       updatePaymentIntent: true,
-      enableCustomerCancellation: true,
+      // enableCustomerCancellation: true,
     });
 
     if (error) {
       alert({
         type: 'error',
-        text: 'TaptoPay Payment Method error',
+        text: error.message,
+      });
+
+      setStatus({
+        status: 'info',
+        data: {
+          message: 'collectPaymentMethod Error',
+          res: error.message,
+        },
       });
     } else if (paymentIntent) {
+      setStatus({
+        status: 'info',
+        data: {
+          message: 'collectPaymentMethod Intent',
+          res: paymentIntent,
+        },
+      });
+
       await _confirmPaymentIntent(paymentIntent);
     }
   };
 
   const _confirmPaymentIntent = async (collectedPaymentIntent: any) => {
+    setStatus({
+      status: 'info',
+      data: {
+        message: 'confirmPaymentIntent start',
+        res: {},
+      },
+    });
+
     const {paymentIntent, error} = await confirmPaymentIntent({
       paymentIntent: collectedPaymentIntent,
     });
@@ -417,23 +525,13 @@ const TapToPayHandler = (props: any) => {
     }
   };
 
-  return (
-    <View style={{width: wp(90), alignSelf: 'center'}}>
-      <Gap height={hp(2)} />
-
-      <Button
-        text="Capture"
-        textColor="#fff"
-        onPress={() => _createPaymentIntent()}
-      />
-    </View>
-  );
+  return null;
 };
 
 export const TapToPayTerminal = (props: any) => {
   const {paramsData, setPaymentLoader, setStatus, paymentLoader} = props;
-  const simulated = true;
-  const locationId = 'tml_Fw8MrwQ58DGeXg';
+  const simulated = false;
+  const locationId = 'tml_FmuvfwnNrYkTGF'; // Test location 'tml_Fw8MrwQ58DGeXg';
 
   const [connectingReader, setConnectingReader] = useState<Reader.Type>();
   const [initLoaded, setInitLoaded] = useState<boolean>(false);
@@ -504,16 +602,23 @@ export const TapToPayTerminal = (props: any) => {
     }
   }, [handlePermissionsSuccess]);
 
+  console.log('🚀 ~ TapToPayTerminal ~ connectingReader:', connectingReader);
+  console.log('🚀 ~ TapToPayTerminal ~ initLoaded:', initLoaded);
+
   return (
     <View>
       <DiscoverReader
         setConnectingReader={setConnectingReader}
         connectingReader={connectingReader}
-        simulated={simulated}
+        // simulated={simulated}
         locationId={locationId}
         {...props}
       />
-      <TapToPayHandler {...props} connectingReader={connectingReader} />
+      <TapToPayHandler
+        {...props}
+        connectingReader={connectingReader}
+        simulated={simulated}
+      />
     </View>
   );
 };

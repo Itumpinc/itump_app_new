@@ -32,7 +32,7 @@ const Navbar = () => {
   
   const route: any = useRoute();
   const {name} = route;
-
+  
   const [modalClose, setModalClose] = useState(false);
   const storage = useAppSelector(state => state.common.storage);
   const {user, business} = storage;
@@ -82,7 +82,7 @@ const Navbar = () => {
       <TouchableOpacity
         onPress={handleSearch}
         style={{alignItems: 'center', justifyContent: 'center'}}>
-        {name == 'Invoice' ? <InvoiceS /> : <Invoice />}
+        {name == 'InvoiceList' ? <InvoiceS /> : <Invoice />}
         {/* <Image
           source={focus == 'Invoice' ? pictures.moneyPurple : pictures.money}
           style={{height: hp(3), width: hp(3)}}
@@ -91,7 +91,7 @@ const Navbar = () => {
         <Text
           style={[
             styles.textStyle,
-            {color: name == 'Invoice' ? colors.primary : colors.primaryText},
+            {color: name == 'InvoiceList' ? colors.primary : colors.primaryText},
           ]}>
           Invoice
         </Text>

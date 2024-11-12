@@ -78,7 +78,7 @@ const ConnectedAccount = ({externalAccount, connectAccount}: any) => {
   return (
     <View>
       <Gap height={hp(2)} />
-      <View style={{opacity: 0.5}}>
+      <View>
         <Line />
       </View>
       <Gap height={hp(3)} />
@@ -273,7 +273,7 @@ const WalletBalance = (props: any) => {
             <View>
               <Text
                 style={{
-                  color: 'white',
+                  color: colors.secondaryText,
                   fontSize: hp(1.6),
                 }}>
                 Available to pay out
@@ -281,7 +281,7 @@ const WalletBalance = (props: any) => {
               <Gap height={hp(0.5)} />
               <Text
                 style={{
-                  color: 'white',
+                  color: colors.secondaryText,
                   fontFamily: 'Satoshi-Bold',
                   fontSize: 22,
 
@@ -304,7 +304,7 @@ const WalletBalance = (props: any) => {
             <View>
               <Text
                 style={{
-                  color: 'white',
+                  color: colors.secondaryText,
                   fontSize: hp(1.6),
                 }}>
                 Available soon
@@ -312,7 +312,7 @@ const WalletBalance = (props: any) => {
               <Gap height={hp(0.5)} />
               <Text
                 style={{
-                  color: 'white',
+                  color: colors.secondaryText,
                   fontFamily: 'Satoshi-Bold',
                   fontSize: 22,
 

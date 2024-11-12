@@ -1,13 +1,6 @@
 import {
   Text,
   View,
-  Image,
-  TouchableOpacity,
-  TextInput,
-  Switch,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  Modal,
   FlatList,
   ActivityIndicator,
 } from 'react-native';
@@ -19,28 +12,16 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {useThemeColors} from '@constants/colors';
-import useStyles from '@src/screens/BusinessRegistration/styles';
 import Container from '@src/components/common/container';
 import Header from '@src/constants/header';
-import Button from '@src/constants/button';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {Line} from '@src/constants/Line';
-import Popup from '@src/components/common/popup';
-import {Spinner} from 'native-base';
 import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 import {userApi} from '@src/store/services/user';
 import {
-  formatAmount,
   getData,
-  getfirstlastname,
-  makeId,
-  titleCase,
 } from '@src/utils/helpers';
-import {OrderCard} from '@src/components/common/ordercard';
-import {useAppSelector} from '@src/store/store';
-import moment from 'moment';
-import {orderApi} from '@src/store/services/order';
 import TransactionCard from './TransactionCard';
+import PageLoader from '@src/components/common/PageLoader';
 
 const LIMIT = 10;
 let isEndReachedCalledDuringMomentum = false;
@@ -51,7 +32,7 @@ const TransactionList = () => {
   const navigation: any = useNavigation();
   const route: any = useRoute();
 
-  const paramsType = route && route.params ? route.params.type : 'invoice';
+  const paramsType = route && route.params ? route.params.finances : false;
 
   const [getTransactionsQuery, getTransactionsData] =
     userApi.useLazyGetTransactionsQuery();
@@ -61,13 +42,13 @@ const TransactionList = () => {
   const [loading, setLoading] = useState(false); // Loading state
   const [hasMore, setHasMore] = useState(true);
 
-  const storage = useAppSelector(state => state.common.storage);
-
   const loadMore = async () => {
     if (loading || !hasMore) return;
     setLoading(true);
     setPage(page + 1);
-    await getTransactionsQuery(`?page=${page + 1}&limit=${LIMIT}`);
+    await getTransactionsQuery(
+      `?page=${page + 1}&limit=${LIMIT}&finance=${paramsType}`,
+    );
   };
 
   useEffect(() => {
@@ -99,7 +80,7 @@ const TransactionList = () => {
     setPage(1);
     setLoading(false);
     setHasMore(true);
-    getTransactionsQuery(`?page=1&limit=${LIMIT}`);
+    getTransactionsQuery(`?page=1&limit=${LIMIT}&finance=${paramsType}`);
   }, [paramsType]);
 
   const renderFooter = () => {
@@ -124,13 +105,32 @@ const TransactionList = () => {
     );
   };
 
+  if (
+    (getTransactionsData.isFetching || getTransactionsData.isLoading) &&
+    page === 1
+  )
+    return (
+      <Container source={pictures.welcome} disableScroll>
+        <View style={{width: wp(90), alignSelf: 'center'}}>
+          <Header
+            title={`${
+              paramsType ? 'Finances' : 'Activities'
+            }`}
+            source={pictures.arrowLeft}
+            onPress={() => navigation.goBack()}
+          />
+          <PageLoader />
+        </View>
+      </Container>
+    );
+
   return (
     <Container source={pictures.welcome} disableScroll>
       <View style={{width: wp(90), alignSelf: 'center'}}>
         <Header
           title={`${
-            paramsType === 'invoice' ? titleCase(paramsType) : ''
-          } Transactions`}
+            paramsType ? 'Finances' : 'Activities'
+          }`}
           source={pictures.arrowLeft}
           onPress={() => navigation.goBack()}
         />

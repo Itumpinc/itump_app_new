@@ -96,6 +96,7 @@ function TapToPay({setSchemaData, setGetAmount}: any) {
           value={schema.data.user_business_id}
           placeHolder="Select Business"
           options={options}
+          addBusiness
         />
 
         <CustomerDetails
@@ -150,7 +151,6 @@ const GetAmount = ({schemaData}: any) => {
         business,
       },
     };
-
     navigation.navigate('TapToPayPayment', {data});
   };
 
@@ -222,9 +222,13 @@ const GetAmount = ({schemaData}: any) => {
   );
 };
 
-export default function TapToPayCreate() {
+export default function TapToPayCreate({setTaptopayTakingAmount}: any) {
   const [schemaData, setSchemaData] = useState();
   const [getAmount, setGetAmount] = useState(false);
+
+  useEffect(() => {
+    setTaptopayTakingAmount(true);
+  }, [getAmount]);
 
   return (
     <View>

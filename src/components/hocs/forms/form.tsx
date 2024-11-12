@@ -221,7 +221,7 @@ const Form = (props: {
     const {error} = schema.validate({[name]: value}, {abortEarly: false});
     const errors = {...formState.errors};
     if (error) {
-      // console.log('error===>', error.details);
+      console.log('error===>', error.details);
       const validationError = error.details.find(
         (err: any) => err.path[0] === name,
       );

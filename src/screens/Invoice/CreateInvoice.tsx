@@ -533,13 +533,25 @@ const CreateInvoice = () => {
       Joi.object({
         to_user_id: Joi.number().allow(0, ''),
         user_business_id: Joi.number().required(),
-        customer_email: Joi.string().trim().required(),
+        customer_email: Joi.string().trim().required().messages({
+          'string.empty': 'Please enter customer email',
+          'any.required': 'Please enter customer email',
+        }),
         customer_phone: Joi.string().trim().allow('', null),
-        customer_name: Joi.string().trim().required(),
-        invoice_title: Joi.string().trim().required(),
+        customer_name: Joi.string().trim().required().messages({
+          'string.empty': 'Please enter customer name',
+          'any.required': 'Please enter customer name',
+        }),
+        invoice_title: Joi.string().trim().required().messages({
+          'string.empty': 'Please enter invoice title',
+          'any.required': 'Please enter invoice title',
+        }),
         memo: Joi.string().trim().allow('', null),
         due_date: Joi.string().trim().required(),
-        amount: Joi.number().required(),
+        amount: Joi.number().required().messages({
+          'string.empty': 'Please enter amount',
+          'any.required': 'Please enter amount',
+        }),
         country_id: Joi.number().required(),
 
         billing_street: Joi.string().trim().allow('', null),
@@ -702,6 +714,7 @@ const CreateInvoice = () => {
                 value={schema.data.user_business_id}
                 placeHolder="Select Business"
                 options={options}
+                addBusiness
               />
 
               {steps.map((step, index) => {

@@ -63,8 +63,9 @@ export function getDefaultCountry(country: any[], dialCode: string) {
 }
 
 export const getfirstlastname = (fullName: string) => {
-  var firstName = fullName.split(' ').slice(0, -1).join(' ');
-  var lastName = fullName.split(' ').slice(-1).join(' ');
+  if (!fullName) return {firstName: '', lastName: ''};
+  let firstName = fullName.split(' ').slice(0, -1).join(' ');
+  let lastName = fullName.split(' ').slice(-1).join(' ');
   if (firstName == '') {
     firstName = lastName;
     lastName = '';
@@ -139,8 +140,9 @@ export function createImgUrl(url: string, imgEndPoint: string) {
 }
 
 export function getDecimalPart(number: number) {
-  const decimalPart = number.toString().split('.')[1];
-  return decimalPart ? parseInt(decimalPart) : 0;
+  const decimalPart = number.toString().split('.')[1] || '0';
+  const paddedDecimal = decimalPart.padEnd(2, '0');
+  return parseInt(paddedDecimal.slice(0, 2));
 }
 
 export function formatAmount(num: number | number, currency?: string) {
@@ -280,3 +282,50 @@ export const getSelectedBusiness = (storage: any, businessId: number) => {
   );
   return selectedbusiness;
 };
+
+const chars =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+export function base64decode(input: string) {
+  let str = input.replace(/=+$/, '');
+  let output = '';
+
+  if (str.length % 4 == 1) {
+    throw new Error(
+      "'atob' failed: The string to be decoded is not correctly encoded.",
+    );
+  }
+  for (
+    let bc = 0, bs = 0, buffer, i = 0;
+    (buffer = str.charAt(i++));
+    ~buffer && ((bs = bc % 4 ? bs * 64 + buffer : buffer), bc++ % 4)
+      ? (output += String.fromCharCode(255 & (bs >> ((-2 * bc) & 6))))
+      : 0
+  ) {
+    buffer = chars.indexOf(buffer);
+  }
+
+  return output;
+}
+
+export function base64encode(input: string) {
+  let str = input;
+  let output = '';
+
+  for (
+    let block = 0, charCode, i = 0, map = chars;
+    str.charAt(i | 0) || ((map = '='), i % 1);
+    output += map.charAt(63 & (block >> (8 - (i % 1) * 8)))
+  ) {
+    charCode = str.charCodeAt((i += 3 / 4));
+
+    if (charCode > 0xff) {
+      throw new Error(
+        "'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.",
+      );
+    }
+    block = (block << 8) | charCode;
+  }
+
+  return output;
+}

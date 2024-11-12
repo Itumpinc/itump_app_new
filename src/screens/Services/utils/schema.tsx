@@ -496,7 +496,9 @@ export const secureSchema = (defaultData: any) => {
         'any.required': 'Please enter secure name', 
       }), 
       docforSecure: Joi.object().required().messages({
-        'any.required': 'Please upload document',   
+        'object.base': 'Please select Document',
+        'string.empty': 'Please select Document',
+        'any.required': 'Please select Document',
       }),
       docforSecureName: Joi.string().allow(''),
 
@@ -637,7 +639,11 @@ export const fincenBoiSchema = (defaultData: any) => {
         'string.empty': 'Please select country',
         'any.required': 'Please select country',
       }),
-      applicant_id_document: Joi.object().required(), // not need to add in db will upload in document
+      applicant_id_document: Joi.object().required().messages({
+        'object.base': 'Please select Document',
+        'string.empty': 'Please select Document',
+        'any.required': 'Please select Document',
+      }), // not need to add in db will upload in document
 
       applicant_first_name_1: Joi.string().allow('', null), // new
       applicant_last_name_1: Joi.string().allow('', null), // new

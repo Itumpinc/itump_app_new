@@ -16,6 +16,7 @@ import ServiceCard from '@src/components/common/serviceCard';
 import {serviceApi} from '@src/store/services/service';
 import {Spinner} from 'native-base';
 import {getData} from '@src/utils/helpers';
+import useFocusedEffect from '@src/components/hooks/useFocusEffect';
 
 export const ServiceHOC = (props: any) => {
   const {paramsData, children, setParamsData, setSchema} = props;
@@ -26,7 +27,7 @@ export const ServiceHOC = (props: any) => {
   const [serviceDetailQuery, serviceDetailData] =
     serviceApi.useLazyServiceDetailQuery();
 
-  useEffect(() => {
+  useFocusedEffect(() => {
     if (
       (!(paramsData && paramsData.serviceData) ||
         (paramsData &&

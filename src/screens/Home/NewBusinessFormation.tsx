@@ -52,7 +52,7 @@ export default function NewBusinessFormation(props: any) {
               styles.text,
               {color: colors.secondaryText, fontSize: hp(2)},
             ]}>
-            Start New Formation
+            Add/Form a new Business
           </Text>
           {!from && (
             <TouchableOpacity
@@ -121,8 +121,8 @@ export default function NewBusinessFormation(props: any) {
               marginBottom: hp(1),
               flexDirection: 'row',
               alignItems: 'center',
-              justifyContent:'space-between',
-              paddingRight: 20
+              justifyContent: 'space-between',
+              paddingRight: 20,
             }}>
             <Text
               style={[

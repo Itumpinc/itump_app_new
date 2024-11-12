@@ -1,6 +1,6 @@
 import {Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
 
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -36,8 +36,8 @@ export default function Home() {
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const navigation: any = useNavigation();
-  const { routes, index } = navigation.getState();
-  
+  const {routes, index} = navigation.getState();
+
   const [userApisQuery, userApisData] = userApi.useLazyUserProfileQuery();
   const storage = useAppSelector(state => state.common.storage);
   const {user: userdetail} = storage;
@@ -90,26 +90,22 @@ export default function Home() {
       <WalletChart dashboardData={dashboardData} />
       <Gap height={hp(2)} />
 
-      {user.is_pro_user === 1 && (
-        <TapToPay />
-      )}
-      {(user.is_pro_user === 0) && (
-        <ActivateAccount />
-      )}
+      {user.is_pro_user === 1 && <TapToPay />}
+      {user.is_pro_user === 0 && <ActivateAccount />}
       <DuePayment />
       {allBusiness.length > 0 ? (
         <LineOfCreditbanner />
       ) : (
         <NewBusinessFormation />
       )}
-      {allBusiness.length > 0 && <Ongoing allBusiness={userProfile.business} />}
+      {/* {allBusiness.length > 0 && <Ongoing allBusiness={userProfile.business} />} */}
 
       {/* Dashboard 2 Component */}
       {/* <ItumpDebitCard /> */}
 
       <FixIssues business={allBusiness} />
       <RecentOrders />
-      <Transaction />
+      {/* <Transaction /> */}
       <Invoices />
 
       {/* Dashboard 1 Component */}

@@ -123,7 +123,7 @@ const Input = (props: {
 
         <TextInput
           inputMode="numeric"
-          maxLength={10}
+          // maxLength={10}
           editable={disable ? false : true}
           onChangeText={val => {
             (val = val.replace(/[^0-9]/g, '')),

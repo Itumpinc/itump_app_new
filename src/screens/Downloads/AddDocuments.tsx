@@ -70,7 +70,11 @@ const AddDocuments = () => {
       Joi.object({
         business_id: Joi.number().allow(0, ''),
         document_type: Joi.string().trim().required(),
-        uploadedDoc: Joi.object().required(),
+        uploadedDoc: Joi.object().required().messages({
+          'object.base': 'Please select Document',
+          'string.empty': 'Please select Document',
+          'any.required': 'Please select Document',
+        }),
         document_other_name: Joi.string().trim().allow('', null),
       }),
       {},
@@ -160,6 +164,7 @@ const AddDocuments = () => {
               value={schema.data.business_id}
               placeHolder="Select Business"
               options={options}
+              addBusiness
             />
 
             <Text style={{color: colors.secondaryText}}>Document Type</Text>

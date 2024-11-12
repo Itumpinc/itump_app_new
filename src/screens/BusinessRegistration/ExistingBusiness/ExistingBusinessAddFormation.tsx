@@ -56,11 +56,11 @@ export function ExistingBusinessAddFormation(props: any) {
         name="haveFormedDate"
         options={[
           {
-            label: "I haven't formed my company with the state yet.",
+            label: "I haven't formed my company yet.",
             value: 'new',
           },
           {
-            label: 'I have date when I formed this company',
+            label: 'I remember my formation date',
             value: 'yes',
           },
           {

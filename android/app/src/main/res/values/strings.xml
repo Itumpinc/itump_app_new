@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">itump</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">UC9Pg55506bnn_MraPiKk11rn5XTVsUNVIXYiG</string>
 </resources>

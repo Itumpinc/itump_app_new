@@ -72,5 +72,9 @@
 	<array>
 		<string>bluetooth-central</string>
 	</array>
+	<key>CodePushDeploymentKey</key>
+	<string>Q59uiv6ovDWEDrBb-G1jlm2M_HNKvPHx6Z-Xa_</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app require to use your location to connect with you card readers.</string>
 </dict>
 </plist>

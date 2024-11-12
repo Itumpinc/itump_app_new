@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {NativeBaseProvider, extendTheme} from 'native-base';
 import {Text, View, LogBox} from 'react-native';
 import {PersistGate} from 'redux-persist/integration/react';
@@ -7,6 +7,9 @@ import {store, persistor} from '@store/store';
 import {Provider} from 'react-redux';
 import Navigation from '@src/navigators/Application';
 import {NavigationContainer} from '@react-navigation/native';
+import CodePush from 'react-native-code-push';
+import messaging from '@react-native-firebase/messaging';
+import {PermissionsAndroid} from 'react-native';
 
 LogBox.ignoreAllLogs(); // Ignore all log notifications
 
@@ -44,7 +47,18 @@ const theme = extendTheme({
   },
 });
 
-function App() {
+const App = () => {
+  // async function requestUserPermission() {
+  //   const authStatus = await messaging().requestPermission();
+  //   const enabled =
+  //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+  //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+  //   if (enabled) {
+  //     console.log('Authorization status:', authStatus);
+  //   }
+  // }
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
@@ -56,6 +70,8 @@ function App() {
       </PersistGate>
     </Provider>
   );
-}
+};
 
-export default App;
+let codePushOptions = {checkFrequency: CodePush.CheckFrequency.ON_APP_START};
+
+export default CodePush(codePushOptions)(App);
